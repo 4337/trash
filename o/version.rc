@@ -1,0 +1,30 @@
+#include <windows.h> 
+
+1 VERSIONINFO
+FILEVERSION 1,0,0,8
+PRODUCTVERSION 1,0,0,8
+
+FILETYPE VFT_APP
+{
+         BLOCK "StringFileInfo"
+         {
+		        BLOCK "041904E4"
+		        {
+			           VALUE "CompanyName", "Evil Empire"
+			           VALUE "FileVersion", "1.0.8"
+			           VALUE "FileDescription", "Developed in ANSI C"
+			           VALUE "InternalName", "T-probe"
+			           VALUE "LegalCopyright", "Copyright Evil Empire"
+			           VALUE "LegalTrademarks", ""
+			           VALUE "OriginalFilename", "tp.exe"
+			           VALUE "ProductName", "T-probe"
+			           VALUE "ProductVersion", "1.0.8"
+		         }
+	      }
+	      
+          BLOCK "VarFileInfo"
+	      {
+		         VALUE "Translation", 0x0419, 1252
+	      }
+}
+

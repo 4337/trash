@@ -1,0 +1,63 @@
+;1. Wszystkie pola s¹ opcjonalne (nawet te które s¹ w ka¿dym pakiecie) [patrz punkt 4]
+;2. Wiêkszoœæ pól obs³uguje wielowartoœci (mo¿na je wpisywaæ po przecinku)
+;3. W sytuacji w której dane pole jest opcjonalne (np tcp_option) i wymaga wielu wartoœci 
+;   przy czym w pewnych pakietach nie jest zdefiniowane mo¿emy 
+;   zapisaæ tcp_option=wartoœæ1,wartoœæ2,wartoœæN,* (gwiazda (*) oznacza brak definicji) 
+;4. Iloœæ pól (wielkoœæ sygnatury) ma znaczenie 
+;   (czym wiêksza sygnatura tym wiêksze prawdopodobieñstwo trafnej detekcji, mo¿e nie jest to najlepsze rozwi¹zanie 
+;    ale jakieœ za³o¿enia trzeba przyj¹æ a to wydaje siê najbardziej logiczne bo im mniejsza ilosc danych w danych ustandaryzowanych 
+     tym czêsciej bed¹ siê one pokrywaæ w róznych systemach [ogolnie chodzi o szczególy]) 
+;5. Wartoœci zapisane jako '*' zmniejszaj¹ procent zgodnoœci
+;6. Wartoœci wszystkich pól zapisujemy w naturalnej notacji dziesiêtnej B-Endian 
+;   poza opcjami tcp i opcjami ip oraz znacznikami tcp te zapisujemy hexami w notacji L-Endian (uzupelniajac do 2 bajtow eg. 02 zamiast 2);
+;
+;-------------------- Fantastyczny Œwiat POLA ----------------------
+;
+; char* name =                    nazwa systemu (nie obs³uguje wielowartoœci)
+; struct s_multi_uc  ip_ttl =     wartoœci ttl systemu (obs³uguje wielowartoœci, nieobs³uguje '*')
+; struct s_multi_uc  ip_df  =     wartoœæ znacznika DF (PMTU) (obs³uguje wielowartoœci w praktyce 1 lub/i 0)
+; struct s_multi_uc  ip_mf  =     wartoœæ znacznika MF (obs³uguje wilowartoœci w praktyce 1 lub/i 0)
+; struct s_multi_uc  ip_fr_off  = fragment offset (obs³uguje wielowartoœci w praktyce bez znaczenia)        
+; struct s_multi_short ip_ident = Id Fragmentu (obs³uguje weilowartoœci w praktyce bez znaczenia)
+; struct s_multi_uc ip_hlen     = IpHeader Length (obs³uguje wielowartoœci w praktyce bez znaczenia)       
+; struct s_multi_ptr_uc ip_option = Opcje IP [nie wpe³ni zaimplementowane] (obs³uguje wielowartoœci)
+; struct s_multi_short tcp_winsize= Rozmiar okna (obs³uguje wielowartoœci , nieobs³uguje znaku '*')
+; struct s_multi_uc ip_tos =        Type of service (obs³uguje wielowartoœci , nieobs³uguje znaku '*')         
+; struct s_multi_short tcp_prior     
+; struct s_multi_ptr_uc tcp_option = Opcje tcp (obs³uguje wielowartoœci)
+; struct s_multi_uc tcp_flags =      Flagi (obs³uguje wielowartoœci,nieobs³uguje znaku '*')
+; struct s_multi_ul tcp_ack =           Wartoœæ numeru potwierdzenia (obs³uguje multivalue w praktyce 1||0 nie obs³uguje znaku '*')                       
+; struct s_multi_ul  tcp_seq =           Wartoœæ numeru sekwencyjnego (obs³uguje multivalue w praktyce 1||0 nie obs³uguje znaku '*')  
+; char*          net_data  =     dane w pakiecie (nieobs³uguje wielowartoœci) nie w pe³ni zaimplementowane (nie ma obs³ugi full-connecta)
+;                                a dane w handsheku to w zasadzie anomalia chocia¿ zgodne z RFC
+
+
+[AndroidLinuxTS]
+name=Android 4.1.2 GT-S6310N [S6310NXXAMD3] (*NIX) 
+ip_hlen=5
+ip_ttl=64
+ip_df=1
+ip_mf=0
+ip_tos=0
+ip_fr_off=0
+ip_ident=0
+tcp_winsize=14480,14600,0
+tcp_prior=0
+tcp_flags=16,18,4,20
+tcp_seq=0,1
+tcp_option=0101080a000048b5ffff0a,020405b401010402,00357a69225e55c00918827570123908f3f40000020405b401010402,0101080A01C2BA46FFFFFF0A,*
+
+[DlinkDir615]
+name=D-link Dir-615 Version: 4.11 (Wireless Router) 
+ip_hlen=5
+ip_ttl=64
+ip_df=1
+ip_mf=0
+ip_tos=0
+ip_fr_off=0
+ip_ident=0
+tcp_winsize=0,5840
+tcp_prior=0
+tcp_flags=20,18,16
+tcp_seq=0,1
+tcp_option=020405b401010402,*
