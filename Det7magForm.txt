@@ -1,0 +1,11 @@
+echo("dechex((0x1000 - 0x08 - 0x10) / (0x50 + 0x08))") = maksymalna liczba alokacji o okreœlonym rozmiarze w segmencie 
+                |        |      |        |      +------------- _HEAP_CHUNK_HEADER
+                |        +-+    |        +--------------+
+           w wiêkszoœci    |    +--------------+        |
+            przypadków     +-----------+       |   User Alloc Request Size
+          ale nie zwasze               |       |      
+    if((unsigned)StartIndex > 0x12)    | _HEAP_USERDATA_HEADER
+       StartIndex = 0x12;              |
+                                       |
+                                 _HEAP_CHUNK_HEADER     
+
