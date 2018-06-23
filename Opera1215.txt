@@ -1,0 +1,104 @@
+<pre>
+0:007> bl
+ 0 e 64b0e7fa     0001 (0001)  0:**** Opera_648f0000!OpSetLaunchMan+0x21d5a8 ".printf \"eax=%08x [eax+14h]=%08x *[eax+14h]=%p\n\",[eax],[eax+14h],poi(eax+14h); !heap -p -a [eax + 14h];"
+
+eax=03ce6948 [eax+14h]=03ce695c *[eax+14h]=03c5d388     
+     address 03ce695c found in
+    _HEAP @ eb0000
+      HEAP_ENTRY Size Prev Flags    UserPtr UserSize - state
+        03ce6940 0008 0000  [00]   03ce6948    00034 - (busy)
+
+ 
+eax=03ce6948 ebx=00000000 ecx=03c5d388 edx=00000000 esi=03ce6d48 edi=0046d828
+eip=64b0e7fa esp=0046d5e0 ebp=0046d6e4 iopl=0         nv up ei pl zr na pe nc
+cs=0023  ss=002b  ds=002b  es=002b  fs=0053  gs=002b             efl=00200246
+Opera_648f0000!OpSetLaunchMan+0x21d5a8:
+64b0e7fa 8b4814          mov     ecx,dword ptr [eax+14h] ds:002b:03ce695c=88d3c503
+
+0:000> ba w 1 0x03ce695c ".printf \"\n\nBA on [VTBL] = 0x03ce695c EIP=%p\n\n\",eip" 
+0:000> BP ntdll!RtlAllocateHeap ".printf \"RtlAllocateHeap args  arg0=%p arg1=%p arg2=%p\n\",poi(esp+4),poi(esp+8),poi(esp+c); g"
+0:000> BP ntdll!RtlFreeHeap ".printf \"\nRtlFreeHeap args ret=%p arg1=%p arg2=%p\n\",poi(esp),poi(esp+8),poi(esp+c); g"
+
+RtlAllocateHeap args  arg0=00eb0000 arg1=00000000 arg2=0000000c  
+RtlAllocateHeap args  arg0=00eb0000 arg1=00000000 arg2=00000020    
+RtlFreeHeap args ret=75ea14dd arg1=00000000 arg2=03c67138 
+RtlAllocateHeap args  arg0=00eb0000 arg1=00000000 arg2=00000020    
+RtlFreeHeap args ret=75ea14dd arg1=00000000 arg2=03c67138 
+RtlAllocateHeap args  arg0=00eb0000 arg1=00000000 arg2=00000020
+RtlFreeHeap args ret=75ea14dd arg1=00000000 arg2=03c67138 
+RtlAllocateHeap args  arg0=00eb0000 arg1=00000000 arg2=00000020
+RtlFreeHeap args ret=75ea14dd arg1=00000000 arg2=03c67138 
+RtlAllocateHeap args  arg0=00eb0000 arg1=00000000 arg2=00000020
+RtlFreeHeap args ret=75ea14dd arg1=00000000 arg2=03c67138 
+RtlAllocateHeap args  arg0=00eb0000 arg1=00000000 arg2=00000020  
+RtlFreeHeap args ret=75ea14dd arg1=00000000 arg2=03c67138
+RtlAllocateHeap args  arg0=00eb0000 arg1=00000000 arg2=00000018 
+RtlFreeHeap args ret=75ea14dd arg1=00000000 arg2=03c5d370  
+RtlFreeHeap args ret=75ea14dd arg1=00000000 arg2=03c5d388         <- ** FREE *[eax+14h]=03c5d388 (our corrupted OBJ PTR) **
+
+BA on [VTBL] = 0x03ce695c EIP=64b24889  
+
+eax=03c5d388 ebx=00000000 ecx=00000002 edx=00000001 esi=03ce6948 edi=00eb6f00
+eip=64b24889 esp=0046d8d4 ebp=03bce120 iopl=0         nv up ei pl nz na po nc
+cs=0023  ss=002b  ds=002b  es=002b  fs=0053  gs=002b             efl=00200202
+
+
+Opera_648f0000!OpSetLaunchMan+0x25b8bf - 6                                                   <- call overwriter
+
+....
+....
+64b24858 33db            xor     ebx,ebx                                                     <- no controll over value ofc we should deep analise this function (im lazy ;x)
+....                                                                                         <- pamiêæ zosta³a zwolniona do wskaŸnika przypisana jest wartoœæ NULL
+....
+....
+64b24886 895e14          mov     dword ptr [esi+14h],ebx                                     <- overwrite vtbl [esi+14h] = [eax+14h] = ebx = null 
+Opera_648f0000!OpSetLaunchMan+0x233637:
+64b24889 5e              pop     esi
+
+0:000> g
+
+RtlAllocateHeap args  arg0=00eb0000 arg1=00000000 arg2=00000018
+
+eax=03ce6948 [eax+14h]=03ce695c *[eax+14h]=00000000    
+    address 03ce695c found in
+    _HEAP @ eb0000
+      HEAP_ENTRY Size Prev Flags    UserPtr UserSize - state
+        03ce6940 0008 0000  [00]   03ce6948    00034 - (busy)
+
+ 
+eax=03ce6948 ebx=00000000 ecx=03c5d3a0 edx=00000000 esi=03ce6d48 edi=0046d828
+eip=64b0e7fa esp=0046d5e0 ebp=0046d6e4 iopl=0         nv up ei pl zr na pe nc
+cs=0023  ss=002b  ds=002b  es=002b  fs=0053  gs=002b             efl=00200246
+Opera_648f0000!OpSetLaunchMan+0x21d5a8:
+64b0e7fa 8b4814          mov     ecx,dword ptr [eax+14h] ds:002b:03ce695c=00000000            <- one step to death
+
+
+0:000> g
+
+(1fec.1474): Access violation - code c0000005 (first chance)
+First chance exceptions are reported before any exception handling.
+This exception may be expected and handled.
+
+eax=03ce6948 ebx=00000000 ecx=00000000 edx=00000000 esi=03ce6d48 edi=0046d828
+eip=64b0e7fd esp=0046d5e0 ebp=0046d6e4 iopl=0         nv up ei pl zr na pe nc
+cs=0023  ss=002b  ds=002b  es=002b  fs=0053  gs=002b             efl=00210246
+
+Opera_648f0000!OpSetLaunchMan+0x21d5ab:
+64b0e7fd 8b01            mov     eax,dword ptr [ecx]  ds:002b:00000000=????????
+
+0:000> g
+
+(1fec.1474): Access violation - code c0000005 (!!! second chance !!!)
+
+eax=03ce6948 ebx=00000000 ecx=00000000 edx=00000000 esi=03ce6d48 edi=0046d828
+eip=64b0e7fd esp=0046d5e0 ebp=0046d6e4 iopl=0         nv up ei pl zr na pe nc
+cs=0023  ss=002b  ds=002b  es=002b  fs=0053  gs=002b             efl=00210246
+
+Opera_648f0000!OpSetLaunchMan+0x21d5ab:
+64b0e7fd 8b01            mov     eax,dword ptr [ecx]  ds:002b:00000000=????????
+
+/* Conclusion : Unexploitable !!
+   (Objekt zostaje zwolniony do wskaŸnika na objekt zostaje przypisana wartoœæ NULL 
+    nastêpnie dochodzi do wyuskania owego wskaŸnika - klasyczny NULL Pointer Dereference) 
+   Sprawa zamkniêta ;> */
+</pre>

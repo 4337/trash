@@ -1,0 +1,87 @@
+<pre>
+ptr = d2bdbc0 , ptr->ptr = 1e6dcad8, ptr->ptr->ptr = 1e6a4ec8
+
+ Breakpoint 1 hit
+
+eax=00000000 ebx=00000000 ecx=1e6a4e90 edx=02bc1078 esi=1e6dcad8 edi=1e6dce88
+eip=6b1a0e89 esp=003bee24 ebp=003bee98 iopl=0         nv up ei pl zr na pe nc
+cs=0023  ss=002b  ds=002b  es=002b  fs=0053  gs=002b             efl=00000246
+
+dxgi!CDXGISwapChain::DestroyBackBuffers+0x47:
+
+edi = &ptr->ptr->ptr = 1e6dce88
+
+6b1a0e85 33c0            xor     eax,eax
+6b1a0e87 8907            mov     dword ptr [edi],eax    //ptr->ptr->ptr = 0
+6b1a0e89 43              inc     ebx
+
+0:000> !heap -p -a 1e6a4ec8                            //ptr->ptr->ptr 
+    address 1e6a4ec8 found in
+    _DPH_HEAP_ROOT @ 2bc1000
+    in free-ed allocation (  DPH_HEAP_BLOCK:         VirtAddr         VirtSize)
+                                   1e620270:         1e6a4000             2000
+    704490b2 verifier!AVrfDebugPageHeapFree+0x000000c2
+    77431564 ntdll!RtlDebugFreeHeap+0x0000002f
+    773eac29 ntdll!RtlpFreeHeap+0x0000005d
+    773934a2 ntdll!RtlFreeHeap+0x00000142
+    74df14ad kernel32!HeapFree+0x00000014
+    6a74f67d d3d11!operator delete+0x0000001d          //free(ptr->ptr->ptr)
+    6a78ca48 d3d11!CDelegatingUseCountedObject<NOutermost::CDeviceChild>::UCDestroy+0x0000001e
+    6b1a0f44 dxgi!CDXGISwapChain::DestroyOwnedBuffer+0x0000003c
+    6b1a0e85 dxgi!CDXGISwapChain::DestroyBackBuffers+0x00000043
+    6b1a5a7b dxgi!CDXGISwapChain::ResizeBuffers+0x0000048e
+    5e1f0bde xul!XRE_StopLateWriteChecks+0x0002866e
+    5e275a02 xul!xpc::SimulateActivityCallback+0x0000befb
+    5e451208 xul!mozilla::services::_external_GetChromeRegistryService+0x0000fc16
+    5e451357 xul!mozilla::services::_external_GetChromeRegistryService+0x0000fd65
+    5e2399f3 xul!NS_LogCOMPtrRelease+0x0001a85b
+    5d8c19d9 xul!CallWindowProcCrashProtected+0x000120e6
+
+0:000> !heap -p -a 1e6dcad8                     //ptr->ptr
+    address 1e6dcad8 found in
+    _DPH_HEAP_ROOT @ 2bc1000
+    in busy allocation (  DPH_HEAP_BLOCK:         UserAddr         UserSize -         VirtAddr         VirtSize)
+                                1e621c98:         1e6dcad8              528 -         1e6dc000             2000
+          dxgi!CMTUseCountedObject<CDXGISwapChain>::`vftable'
+    70448e89 verifier!AVrfDebugPageHeapAllocate+0x00000229
+    77430d96 ntdll!RtlDebugAllocateHeap+0x00000030
+    773eaf0d ntdll!RtlpAllocateHeap+0x000000c4
+    77393cfe ntdll!RtlAllocateHeap+0x0000023a
+    6b1950ac dxgi!operator new+0x0000001a
+    6b19cbce dxgi!CMTUseCountedObject<CDXGISwapChain>::CreateInstance+0x00000021
+    6b19956e dxgi!CDXGIFactory::CreateSwapChainImpl+0x000000f5
+    6b199d37 dxgi!CDXGIFactory::CreateSwapChainForHwndImpl+0x00000147
+    6b199a5c dxgi!CDXGIFactory::CreateSwapChain+0x000000ca
+    5e109590 xul!mozilla::scache::PathifyURI+0x000e56a0
+
+
+ptr = d2bdbc0 , ptr->ptr = 1e6dcad8, ptr->ptr->ptr = 0
+
+(11d0.1490): Access violation - code c0000005 (first chance)
+First chance exceptions are reported before any exception handling.
+This exception may be expected and handled.
+eax=00000000 ebx=1e6dcad8 ecx=00001490 edx=003be664 esi=003be658 edi=00000000
+eip=6b1a56f3 esp=003be638 ebp=003be698 iopl=0         nv up ei pl nz na po nc
+cs=0023  ss=002b  ds=002b  es=002b  fs=0053  gs=002b             efl=00010202
+dxgi!CDXGISwapChain::ResizeBuffers+0x106:
+6b1a56f3 8b08            mov     ecx,dword ptr [eax]  ds:002b:00000000=????????
+
+0:000> k
+ChildEBP RetAddr  
+0042e100 5e1f0bde dxgi!CDXGISwapChain::ResizeBuffers+0x106
+WARNING: Stack unwind information not available. Following frames may be wrong.
+0042e17c 5e275a02 xul!XRE_StopLateWriteChecks+0x2866e
+0042e1b4 5e451208 xul!xpc::SimulateActivityCallback+0xbefb
+0042e200 5e451357 xul!mozilla::services::_external_GetChromeRegistryService+0xfc16
+0042e264 5e2399f3 xul!mozilla::services::_external_GetChromeRegistryService+0xfd65
+0042e37c 5d8c19d9 xul!NS_LogCOMPtrRelease+0x1a85b
+0042e404 5d8c1829 xul!CallWindowProcCrashProtected+0x120e6
+0042e414 5d88420f xul!CallWindowProcCrashProtected+0x11f36
+0042e438 5e18b075 xul!NS_NewLocalFile+0x3c6e6
+0042e47c 7737010a xul!mozilla::scache::PathifyURI+0x167185
+0042e4b4 75f15737 ntdll!KiUserCallbackDispatcher+0x2e
+0042e4e4 00000000 GDI32!DeleteObject+0x243
+
+
+Conclusion: Null Pointer Dereference (unexploitable)
+</pre>

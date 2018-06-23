@@ -1,0 +1,144 @@
+Kreszendo (^^)        (ff34)
+0:046> bp mozalloc!moz_xmalloc+0x26 ".if (poi(esp+4)==0168) { .printf \"moz_xmalloc(size=%x) ret_ptr=%x\\r\\n\",poi(esp+4),eax; } .else {g}"
+0:046> g
+
+moz_xmalloc(size=168) ret_ptr=156fc230
+eax=156fc230 ebx=0fc0b560 ecx=00000168 edx=156fb00c esi=0d863790 edi=65693d96
+eip=74061336 esp=0030d168 ebp=0030d1d8 iopl=0         nv up ei pl nz na pe nc
+cs=0023  ss=002b  ds=002b  es=002b  fs=0053  gs=002b             efl=00200206
+mozalloc!moz_xmalloc+0x26:
+74061336 c3              ret
+0:000> k
+ChildEBP RetAddr  
+0030d164 65693da1 mozalloc!moz_xmalloc+0x26 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\memory\mozalloc\mozalloc.cpp @ 58]
+0030d16c 6474b9a9 xul!NS_NewHTMLVideoElement+0xb [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\content\html\content\src\htmlvideoelement.cpp @ 35]
+0030d188 6476b353 xul!NS_NewHTMLElement+0x59 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\content\html\document\src\nshtmlcontentsink.cpp @ 285]
+0030d1c4 6467b0aa xul!NS_NewElement+0x103 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\content\base\src\nsnamespacemanager.cpp @ 146]
+0030d230 11f751c0 xul!nsIDocument::CreateElement+0xa5 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\content\base\src\nsdocument.cpp @ 5178]
+WARNING: Frame IP not in any known module. Following frames may be wrong.
+0030d264 646e3c8b 0x11f751c0
+0030d28c 6465c90e xul!mozilla::dom::ConvertJSValueToString<mozilla::dom::binding_detail::FakeString>+0x8b [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\obj-firefox\dist\include\mozilla\dom\bindingutils.h @ 1901]
+0030d43c 715e2bc8 xul!mozilla::dom::DocumentBinding::createElement+0x94 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\obj-firefox\dom\bindings\documentbinding.cpp @ 503]
+0030d470 715503f9 mozjs!js::ProtoKeyToClass+0xfbd8
+00000000 00000000 mozjs!JS::ForOfIterator::materializeArrayIterator+0x2e9
+
+0:000> bp mozalloc!moz_free ".if (poi(esp+4)==156fc230) { .printf \"moz_free(156fc230)\\r\\n\"; } .else {g}"
+0:000> bp ntdll!RtlFreeHeap ".if (poi(esp+4)==156fc230) { .printf \"FreeHeap(156fc230)\\r\\n\"; } .else {g}"
+0:000> ba w 1 156fc230+150 ".printf \"Write at ret_ptr->off150h_ptr\\r\\n\";"
+0:000> bp mozjs!js::ProtoKeyToClass+0xfbc9 ".if ((poi(eax-8)!=0) & (esi==6488ac40)){.printf \"In GenericBindingGetter up1_ptr=%x\\r\\n\",poi(poi(eax-8)+10h);g}.else{g}"
+0:000> bp xul!mozilla::dom::HTMLMediaElement::GetOrCreateTextTrackManager+0xc ".printf \"In GetOrCreateTextTrackManager Ptr=%x Ptr1=%x\\r\\n\",esi,edi;g"
+
+0:000> bl
+ 0 e 74061336     0001 (0001)  0:**** mozalloc!moz_xmalloc+0x26 ".if (poi(esp+4)==0168) { .printf \"moz_xmalloc(size=%x) ret_ptr=%x\\r\\n\",poi(esp+4),eax; } .else {g}"
+ 1 e 7406130a     0001 (0001)  0:**** mozalloc!moz_free ".if (poi(esp+4)==156fc230) { .printf \"moz_free(156fc230)\\r\\n\"; } .else {g}"
+ 2 e 7759dfa5     0001 (0001)  0:**** ntdll!RtlFreeHeap ".if (poi(esp+4)==156fc230) { .printf \"FreeHeap(156fc230)\\r\\n\"; } .else {g}"
+ 3 eu         w 1 0001 (0001) (ret_ptr+150) ".printf \"Write at ret_ptr->off150h_ptr\\r\\n\";"
+ 4 e 156fc380 w 1 0001 (0001)  0:****  ".printf \"Write at ret_ptr->off150h_ptr\\r\\n\";"
+ 5 e 715e2bb9     0001 (0001)  0:**** mozjs!js::ProtoKeyToClass+0xfbc9 ".if ((poi(eax-8)!=0) & (esi==6488ac40)){.printf \"In GenericBindingGetter up1_ptr=%x\\r\\n\",poi(poi(eax-8)+10h);g}.else{g}"
+ 6 e 656dbce0     0001 (0001)  0:**** xul!mozilla::dom::HTMLMediaElement::GetOrCreateTextTrackManager+0xc ".printf \"In GetOrCreateTextTrackManager Ptr=%x Ptr1=%x\\r\\n\",esi,edi;g"
+
+0:000> g
+Write at ret_ptr->off150h_ptr
+eax=156fc37c ebx=00000000 ecx=156fc37c edx=00000004 esi=156fc230 edi=65693d96
+eip=656937af esp=0030d148 ebp=0030d150 iopl=0         nv up ei pl zr na pe nc
+cs=0023  ss=002b  ds=002b  es=002b  fs=0053  gs=002b             efl=00200246
+xul!mozilla::dom::HTMLMediaElement::HTMLMediaElement+0x1c9:
+....
+6569362f 33db            xor     ebx,ebx                                                <-- ebx = 0 (NULL)
+....
+656937a9 899e50010000    mov     dword ptr [esi+150h],ebx                               <-- ret_ptr->off150h_ptr is init by NULL
+656937af 899e54010000    mov     dword ptr [esi+154h],ebx ds:002b:156fc384=5a5a5a5a         (_ctor initialization)
+0:000> k
+ChildEBP RetAddr  
+0030d150 65693d59 xul!mozilla::dom::HTMLMediaElement::HTMLMediaElement+0x1c9 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\content\html\content\src\htmlmediaelement.cpp @ 2053]
+0030d160 65693db0 xul!mozilla::dom::HTMLVideoElement::HTMLVideoElement+0xf [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\content\html\content\src\htmlvideoelement.cpp @ 46]
+0030d16c 6474b9a9 xul!NS_NewHTMLVideoElement+0x1a [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\content\html\content\src\htmlvideoelement.cpp @ 35]
+0030d188 6476b353 xul!NS_NewHTMLElement+0x59 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\content\html\document\src\nshtmlcontentsink.cpp @ 285]
+0030d1c4 6467b0aa xul!NS_NewElement+0x103 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\content\base\src\nsnamespacemanager.cpp @ 146]
+0030d230 11f751c0 xul!nsIDocument::CreateElement+0xa5 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\content\base\src\nsdocument.cpp @ 5178]
+WARNING: Frame IP not in any known module. Following frames may be wrong.
+0030d264 646e3c8b 0x11f751c0
+0030d28c 6465c90e xul!mozilla::dom::ConvertJSValueToString<mozilla::dom::binding_detail::FakeString>+0x8b [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\obj-firefox\dist\include\mozilla\dom\bindingutils.h @ 1901]
+0030d43c 715e2bc8 xul!mozilla::dom::DocumentBinding::createElement+0x94 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\obj-firefox\dom\bindings\documentbinding.cpp @ 503]
+0030d470 715503f9 mozjs!js::ProtoKeyToClass+0xfbd8
+00000000 00000000 mozjs!JS::ForOfIterator::materializeArrayIterator+0x2e9
+0:000> g
+...
+In GenericBindingGetter up1_ptr=156fc230                                        <-- long before crash (keep in mind that value of ret_ptr->off150h_ptr 
+In GetOrCreateTextTrackManager Ptr=156fc380 Ptr1=156fc230                                              between those events doesn't change (is still 0))
+                  (moz_xmalloc(size=168) ret_ptr=156fc230)
+xul!mozilla::dom::HTMLMediaElement::GetOrCreateTextTrackManager
+656dbcd4 56              push    esi
+656dbcd5 57              push    edi
+656dbcd6 8b7c240c        mov     edi,dword ptr [esp+0Ch]                        <-- our  ret_ptr=156fc230 moz_xmalloc(size=168)
+656dbcda 8db750010000    lea     esi,[edi+150h]                                     our  ret_ptr->off150h_ptr
+656dbce0 833e00          cmp     dword ptr [esi],0                                  if (ret_ptr->off150h_ptr != NULL) return ret_ptr->off150h_ptr
+656dbce3 7526            jne     xul!mozilla::dom::HTMLMediaElement::GetOrCreateTextTrackManager+0x37 (656dbd0b)      
+656dbce5 6a1c            push    1Ch                                                else 
+656dbce7 ff15384a7265    call    dword ptr [xul!_imp__moz_xmalloc (65724a38)]           alloc new Object()  <-- later components of this object is init by NULL (eg: in xul!mozilla::dom::TextTrackManager::TextTrackManager:) 
+
+
+Write at ret_ptr->off150h_ptr
+eax=156fc380 ebx=00000000 ecx=00000000 edx=154fc0a0 esi=154fc0a0 edi=156fc230
+eip=6502237a esp=0030e344 ebp=0030e378 iopl=0         nv up ei pl nz na po nc
+cs=0023  ss=002b  ds=002b  es=002b  fs=0053  gs=002b             efl=00200202
+xul!nsRefPtr<nsExpirationTracker<mozilla::ScrollFrameHelper,4>::ExpirationTrackerObserver>::assign_assuming_AddRef+0xc:
+...
+6502237a 85c9            test    ecx,ecx
+65022374 8b542408        mov     edx,dword ptr [esp+8]                          <-- arg2 - but is after condition checking ret_ptr->off150h_ptr
+                                                                                    in xul!mozilla::dom::HTMLMediaElement::GetOrCreateTextTrackManager
+                                                                                    so GetOrCreateTextTrackManager create new Object and [esp+8] dosent matter for us
+65022378 8910            mov     dword ptr [eax],edx
+0:000> k
+ChildEBP RetAddr  
+0030e340 65033147 xul!nsRefPtr<nsExpirationTracker<mozilla::ScrollFrameHelper,4>::ExpirationTrackerObserver>::assign_assuming_AddRef+0xc [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\obj-firefox\dist\include\nsautoptr.h @ 838]
+0030e350 656dbd04 xul!nsRefPtr<mozilla::dom::RTCStatsReportCallback>::assign_with_AddRef+0x19 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\obj-firefox\dist\include\nsautoptr.h @ 823]
+0030e364 656dcdda xul!mozilla::dom::HTMLMediaElement::GetOrCreateTextTrackManager+0x30 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\content\html\content\src\htmlmediaelement.cpp @ 4138]
+0030e378 6488acea xul!mozilla::dom::HTMLMediaElementBinding::get_textTracks+0x12 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\obj-firefox\dom\bindings\htmlmediaelementbinding.cpp @ 1297]
+0030e3b0 715e2bc8 xul!mozilla::dom::GenericBindingGetter+0xaa [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\dom\bindings\bindingutils.cpp @ 2421]
+WARNING: Stack unwind information not available. Following frames may be wrong.
+0030e3e0 647d2a6e mozjs!js::ProtoKeyToClass+0xfbd8
+0030e46c 64630793 xul!nsCOMPtr_base::~nsCOMPtr_base+0xe [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\obj-firefox\dist\include\nscomptr.h @ 429]
+0030e520 7149f6dc xul!nsLocalFile::Equals+0x9c [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\xpcom\io\nslocalfilewin.cpp @ 3112]
+0030e740 7151d4b1 mozjs!JS_EnumerateStub+0x24c4c
+0030e780 71577638 mozjs!JSContext::sizeOfIncludingThis+0x31a1
+0030e7a4 715ab3bd mozjs!js::DirectProxyHandler::get+0x98
+0030e7d4 7157c71e mozjs!js::CrossCompartmentWrapper::get+0xfd
+0030e810 7157d4be mozjs!js::BaseProxyHandler::set+0xcee
+0030e828 7143f729 mozjs!js::proxy_GetGeneric+0x1e
+0030e988 715e811f mozjs!js::BaseProxyHandler::finalizeInBackground+0x39559
+00000000 00000000 mozjs!JS::AddSizeOfTab+0x45f
+
+0:000> g
+(34a8.36ec): Access violation - code c0000005 (first chance)
+First chance exceptions are reported before any exception handling.
+This exception may be expected and handled.
+eax=00000000 ebx=0030e620 ecx=00000000 edx=00000000 esi=656dcdc8 edi=0030e620
+eip=6516ed4f esp=0030e350 ebp=0030e35c iopl=0         nv up ei pl zr na pe nc
+cs=0023  ss=002b  ds=002b  es=002b  fs=0053  gs=002b             efl=00210246
+xul!mozilla::dom::WrapNewBindingObjectHelper<nsRefPtr<mozilla::dom::SpeechGrammarList>,1>::Wrap+0xe:
+6516ed4f 8b7008          mov     esi,dword ptr [eax+8] ds:002b:00000008=????????                           <-- b00m
+
+0:000> kb
+ChildEBP RetAddr  Args to Child       156fc230       
+0030e35c 656dcdf5 16674740 0030e374 0030e620 xul!mozilla::dom::WrapNewBindingObjectHelper<nsRefPtr<mozilla::dom::SpeechGrammarList>,1>::Wrap+0xe [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\obj-firefox\dist\include\mozilla\dom\bindingutils.h @ 1573]
+0030e378 6488acea 16674740 0030e3b0 156fc230 xul!mozilla::dom::HTMLMediaElementBinding::get_textTracks+0x2d [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\obj-firefox\dom\bindings\htmlmediaelementbinding.cpp @ 1299]
+0030e3b0 715e2bc8 16674740 00000000 000000b8 xul!mozilla::dom::GenericBindingGetter+0xaa [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\dom\bindings\bindingutils.cpp @ 2421]
+WARNING: Stack unwind information not available. Following frames may be wrong.
+0030e3e0 647d2a6e 00000415 0030e418 73d22982 mozjs!js::ProtoKeyToClass+0xfbd8
+0030e46c 64630793 65a5858c 0030e553 646307a2 xul!nsCOMPtr_base::~nsCOMPtr_base+0xe [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\obj-firefox\dist\include\nscomptr.h @ 429]
+0030e520 7149f6dc 0030e6d8 0030e708 0030e568 xul!nsLocalFile::Equals+0x9c [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\xpcom\io\nslocalfilewin.cpp @ 3112]
+0030e740 7151d4b1 159c50d0 00000001 00000000 mozjs!JS_EnumerateStub+0x24c4c
+0030e780 71577638 16674740 0030e7a4 0030e7d4 mozjs!JSContext::sizeOfIncludingThis+0x31a1
+0030e7a4 715ab3bd 16674740 0030e86c 0030e7d4 mozjs!js::DirectProxyHandler::get+0x98
+0030e7d4 7157c71e 16674740 0030e86c 0030e86c mozjs!js::CrossCompartmentWrapper::get+0xfd
+0030e810 7157d4be 16674701 0030e86c 0030e86c mozjs!js::BaseProxyHandler::set+0xcee
+0030e828 7143f729 16674740 0030e86c 0030e86c mozjs!js::proxy_GetGeneric+0x1e
+0030e988 715e811f 0f800620 00000000 0030e9d0 mozjs!js::BaseProxyHandler::finalizeInBackground+0x39559
+00000000 00000000 00000000 00000000 00000000 mozjs!JS::AddSizeOfTab+0x45f
+
+
+Conclusion: unexploitable !
+ 
+
+

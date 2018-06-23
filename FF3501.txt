@@ -1,0 +1,499 @@
+
+/*
+  http://hastebin.com/fomuresowo.tex
+  
+  it started like this:
+  
+  $+DDFC1F > 55               PUSH EBP                                            ;stdcall|thiscall|stf|!cdecl crash(unknow_ptr* arg0)
+  $+DDFC20 > 8BEC             MOV EBP,ESP
+
+  $+DDFC22 > 51               PUSH ECX
+  $+DDFC23 > 56               PUSH ESI
+
+  $+DDFC24 > 8B75 08          MOV ESI,DWORD PTR SS:[EBP+8]                        ;esi = arg0          <- its obvious that we should trace arg0
+  $+DDFC27 > 8B4E 20          MOV ECX,DWORD PTR DS:[ESI+20]                       ;ecx = arg0->off20h   
+  $+DDFC2A > 8B01             MOV EAX,DWORD PTR DS:[ECX]                          ;eax = arg0->off20h->off0[vtable]  <-crash (so close)
+  $+DDFC2C > 57               PUSH EDI
+  $+DDFC2D > 8D55 0B          LEA EDX,DWORD PTR SS:[EBP+B]
+  $+DDFC30 > 52               PUSH EDX
+  $+DDFC31 > FF90 BC010000    CALL DWORD PTR DS:[EAX+1BC]
+  
+  and here is caller:
+  
+  $+11971CC> 55               PUSH EBP                                            ;stdcall  caller_carsh(arg0,arg1)    (is called twice before crash)
+  $+11971CD> 8BEC             MOV EBP,ESP
+
+  $+11971CF> 83EC 4C          SUB ESP,4C
+
+  $+11971D2> A1 34E82B6D      MOV EAX,DWORD PTR DS:[6D2BE834]
+  $+11971D7> 8365 F4 00       AND DWORD PTR SS:[EBP-C],0
+  $+11971DB> 53               PUSH EBX
+  $+11971DC> 8B1D 38E82B6D    MOV EBX,DWORD PTR DS:[6D2BE838]
+  $+11971E2> 56               PUSH ESI
+  $+11971E3> 8B35 40E82B6D    MOV ESI,DWORD PTR DS:[6D2BE840]                    ;<- this is the only place where esi is changed [global var] (it seems to be a simple case)
+  ... 
+  snip
+  ...
+  snip
+  $+11973E8> 56               PUSH ESI                                            ;<- arg0 is in the esi 
+  $+11973E9> E8 3188C4FF      CALL xul.6C7B0C1F                                   ;carsh method
+  ...
+  snip
+  ...
+
+*/
+
+
+
+0:050> !dh 0x6a550000 -s
+
+...
+snip
+...
+
+SECTION HEADER #3
+   .data name
+  23C398 virtual size
+ 176C000 virtual address
+   EB400 size of raw data
+ 176A200 file pointer to raw data
+       0 file pointer to relocation table
+       0 file pointer to line numbers
+       0 number of relocations
+       0 number of line numbers
+C0000040 flags
+         Initialized Data
+         (no align specified)
+         Read Write
+
+... 
+snip 
+...
+
+0:050> d 0x6a550000+0x176C000+0x182840
+6be3e840  00 00 00 00 00 00 00 00-00 00 00 00 00 00 00 00  ................
+6be3e850  00 00 00 00 00 00 00 00-00 00 00 00 80 94 09 0e  ................
+6be3e860  10 e1 f7 16 20 ab 0c 12-a0 bf b0 0f 00 00 00 00  .... ...........
+6be3e870  00 00 00 00 00 00 00 00-30 ca ae 15 50 ca ae 15  ........0...P...
+6be3e880  70 ca ae 15 00 00 00 00-00 00 00 00 00 00 00 00  p...............
+6be3e890  00 00 00 00 00 00 00 00-00 00 00 00 b0 7a 30 13  .............z0.
+6be3e8a0  00 00 00 01 00 00 00 00-35 01 00 00 f0 6e 51 0d  ........5....nQ.
+6be3e8b0  00 00 00 00 05 00 00 00-30 55 f0 07 b8 57 66 6f  ........0U...Wfo
+
+0:050> ba w 1 0x6be3e840
+
+0:050> bl
+ 0 e 6be3e840 w 1 0001 (0001)  0:**** xul!mozilla::IMEStateManager::sActiveIMEContentObserver
+ 
+0:050> g
+Breakpoint 0 hit
+eax=16896800 ebx=00000000 ecx=16896844 edx=1689600c esi=6f697260 edi=6f697260
+eip=6b6ec523 esp=003ed6d8 ebp=003ed6ec iopl=0         nv up ei ng nz na pe nc
+cs=0023  ss=002b  ds=002b  es=002b  fs=0053  gs=002b             efl=00000286
+xul!mozilla::IMEStateManager::CreateIMEContentObserver+0x130:
+6b6ec523 8b08            mov     ecx,dword ptr [eax]  ds:002b:16896800={xul!mozilla::IMEContentObserver::`vftable' (6bc0f0ec)}
+
+...
+snip
+...
+6b6ec504 6880000000      push    80h
+6b6ec509 ff15201a7f6b    call    dword ptr [xul!_imp__moz_xmalloc (6b7f1a20)]                                                     ;<-alloc
+6b6ec50f 59              pop     ecx
+6b6ec510 3bc3            cmp     eax,ebx
+6b6ec512 7408            je      xul!mozilla::IMEStateManager::CreateIMEContentObserver+0x129 (6b6ec51c)                          ;<-if fail (set NULL)
+6b6ec514 50              push    eax                                                                                              ;<-else _ctor
+6b6ec515 e8661ea8ff      call    xul!mozilla::IMEContentObserver::IMEContentObserver (6b16e380)
+6b6ec51a eb02            jmp     xul!mozilla::IMEStateManager::CreateIMEContentObserver+0x12b (6b6ec51e)
+6b6ec51c 33c0            xor     eax,eax
+6b6ec51e a340e8e36b      mov     dword ptr [xul!mozilla::IMEStateManager::sActiveIMEContentObserver (6be3e840)],eax               ;<-setup pointer
+6b6ec523 8b08            mov     ecx,dword ptr [eax]  ds:002b:16896800={xul!mozilla::IMEContentObserver::`vftable' (6bc0f0ec)}    ;<-(Our object eax=0x16896800)
+6b6ec525 50              push    eax
+...
+snip
+...
+                                                                                                                                  
+0:000> kb
+ChildEBP RetAddr  Args to Child              
+003ed6ec 6b6eff8f 124a18c0 00000000 124a18c0 xul!mozilla::IMEStateManager::CreateIMEContentObserver+0x130 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\dom\events\imestatemanager.cpp @ 1196]
+003ed744 6ac5a1ed 003ed764 00000000 124a18c0 xul!mozilla::IMEStateManager::UpdateIMEState+0x168 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\dom\events\imestatemanager.cpp @ 658]
+003ed778 6acb426b 16fd6110 14b4dcf8 0fbec4c0 xul!nsEditor::PostCreate+0x136 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\editor\libeditor\nseditor.cpp @ 321]
+003ed8bc 6acb3b53 0fbec4c0 1249c960 80000000 xul!nsEditingSession::SetupEditorOnWindow+0x6ee [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\editor\composer\nseditingsession.cpp @ 478]
+003ed8d8 6b42fafd 0fbec4c0 1249c960 6bb8b7f0 xul!nsEditingSession::MakeWindowEditable+0x10a [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\editor\composer\nseditingsession.cpp @ 169]
+003ed95c 6b43012f 003ed954 14b355c0 003ed9a8 xul!nsHTMLDocument::EditingStateChanged+0x1ec [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\content\html\document\src\nshtmldocument.cpp @ 2759]
+003ed974 6b67b23f 15e30800 003ed9a8 003ed998 xul!nsHTMLDocument::SetDesignMode+0x69 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\content\html\document\src\nshtmldocument.cpp @ 2884]
+003eda44 6a86a1f5 14b355c0 003eda80 15e30800 xul!mozilla::dom::HTMLDocumentBinding::set_designMode+0x82 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\obj-firefox\dom\bindings\htmldocumentbinding.cpp @ 753]
+003eda80 6e78eee9 14b355c0 00000001 000000ac xul!mozilla::dom::GenericBindingSetter+0xb5 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\dom\bindings\bindingutils.cpp @ 2373]
+003edc88 6e78f1e2 14b355c0 003edcf8 00000001 mozjs!js::Invoke+0x149 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\vm\interpreter.cpp @ 474]
+003edd28 6e78f2ea 14b355c0 003edd4c 003edd60 mozjs!js::Invoke+0x212 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\vm\interpreter.cpp @ 537]
+003edd50 6e74b57d 14b355c0 0fa256a0 0fab3180 mozjs!js::InvokeGetterOrSetter+0x6a [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\vm\interpreter.cpp @ 610]
+003edd80 6e74baae 14b355c0 003edf10 003edf1c mozjs!js::CallSetter+0x5d [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\jscntxtinlines.h @ 334]
+003eddac 6a557501 14b355c0 6be4f924 003edf10 mozjs!js::SetPropertyIgnoringNamedGetter+0x19e [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\proxy\baseproxyhandler.cpp @ 143]
+003ede1c 6e750eb3 14b355c0 003edf10 003edf10 xul!mozilla::dom::DOMProxyHandler::set+0x141 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\dom\bindings\domjsproxyhandler.cpp @ 256]
+003ede90 6e751b4f 003edf1c 003edf10 003edf10 mozjs!js::Proxy::set+0xf3 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\proxy\proxy.cpp @ 341]
+003edeac 6e70c5b2 14b355c0 003edf10 003edf1c mozjs!js::proxy_SetGeneric+0x1f [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\proxy\proxy.cpp @ 670]
+003edec8 6e4f1a9e 14b355c0 003edf10 003edf1c mozjs!JSObject::nonNativeSetProperty+0x62 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\jsobj.cpp @ 1836]
+003edee0 6e783cd5 14b355c0 003edf10 003edf10 mozjs!JSObject::setGeneric+0x2e [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\vm\nativeobject.h @ 1604]
+003edf2c 6e78bf56 003edf9c 0e0c7050 0e0c7058 mozjs!SetPropertyOperation+0x165 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\vm\interpreter.cpp @ 331]
+003ee550 6e78ed81 14b355c0 00000000 003ee7e0 mozjs!Interpret+0x3376 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\vm\interpreter.cpp @ 2422]
+003ee56c 6e78ef94 14b355c0 003ee590 003ee8d0 mozjs!js::RunScript+0x141 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\vm\interpreter.cpp @ 431]
+003ee770 6e78f1e2 14b355c0 003ee7e0 00000001 mozjs!js::Invoke+0x1f4 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\vm\interpreter.cpp @ 503]
+003ee810 6e6c21b6 14b355c0 003ee958 003ee890 mozjs!js::Invoke+0x212 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\vm\interpreter.cpp @ 537]
+003ee834 6a56f39e 14b355c0 003ee958 003ee890 mozjs!JS::Call+0x26 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\jsapi.cpp @ 5098]
+003ee914 6a6a0b9d 19828ee0 003ee958 173cea30 xul!mozilla::dom::EventHandlerNonNull::Call+0x16e [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\obj-firefox\dom\bindings\eventhandlerbinding.cpp @ 36]
+003eea28 6a68384f 19828ee0 19828f08 173cea30 xul!mozilla::dom::EventHandlerNonNull::Call<nsISupports *>+0xbd [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\obj-firefox\dist\include\mozilla\dom\eventhandlerbinding.h @ 62]
+003eec28 6a6584d1 19828f00 173cea30 003eedac xul!mozilla::JSEventHandler::HandleEvent+0x14f [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\dom\events\jseventhandler.cpp @ 216]
+003eec5c 6a628e79 15aee3a0 173cea30 124a12f0 xul!mozilla::EventListenerManager::HandleEventSubType+0x71 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\dom\events\eventlistenermanager.cpp @ 970]
+003eecd0 6a625f01 15aee3a0 135d5000 003eee40 xul!mozilla::EventListenerManager::HandleEventInternal+0x219 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\dom\events\eventlistenermanager.cpp @ 1032]
+003eed08 6a623292 003eed2c 15aee307 00000000 xul!mozilla::EventTargetChainItem::HandleEventTargetChain+0x1f1 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\dom\events\eventdispatcher.cpp @ 295]
+003eedd4 6a6b1428 1249c960 135d5000 003eee40 xul!mozilla::EventDispatcher::Dispatch+0x542 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\dom\events\eventdispatcher.cpp @ 609]
+003eeea0 6a6ab091 15e563a0 00000000 14b4dc14 xul!nsDocumentViewer::LoadComplete+0x1f8 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\layout\base\nsdocumentviewer.cpp @ 1006]
+003ef208 6a696a5d 14b4dc14 13317830 00000000 xul!nsDocShell::EndPageLoad+0xf1 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\docshell\base\nsdocshell.cpp @ 7306]
+003ef234 6a65c5e0 13317830 14b29204 003ef2c0 xul!nsDocShell::OnStateChange+0x10d [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\docshell\base\nsdocshell.cpp @ 7117]
+003ef25c 6a649ff3 14b4dc34 003ef354 14b4dc00 xul!nsIOService::URIChainHasFlags+0x50 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\netwerk\base\src\nsioservice.cpp @ 1130]
+003ef2f4 6a56121f 14b4dc14 13317830 14b4dd18 xul!nsSecureBrowserUIImpl::OnStateChange+0x3e3 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\security\manager\boot\src\nssecurebrowseruiimpl.cpp @ 1278]
+003ef37c 6a6911b2 00000001 14b23600 00000000 xul!nsDocLoader::doStopDocumentLoad+0x8f [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\uriloader\base\nsdocloader.cpp @ 850]
+003ef3d4 6a643cbe 14b4dc00 003ef470 6a643990 xul!nsDocLoader::OnStopRequest+0x122 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\uriloader\base\nsdocloader.cpp @ 624]
+003ef3f4 6a625c71 14b4dc00 1a0e824a 6a67a495 xul!nsDocLoader::QueryInterface+0xce [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\uriloader\base\nsdocloader.cpp @ 205]
+003ef4f8 6a6c27fa 6a6c280d 1a0e85fa 6bb2ff10 xul!nsCOMPtr_base::assign_from_helper+0x51 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\xpcom\glue\nscomptr.cpp @ 125]
+003ef534 6a714c38 15e30800 00000000 125d9000 xul!nsIDocument::GetDocumentLoadGroup+0x2f [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\obj-firefox\dist\include\nsidocument.h @ 284]
+003ef554 6a5691d7 00000001 5a12270f 07f3f160 xul!nsDocument::UnblockOnload+0x62 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\content\base\src\nsdocument.cpp @ 8792]
+003ef5b0 6a59c316 6a62f01d 19828e80 07f10b60 xul!nsDocument::DispatchContentLoadedEvents+0x1d7 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\content\base\src\nsdocument.cpp @ 5039]
+003ef5b4 6a62f01d 19828e80 07f10b60 07f10b50 xul!nsRunnableMethodImpl<void (__thiscall nsDocument::*)(void),void,1>::Run+0x26 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\obj-firefox\dist\include\nsthreadutils.h @ 390]
+003ef72c 6a64cf9d 07f3f160 00000000 003ef744 xul!nsThread::ProcessNextEvent+0x6bd [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\xpcom\threads\nsthread.cpp @ 831]
+003ef73c 6a8f9855 07f3f101 00000000 07f4a0c0 xul!NS_ProcessNextEvent+0x2d [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\xpcom\glue\nsthreadutils.cpp @ 265]
+003ef768 6a8ed27c 01f4a0c0 1a0e867e 07f3f160 xul!mozilla::ipc::MessagePump::Run+0x46 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\ipc\glue\messagepump.cpp @ 99]
+003ef7a0 6a8ed330 07f3fe10 00000001 003ef800 xul!MessageLoop::RunHandler+0x50 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\ipc\chromium\src\base\message_loop.cc @ 224]
+003ef7c0 6a83060d 80000000 0fb0dac0 6a8398fb xul!MessageLoop::Run+0x19 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\ipc\chromium\src\base\message_loop.cc @ 198]
+003ef7cc 6a8398fb 07f3fe10 6ae7d81b 07f3fe10 xul!nsBaseAppShell::Run+0x2c [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\widget\xpwidgets\nsbaseappshell.cpp @ 166]
+003ef7e4 6a7b62cd 0fb0dac0 003ef908 00000000 xul!nsAppShell::Run+0x19 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\widget\windows\nsappshell.cpp @ 178]
+003ef8c4 6a819477 003ef908 003efa3c 003ef908 xul!XREMain::XRE_mainRun+0x538 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\toolkit\xre\nsapprunner.cpp @ 4191]
+003ef8e8 6a8509df 003ef908 00000001 00956ff8 xul!XREMain::XRE_main+0xfc [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\toolkit\xre\nsapprunner.cpp @ 4267]
+003efa0c 00e117c2 00000001 00956ff8 003efa3c xul!XRE_main+0x35 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\toolkit\xre\nsapprunner.cpp @ 4485]
+003efba4 00e11a82 00000001 00956ff8 07f1c160 firefox!do_main+0x27f [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\browser\app\nsbrowserapp.cpp @ 287]
+003efc38 00e11b96 00000001 00956ff8 00000000 firefox!NS_internal_main+0x11d [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\browser\app\nsbrowserapp.cpp @ 652]
+003efc6c 00e126ad 00000000 008ecf90 008eef40 firefox!wmain+0xf9 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\toolkit\xre\nswindowswmain.cpp @ 120]
+003efcb4 7553338a fffde000 003efd00 77689f72 firefox!__tmainCRTStartup+0x10b [f:\dd\vctools\crt_bld\self_x86\crt\src\crt0.c @ 278]
+003efcc0 77689f72 fffde000 2ebc7f54 00000000 kernel32!BaseThreadInitThunk+0xe
+003efd00 77689f45 00e12703 fffde000 00000000 ntdll!__RtlUserThreadStart+0x70
+003efd18 00000000 00e12703 fffde000 00000000 ntdll!_RtlUserThreadStart+0x1b
+
+0:000> r
+eax=16896800 ebx=00000000 ecx=16896844 edx=1689600c esi=6f697260 edi=6f697260
+eip=6b6ec523 esp=003ed6d8 ebp=003ed6ec iopl=0         nv up ei ng nz na pe nc
+cs=0023  ss=002b  ds=002b  es=002b  fs=0053  gs=002b             efl=00000286
+xul!mozilla::IMEStateManager::CreateIMEContentObserver+0x130:
+6b6ec523 8b08            mov     ecx,dword ptr [eax]  ds:002b:16896800={xul!mozilla::IMEContentObserver::`vftable' (6bc0f0ec)}
+
+0:000> d 0x16896800+0x20
+16896820  00 00 00 00 00 00 00 00-00 00 00 00 00 00 00 00  ................
+16896830  00 00 00 00 00 00 00 00-00 00 00 00 00 00 00 00  ................
+16896840  00 00 00 00 00 00 00 00-00 00 00 00 00 00 00 00  ................
+16896850  00 00 00 00 00 00 00 00-00 00 00 00 00 00 5a 5a  ..............ZZ
+16896860  00 00 00 00 40 5a 5a 5a-5a 5a 5a 5a 5a 5a 5a 5a  ....@ZZZZZZZZZZZ
+16896870  ff ff ff ff ff ff ff ff-00 00 00 00 5a 5a 5a 5a  ............ZZZZ
+16896880  f0 af ee 0b 00 00 00 00-e8 d9 d1 15 00 00 00 00  ................
+16896890  f0 cf d1 3d 00 00 00 00-98 db d1 15 00 00 00 00  ...=............
+
+0:000> ba w 1 0x16896820
+
+0:000> bl
+ 0 e 6be3e840 r 1 0001 (0001)  0:**** xul!mozilla::IMEStateManager::sActiveIMEContentObserver
+ 1 e 16896820 w 1 0001 (0001)  0:**** 
+
+0:000> bp mozalloc!moz_free ".if (poi(esp+4)==16896800) { .printf \"moz_free(156fc230)\\r\\n\"; } .else {g}"
+0:000> bp ntdll!RtlFreeHeap ".if (poi(esp+4)==16896800) { .printf \"FreeHeap(156fc230)\\r\\n\"; } .else {g}"
+
+0:000> g
+Breakpoint 1 hit
+eax=00000000 ebx=135d5000 ecx=16896820 edx=12593000 esi=12593000 edi=16896820
+eip=6a62399e esp=003ed658 ebp=003ed6c8 iopl=0         nv up ei pl nz na pe cy
+cs=0023  ss=002b  ds=002b  es=002b  fs=0053  gs=002b             efl=00000207
+xul!nsCOMPtr_base::assign_with_AddRef+0xe:
+6a62399e 5f              pop     edi
+
+...
+snip
+...
+6a623991 8bf2            mov     esi,edx
+6a623993 57              push    edi
+6a623994 8bf9            mov     edi,ecx
+6a623996 85f6            test    esi,esi
+6a623998 750b            jne     xul!nsCOMPtr_base::assign_with_AddRef+0x15 (6a6239a5)
+6a62399a 8b07            mov     eax,dword ptr [edi]
+6a62399c 8937            mov     dword ptr [edi],esi
+6a62399e 5f              pop     edi                                                                                              ;setup arg0->off20h
+...
+snip
+...
+
+0:000> g
+Breakpoint 0 hit
+eax=16896800 ebx=00000000 ecx=003ed448 edx=a58e090d esi=6f697260 edi=6f697260
+eip=6afb5af6 esp=003ed418 ebp=003ed420 iopl=0         nv up ei ng nz ac pe cy
+cs=0023  ss=002b  ds=002b  es=002b  fs=0053  gs=002b             efl=00000297
+xul!mozilla::IMEStateManager::DestroyIMEContentObserver+0x81c853:
+6afb5af6 832540e8e36b00  and     dword ptr [xul!mozilla::IMEStateManager::sActiveIMEContentObserver (6be3e840)],0 ds:002b:6be3e840=16896800
+
+0:000> t
+Breakpoint 0 hit
+eax=16896800 ebx=00000000 ecx=003ed448 edx=a58e090d esi=6f697260 edi=6f697260
+eip=6afb5afd esp=003ed418 ebp=003ed420 iopl=0         nv up ei pl zr na pe nc
+cs=0023  ss=002b  ds=002b  es=002b  fs=0053  gs=002b             efl=00000246
+xul!mozilla::IMEStateManager::DestroyIMEContentObserver+0x81c85a:
+6afb5afd 50              push    eax
+
+...
+snip
+...
+afb5af0 59               pop     ecx
+6afb5af1 a140e8e36b      mov     eax,dword ptr [xul!mozilla::IMEStateManager::sActiveIMEContentObserver (6be3e840)]
+6afb5af6 832540e8e36b00  and     dword ptr [xul!mozilla::IMEStateManager::sActiveIMEContentObserver (6be3e840)],0                   ;global_ptr = NULL
+6afb5afd 50              push    eax
+...
+snip
+...
+
+0:000> d 6be3e840
+6be3e840  00 00 00 00 00 00 00 00-00 00 00 00 00 00 00 00  ................
+6be3e850  00 00 00 00 00 00 00 00-00 00 00 00 80 94 09 0e  ................
+6be3e860  10 e1 f7 16 20 ab 0c 12-a0 bf b0 0f 00 00 00 00  .... ...........
+6be3e870  00 00 00 00 00 00 00 00-30 ca ae 15 50 ca ae 15  ........0...P...
+6be3e880  70 ca ae 15 00 00 00 00-00 00 00 00 00 00 00 00  p...............
+6be3e890  00 00 00 00 00 00 00 00-00 00 00 00 b0 7a 30 13  .............z0.
+6be3e8a0  00 00 00 01 00 00 00 00-35 01 00 00 f0 6e 51 0d  ........5....nQ.
+6be3e8b0  00 00 00 00 05 00 00 00-30 55 f0 07 98 92 e8 d6  ........0U......
+
+
+0:000> kb
+ChildEBP RetAddr  Args to Child              
+003ed420 6b6eff65 16fd6110 18491880 00000000 xul!mozilla::IMEStateManager::DestroyIMEContentObserver+0x81c85a [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\dom\events\imestatemanager.cpp @ 1147]
+003ed474 6ac57408 003ed490 16fd6110 18491880 xul!mozilla::IMEStateManager::UpdateIMEState+0x13e [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\dom\events\imestatemanager.cpp @ 651]
+003ed49c 6ac5f322 16fd6110 00000000 18491880 xul!nsEditor::SetFlags+0xae [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\editor\libeditor\nseditor.cpp @ 502]
+003ed4b4 6ac5a19d 15edea60 18491880 00000000 xul!nsEditorEventListener::SpellCheckIfNeeded+0x31 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\editor\libeditor\nseditoreventlistener.cpp @ 1136]
+003ed4dc 6a76b80c 16fd6110 16fd6110 15edea60 xul!nsEditor::PostCreate+0xe6 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\editor\libeditor\nseditor.cpp @ 318]
+003ed618 6a763ba3 00000000 6a70a8d2 16fd6110 xul!nsTextEditorState::PrepareEditor+0x45f [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\content\html\content\src\nstexteditorstate.cpp @ 1419]
+003ed620 6a70a8d2 16fd6110 6b16941b 16fd61bc xul!nsTextEditorState::GetEditor+0x13 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\content\html\content\src\nstexteditorstate.cpp @ 1041]
+003ed628 6b16941b 16fd61bc 16fd6110 16fd6110 xul!mozilla::dom::HTMLInputElement::GetTextEditor+0x28 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\content\html\content\src\htmlinputelement.cpp @ 2441]
+003ed63c 6b1a118b 16fd61bc 16896800 003ed664 xul!mozilla::dom::Element::GetEditorInternal+0x2a [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\content\base\src\element.cpp @ 3169]
+003ed64c 6b356681 16fd6110 6f697260 135d5000 xul!nsINode::GetTextEditorRootContent+0x29 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\content\base\src\nsinode.cpp @ 227]
+003ed664 6b6e833a 159a1dc0 6f697260 6f697260 xul!nsINode::GetSelectionRootContent+0x42 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\content\base\src\nsinode.cpp @ 314]
+003ed6c8 6b6ec543 12593000 159a1dc0 003ed764 xul!mozilla::IMEContentObserver::Init+0x16e [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\dom\events\imecontentobserver.cpp @ 147]
+003ed6ec 6b6eff8f 124a18c0 00000000 124a18c0 xul!mozilla::IMEStateManager::CreateIMEContentObserver+0x150 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\dom\events\imestatemanager.cpp @ 1203]
+003ed744 6ac5a1ed 003ed764 00000000 124a18c0 xul!mozilla::IMEStateManager::UpdateIMEState+0x168 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\dom\events\imestatemanager.cpp @ 658]
+003ed778 6acb426b 16fd6110 14b4dcf8 0fbec4c0 xul!nsEditor::PostCreate+0x136 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\editor\libeditor\nseditor.cpp @ 321]
+003ed8bc 6acb3b53 0fbec4c0 1249c960 80000000 xul!nsEditingSession::SetupEditorOnWindow+0x6ee [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\editor\composer\nseditingsession.cpp @ 478]
+003ed8d8 6b42fafd 0fbec4c0 1249c960 6bb8b7f0 xul!nsEditingSession::MakeWindowEditable+0x10a [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\editor\composer\nseditingsession.cpp @ 169]
+003ed95c 6b43012f 003ed954 14b355c0 003ed9a8 xul!nsHTMLDocument::EditingStateChanged+0x1ec [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\content\html\document\src\nshtmldocument.cpp @ 2759]
+003ed974 6b67b23f 15e30800 003ed9a8 003ed998 xul!nsHTMLDocument::SetDesignMode+0x69 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\content\html\document\src\nshtmldocument.cpp @ 2884]
+003eda44 6a86a1f5 14b355c0 003eda80 15e30800 xul!mozilla::dom::HTMLDocumentBinding::set_designMode+0x82 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\obj-firefox\dom\bindings\htmldocumentbinding.cpp @ 753]
+003eda80 6e78eee9 14b355c0 00000001 000000ac xul!mozilla::dom::GenericBindingSetter+0xb5 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\dom\bindings\bindingutils.cpp @ 2373]
+003edc88 6e78f1e2 14b355c0 003edcf8 00000001 mozjs!js::Invoke+0x149 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\vm\interpreter.cpp @ 474]
+003edd28 6e78f2ea 14b355c0 003edd4c 003edd60 mozjs!js::Invoke+0x212 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\vm\interpreter.cpp @ 537]
+003edd50 6e74b57d 14b355c0 0fa256a0 0fab3180 mozjs!js::InvokeGetterOrSetter+0x6a [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\vm\interpreter.cpp @ 610]
+003edd80 6e74baae 14b355c0 003edf10 003edf1c mozjs!js::CallSetter+0x5d [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\jscntxtinlines.h @ 334]
+003eddac 6a557501 14b355c0 6be4f924 003edf10 mozjs!js::SetPropertyIgnoringNamedGetter+0x19e [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\proxy\baseproxyhandler.cpp @ 143]
+003ede1c 6e750eb3 14b355c0 003edf10 003edf10 xul!mozilla::dom::DOMProxyHandler::set+0x141 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\dom\bindings\domjsproxyhandler.cpp @ 256]
+003ede90 6e751b4f 003edf1c 003edf10 003edf10 mozjs!js::Proxy::set+0xf3 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\proxy\proxy.cpp @ 341]
+003edeac 6e70c5b2 14b355c0 003edf10 003edf1c mozjs!js::proxy_SetGeneric+0x1f [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\proxy\proxy.cpp @ 670]
+003edec8 6e4f1a9e 14b355c0 003edf10 003edf1c mozjs!JSObject::nonNativeSetProperty+0x62 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\jsobj.cpp @ 1836]
+003edee0 6e783cd5 14b355c0 003edf10 003edf10 mozjs!JSObject::setGeneric+0x2e [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\vm\nativeobject.h @ 1604]
+003edf2c 6e78bf56 003edf9c 0e0c7050 0e0c7058 mozjs!SetPropertyOperation+0x165 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\vm\interpreter.cpp @ 331]
+003ee550 6e78ed81 14b355c0 00000000 003ee7e0 mozjs!Interpret+0x3376 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\vm\interpreter.cpp @ 2422]
+003ee56c 6e78ef94 14b355c0 003ee590 003ee8d0 mozjs!js::RunScript+0x141 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\vm\interpreter.cpp @ 431]
+003ee770 6e78f1e2 14b355c0 003ee7e0 00000001 mozjs!js::Invoke+0x1f4 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\vm\interpreter.cpp @ 503]
+003ee810 6e6c21b6 14b355c0 003ee958 003ee890 mozjs!js::Invoke+0x212 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\vm\interpreter.cpp @ 537]
+003ee834 6a56f39e 14b355c0 003ee958 003ee890 mozjs!JS::Call+0x26 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\jsapi.cpp @ 5098]
+003ee914 6a6a0b9d 19828ee0 003ee958 173cea30 xul!mozilla::dom::EventHandlerNonNull::Call+0x16e [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\obj-firefox\dom\bindings\eventhandlerbinding.cpp @ 36]
+003eea28 6a68384f 19828ee0 19828f08 173cea30 xul!mozilla::dom::EventHandlerNonNull::Call<nsISupports *>+0xbd [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\obj-firefox\dist\include\mozilla\dom\eventhandlerbinding.h @ 62]
+003eec28 6a6584d1 19828f00 173cea30 003eedac xul!mozilla::JSEventHandler::HandleEvent+0x14f [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\dom\events\jseventhandler.cpp @ 216]
+003eec5c 6a628e79 15aee3a0 173cea30 124a12f0 xul!mozilla::EventListenerManager::HandleEventSubType+0x71 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\dom\events\eventlistenermanager.cpp @ 970]
+003eecd0 6a625f01 15aee3a0 135d5000 003eee40 xul!mozilla::EventListenerManager::HandleEventInternal+0x219 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\dom\events\eventlistenermanager.cpp @ 1032]
+003eed08 6a623292 003eed2c 15aee307 00000000 xul!mozilla::EventTargetChainItem::HandleEventTargetChain+0x1f1 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\dom\events\eventdispatcher.cpp @ 295]
+003eedd4 6a6b1428 1249c960 135d5000 003eee40 xul!mozilla::EventDispatcher::Dispatch+0x542 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\dom\events\eventdispatcher.cpp @ 609]
+003eeea0 6a6ab091 15e563a0 00000000 14b4dc14 xul!nsDocumentViewer::LoadComplete+0x1f8 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\layout\base\nsdocumentviewer.cpp @ 1006]
+003ef208 6a696a5d 14b4dc14 13317830 00000000 xul!nsDocShell::EndPageLoad+0xf1 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\docshell\base\nsdocshell.cpp @ 7306]
+003ef234 6a65c5e0 13317830 14b29204 003ef2c0 xul!nsDocShell::OnStateChange+0x10d [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\docshell\base\nsdocshell.cpp @ 7117]
+003ef25c 6a649ff3 14b4dc34 003ef354 14b4dc00 xul!nsIOService::URIChainHasFlags+0x50 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\netwerk\base\src\nsioservice.cpp @ 1130]
+003ef2f4 6a56121f 14b4dc14 13317830 14b4dd18 xul!nsSecureBrowserUIImpl::OnStateChange+0x3e3 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\security\manager\boot\src\nssecurebrowseruiimpl.cpp @ 1278]
+003ef37c 6a6911b2 00000001 14b23600 00000000 xul!nsDocLoader::doStopDocumentLoad+0x8f [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\uriloader\base\nsdocloader.cpp @ 850]
+003ef3d4 6a643cbe 14b4dc00 003ef470 6a643990 xul!nsDocLoader::OnStopRequest+0x122 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\uriloader\base\nsdocloader.cpp @ 624]
+003ef3f4 6a625c71 14b4dc00 1a0e824a 6a67a495 xul!nsDocLoader::QueryInterface+0xce [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\uriloader\base\nsdocloader.cpp @ 205]
+003ef4f8 6a6c27fa 6a6c280d 1a0e85fa 6bb2ff10 xul!nsCOMPtr_base::assign_from_helper+0x51 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\xpcom\glue\nscomptr.cpp @ 125]
+003ef534 6a714c38 15e30800 00000000 125d9000 xul!nsIDocument::GetDocumentLoadGroup+0x2f [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\obj-firefox\dist\include\nsidocument.h @ 284]
+003ef554 6a5691d7 00000001 5a12270f 07f3f160 xul!nsDocument::UnblockOnload+0x62 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\content\base\src\nsdocument.cpp @ 8792]
+003ef5b0 6a59c316 6a62f01d 19828e80 07f10b60 xul!nsDocument::DispatchContentLoadedEvents+0x1d7 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\content\base\src\nsdocument.cpp @ 5039]
+003ef5b4 6a62f01d 19828e80 07f10b60 07f10b50 xul!nsRunnableMethodImpl<void (__thiscall nsDocument::*)(void),void,1>::Run+0x26 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\obj-firefox\dist\include\nsthreadutils.h @ 390]
+003ef72c 6a64cf9d 07f3f160 00000000 003ef744 xul!nsThread::ProcessNextEvent+0x6bd [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\xpcom\threads\nsthread.cpp @ 831]
+003ef73c 6a8f9855 07f3f101 00000000 07f4a0c0 xul!NS_ProcessNextEvent+0x2d [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\xpcom\glue\nsthreadutils.cpp @ 265]
+003ef768 6a8ed27c 01f4a0c0 1a0e867e 07f3f160 xul!mozilla::ipc::MessagePump::Run+0x46 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\ipc\glue\messagepump.cpp @ 99]
+003ef7a0 6a8ed330 07f3fe10 00000001 003ef800 xul!MessageLoop::RunHandler+0x50 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\ipc\chromium\src\base\message_loop.cc @ 224]
+003ef7c0 6a83060d 80000000 0fb0dac0 6a8398fb xul!MessageLoop::Run+0x19 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\ipc\chromium\src\base\message_loop.cc @ 198]
+003ef7cc 6a8398fb 07f3fe10 6ae7d81b 07f3fe10 xul!nsBaseAppShell::Run+0x2c [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\widget\xpwidgets\nsbaseappshell.cpp @ 166]
+003ef7e4 6a7b62cd 0fb0dac0 003ef908 00000000 xul!nsAppShell::Run+0x19 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\widget\windows\nsappshell.cpp @ 178]
+003ef8c4 6a819477 003ef908 003efa3c 003ef908 xul!XREMain::XRE_mainRun+0x538 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\toolkit\xre\nsapprunner.cpp @ 4191]
+003ef8e8 6a8509df 003ef908 00000001 00956ff8 xul!XREMain::XRE_main+0xfc [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\toolkit\xre\nsapprunner.cpp @ 4267]
+003efa0c 00e117c2 00000001 00956ff8 003efa3c xul!XRE_main+0x35 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\toolkit\xre\nsapprunner.cpp @ 4485]
+003efba4 00e11a82 00000001 00956ff8 07f1c160 firefox!do_main+0x27f [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\browser\app\nsbrowserapp.cpp @ 287]
+003efc38 00e11b96 00000001 00956ff8 00000000 firefox!NS_internal_main+0x11d [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\browser\app\nsbrowserapp.cpp @ 652]
+003efc6c 00e126ad 00000000 008ecf90 008eef40 firefox!wmain+0xf9 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\toolkit\xre\nswindowswmain.cpp @ 120]
+003efcb4 7553338a fffde000 003efd00 77689f72 firefox!__tmainCRTStartup+0x10b [f:\dd\vctools\crt_bld\self_x86\crt\src\crt0.c @ 278]
+003efcc0 77689f72 fffde000 2ebc7f54 00000000 kernel32!BaseThreadInitThunk+0xe
+003efd00 77689f45 00e12703 fffde000 00000000 ntdll!__RtlUserThreadStart+0x70
+003efd18 00000000 00e12703 fffde000 00000000 ntdll!_RtlUserThreadStart+0x1b
+
+0:000> g
+Breakpoint 1 hit
+eax=12593000 ebx=00000000 ecx=16896820 edx=00000000 esi=00000000 edi=16896820
+eip=6a62399e esp=003ed3f0 ebp=003ed420 iopl=0         nv up ei pl zr na pe nc
+cs=0023  ss=002b  ds=002b  es=002b  fs=0053  gs=002b             efl=00000246
+xul!nsCOMPtr_base::assign_with_AddRef+0xe:
+6a62399e 5f              pop     edi
+
+...
+snip
+...
+6a623990 56              push    esi
+6a623991 8bf2            mov     esi,edx                                                                                    
+6a623993 57              push    edi
+6a623994 8bf9            mov     edi,ecx
+6a623996 85f6            test    esi,esi
+6a623998 750b            jne     xul!nsCOMPtr_base::assign_with_AddRef+0x15 (6a6239a5)
+6a62399a 8b07            mov     eax,dword ptr [edi]
+6a62399c 8937            mov     dword ptr [edi],esi                                                                        ;arg0->off20h=ESI 
+6a62399e 5f              pop     edi
+...
+snip
+...
+
+Why EDX == NULL ? :
+
+xul!mozilla::IMEContentObserver::Destroy:
+...
+snip
+...                                                                                                                         ;no controll over value !
+6b3fff65 33db            xor     ebx,ebx
+6b3fff67 53              push    ebx
+6b3fff68 56              push    esi
+6b3fff69 e827f2ffff      call    xul!mozilla::IMEContentObserver::UnregisterObservers (6b3ff195)
+6b3fff6e 53              push    ebx
+6b3fff6f 8d4e34          lea     ecx,[esi+34h]
+6b3fff72 e89d57d5ff      call    xul!nsCOMPtr<nsILoadGroup>::operator= (6b155714)                                     
+6b3fff77 53              push    ebx
+6b3fff78 8d4e20          lea     ecx,[esi+20h]
+6b3fff7b e89457d5ff      call    xul!nsCOMPtr<nsILoadGroup>::operator= (6b155714)                                            ;operator=NULL
+6b3fff80 8d4e24          lea     ecx,[esi+24h]
+...
+snip
+...
+
+0:000> kb
+ChildEBP RetAddr  Args to Child              
+003ed3f4 6b155720 16896800 6b3fff80 00000000 xul!nsCOMPtr_base::assign_with_AddRef+0xe [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\xpcom\glue\nscomptr.cpp @ 52]
+003ed3fc 6b3fff80 00000000 6f697260 00000000 xul!nsCOMPtr<nsILoadGroup>::operator=+0xc [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\obj-firefox\dist\include\nscomptr.h @ 679]
+003ed40c 6afb5b06 16896800 003ed490 16896800 xul!mozilla::IMEContentObserver::Destroy+0x21 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\dom\events\imecontentobserver.cpp @ 260]
+003ed420 6b6eff65 16fd6110 18491880 00000000 xul!mozilla::IMEStateManager::DestroyIMEContentObserver+0x81c863 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\dom\events\imestatemanager.cpp @ 1148]
+003ed474 6ac57408 003ed490 16fd6110 18491880 xul!mozilla::IMEStateManager::UpdateIMEState+0x13e [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\dom\events\imestatemanager.cpp @ 651]
+...
+snip
+...
+
+snip
+snip
+
+... 
+
+0:000> g
+(7b0.1624): Access violation - code c0000005 (first chance)
+First chance exceptions are reported before any exception handling.
+This exception may be expected and handled.
+eax=16896830 ebx=135d5000 ecx=00000000 edx=14b4dcf8 esi=16896800 edi=6bc31f50
+eip=6b330c2a esp=003ed65c ebp=003ed664 iopl=0         nv up ei pl zr na pe nc
+cs=0023  ss=002b  ds=002b  es=002b  fs=0053  gs=002b             efl=00010246
+xul!mozilla::IMEContentObserver::ObserveEditableNode+0xb:
+6b330c2a 8b01            mov     eax,dword ptr [ecx]  ds:002b:00000000=????????
+
+xul!mozilla::IMEContentObserver::ObserveEditableNode:
+6b330c1f 55              push    ebp
+6b330c20 8bec            mov     ebp,esp
+6b330c22 51              push    ecx
+6b330c23 56              push    esi
+6b330c24 8b7508          mov     esi,dword ptr [ebp+8]                                               ;<-[EBP+8] = 0x16896800 (Our Object line:106 EAX)
+6b330c27 8b4e20          mov     ecx,dword ptr [esi+20h]                                             ;            Object->off20h (But is null line:372)
+6b330c2a 8b01            mov     eax,dword ptr [ecx]  ds:002b:00000000=????????                      ;<-Boom!!!
+6b330c2c 57              push    edi
+6b330c2d 8d550b          lea     edx,[ebp+0Bh]
+6b330c30 52              push    edx
+6b330c31 ff90bc010000    call    dword ptr [eax+1BCh]
+...
+snip
+...
+
+0:000> kb
+ChildEBP RetAddr  Args to Child              
+003ed664 6b6e83ee 16896800 6f697260 6f697260 xul!mozilla::IMEContentObserver::ObserveEditableNode+0xb [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\dom\events\imecontentobserver.cpp @ 182]
+003ed6c8 6b6ec543 12593000 159a1dc0 003ed764 xul!mozilla::IMEContentObserver::Init+0x222 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\dom\events\imecontentobserver.cpp @ 174]
+003ed6ec 6b6eff8f 124a18c0 00000000 124a18c0 xul!mozilla::IMEStateManager::CreateIMEContentObserver+0x150 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\dom\events\imestatemanager.cpp @ 1203]
+003ed744 6ac5a1ed 003ed764 00000000 124a18c0 xul!mozilla::IMEStateManager::UpdateIMEState+0x168 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\dom\events\imestatemanager.cpp @ 658]
+003ed778 6acb426b 16fd6110 14b4dcf8 0fbec4c0 xul!nsEditor::PostCreate+0x136 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\editor\libeditor\nseditor.cpp @ 321]
+003ed8bc 6acb3b53 0fbec4c0 1249c960 80000000 xul!nsEditingSession::SetupEditorOnWindow+0x6ee [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\editor\composer\nseditingsession.cpp @ 478]
+003ed8d8 6b42fafd 0fbec4c0 1249c960 6bb8b7f0 xul!nsEditingSession::MakeWindowEditable+0x10a [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\editor\composer\nseditingsession.cpp @ 169]
+003ed95c 6b43012f 003ed954 14b355c0 003ed9a8 xul!nsHTMLDocument::EditingStateChanged+0x1ec [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\content\html\document\src\nshtmldocument.cpp @ 2759]
+003ed974 6b67b23f 15e30800 003ed9a8 003ed998 xul!nsHTMLDocument::SetDesignMode+0x69 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\content\html\document\src\nshtmldocument.cpp @ 2884]
+003eda44 6a86a1f5 14b355c0 003eda80 15e30800 xul!mozilla::dom::HTMLDocumentBinding::set_designMode+0x82 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\obj-firefox\dom\bindings\htmldocumentbinding.cpp @ 753]
+003eda80 6e78eee9 14b355c0 00000001 000000ac xul!mozilla::dom::GenericBindingSetter+0xb5 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\dom\bindings\bindingutils.cpp @ 2373]
+003edc88 6e78f1e2 14b355c0 003edcf8 00000001 mozjs!js::Invoke+0x149 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\vm\interpreter.cpp @ 474]
+003edd28 6e78f2ea 14b355c0 003edd4c 003edd60 mozjs!js::Invoke+0x212 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\vm\interpreter.cpp @ 537]
+003edd50 6e74b57d 14b355c0 0fa256a0 0fab3180 mozjs!js::InvokeGetterOrSetter+0x6a [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\vm\interpreter.cpp @ 610]
+003edd80 6e74baae 14b355c0 003edf10 003edf1c mozjs!js::CallSetter+0x5d [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\jscntxtinlines.h @ 334]
+003eddac 6a557501 14b355c0 6be4f924 003edf10 mozjs!js::SetPropertyIgnoringNamedGetter+0x19e [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\proxy\baseproxyhandler.cpp @ 143]
+003ede1c 6e750eb3 14b355c0 003edf10 003edf10 xul!mozilla::dom::DOMProxyHandler::set+0x141 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\dom\bindings\domjsproxyhandler.cpp @ 256]
+003ede90 6e751b4f 003edf1c 003edf10 003edf10 mozjs!js::Proxy::set+0xf3 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\proxy\proxy.cpp @ 341]
+003edeac 6e70c5b2 14b355c0 003edf10 003edf1c mozjs!js::proxy_SetGeneric+0x1f [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\proxy\proxy.cpp @ 670]
+003edec8 6e4f1a9e 14b355c0 003edf10 003edf1c mozjs!JSObject::nonNativeSetProperty+0x62 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\jsobj.cpp @ 1836]
+003edee0 6e783cd5 14b355c0 003edf10 003edf10 mozjs!JSObject::setGeneric+0x2e [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\vm\nativeobject.h @ 1604]
+003edf2c 6e78bf56 003edf9c 0e0c7050 0e0c7058 mozjs!SetPropertyOperation+0x165 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\vm\interpreter.cpp @ 331]
+003ee550 6e78ed81 14b355c0 00000000 003ee7e0 mozjs!Interpret+0x3376 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\vm\interpreter.cpp @ 2422]
+003ee56c 6e78ef94 14b355c0 003ee590 003ee8d0 mozjs!js::RunScript+0x141 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\vm\interpreter.cpp @ 431]
+003ee770 6e78f1e2 14b355c0 003ee7e0 00000001 mozjs!js::Invoke+0x1f4 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\vm\interpreter.cpp @ 503]
+003ee810 6e6c21b6 14b355c0 003ee958 003ee890 mozjs!js::Invoke+0x212 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\vm\interpreter.cpp @ 537]
+003ee834 6a56f39e 14b355c0 003ee958 003ee890 mozjs!JS::Call+0x26 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\js\src\jsapi.cpp @ 5098]
+003ee914 6a6a0b9d 19828ee0 003ee958 173cea30 xul!mozilla::dom::EventHandlerNonNull::Call+0x16e [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\obj-firefox\dom\bindings\eventhandlerbinding.cpp @ 36]
+003eea28 6a68384f 19828ee0 19828f08 173cea30 xul!mozilla::dom::EventHandlerNonNull::Call<nsISupports *>+0xbd [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\obj-firefox\dist\include\mozilla\dom\eventhandlerbinding.h @ 62]
+003eec28 6a6584d1 19828f00 173cea30 003eedac xul!mozilla::JSEventHandler::HandleEvent+0x14f [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\dom\events\jseventhandler.cpp @ 216]
+003eec5c 6a628e79 15aee3a0 173cea30 124a12f0 xul!mozilla::EventListenerManager::HandleEventSubType+0x71 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\dom\events\eventlistenermanager.cpp @ 970]
+003eecd0 6a625f01 15aee3a0 135d5000 003eee40 xul!mozilla::EventListenerManager::HandleEventInternal+0x219 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\dom\events\eventlistenermanager.cpp @ 1032]
+003eed08 6a623292 003eed2c 15aee307 00000000 xul!mozilla::EventTargetChainItem::HandleEventTargetChain+0x1f1 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\dom\events\eventdispatcher.cpp @ 295]
+003eedd4 6a6b1428 1249c960 135d5000 003eee40 xul!mozilla::EventDispatcher::Dispatch+0x542 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\dom\events\eventdispatcher.cpp @ 609]
+003eeea0 6a6ab091 15e563a0 00000000 14b4dc14 xul!nsDocumentViewer::LoadComplete+0x1f8 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\layout\base\nsdocumentviewer.cpp @ 1006]
+003ef208 6a696a5d 14b4dc14 13317830 00000000 xul!nsDocShell::EndPageLoad+0xf1 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\docshell\base\nsdocshell.cpp @ 7306]
+003ef234 6a65c5e0 13317830 14b29204 003ef2c0 xul!nsDocShell::OnStateChange+0x10d [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\docshell\base\nsdocshell.cpp @ 7117]
+003ef25c 6a649ff3 14b4dc34 003ef354 14b4dc00 xul!nsIOService::URIChainHasFlags+0x50 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\netwerk\base\src\nsioservice.cpp @ 1130]
+003ef2f4 6a56121f 14b4dc14 13317830 14b4dd18 xul!nsSecureBrowserUIImpl::OnStateChange+0x3e3 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\security\manager\boot\src\nssecurebrowseruiimpl.cpp @ 1278]
+003ef37c 6a6911b2 00000001 14b23600 00000000 xul!nsDocLoader::doStopDocumentLoad+0x8f [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\uriloader\base\nsdocloader.cpp @ 850]
+003ef3d4 6a643cbe 14b4dc00 003ef470 6a643990 xul!nsDocLoader::OnStopRequest+0x122 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\uriloader\base\nsdocloader.cpp @ 624]
+003ef3f4 6a625c71 14b4dc00 1a0e824a 6a67a495 xul!nsDocLoader::QueryInterface+0xce [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\uriloader\base\nsdocloader.cpp @ 205]
+003ef4f8 6a6c27fa 6a6c280d 1a0e85fa 6bb2ff10 xul!nsCOMPtr_base::assign_from_helper+0x51 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\xpcom\glue\nscomptr.cpp @ 125]
+003ef534 6a714c38 15e30800 00000000 125d9000 xul!nsIDocument::GetDocumentLoadGroup+0x2f [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\obj-firefox\dist\include\nsidocument.h @ 284]
+003ef554 6a5691d7 00000001 5a12270f 07f3f160 xul!nsDocument::UnblockOnload+0x62 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\content\base\src\nsdocument.cpp @ 8792]
+003ef5b0 6a59c316 6a62f01d 19828e80 07f10b60 xul!nsDocument::DispatchContentLoadedEvents+0x1d7 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\content\base\src\nsdocument.cpp @ 5039]
+003ef5b4 6a62f01d 19828e80 07f10b60 07f10b50 xul!nsRunnableMethodImpl<void (__thiscall nsDocument::*)(void),void,1>::Run+0x26 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\obj-firefox\dist\include\nsthreadutils.h @ 390]
+003ef72c 6a64cf9d 07f3f160 00000000 003ef744 xul!nsThread::ProcessNextEvent+0x6bd [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\xpcom\threads\nsthread.cpp @ 831]
+003ef73c 6a8f9855 07f3f101 00000000 07f4a0c0 xul!NS_ProcessNextEvent+0x2d [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\xpcom\glue\nsthreadutils.cpp @ 265]
+003ef768 6a8ed27c 01f4a0c0 1a0e867e 07f3f160 xul!mozilla::ipc::MessagePump::Run+0x46 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\ipc\glue\messagepump.cpp @ 99]
+003ef7a0 6a8ed330 07f3fe10 00000001 003ef800 xul!MessageLoop::RunHandler+0x50 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\ipc\chromium\src\base\message_loop.cc @ 224]
+003ef7c0 6a83060d 80000000 0fb0dac0 6a8398fb xul!MessageLoop::Run+0x19 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\ipc\chromium\src\base\message_loop.cc @ 198]
+003ef7cc 6a8398fb 07f3fe10 6ae7d81b 07f3fe10 xul!nsBaseAppShell::Run+0x2c [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\widget\xpwidgets\nsbaseappshell.cpp @ 166]
+003ef7e4 6a7b62cd 0fb0dac0 003ef908 00000000 xul!nsAppShell::Run+0x19 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\widget\windows\nsappshell.cpp @ 178]
+003ef8c4 6a819477 003ef908 003efa3c 003ef908 xul!XREMain::XRE_mainRun+0x538 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\toolkit\xre\nsapprunner.cpp @ 4191]
+003ef8e8 6a8509df 003ef908 00000001 00956ff8 xul!XREMain::XRE_main+0xfc [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\toolkit\xre\nsapprunner.cpp @ 4267]
+003efa0c 00e117c2 00000001 00956ff8 003efa3c xul!XRE_main+0x35 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\toolkit\xre\nsapprunner.cpp @ 4485]
+003efba4 00e11a82 00000001 00956ff8 07f1c160 firefox!do_main+0x27f [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\browser\app\nsbrowserapp.cpp @ 287]
+003efc38 00e11b96 00000001 00956ff8 00000000 firefox!NS_internal_main+0x11d [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\browser\app\nsbrowserapp.cpp @ 652]
+003efc6c 00e126ad 00000000 008ecf90 008eef40 firefox!wmain+0xf9 [c:\builds\moz2_slave\rel-m-rel-w32_bld-000000000000\build\toolkit\xre\nswindowswmain.cpp @ 120]
+003efcb4 7553338a fffde000 003efd00 77689f72 firefox!__tmainCRTStartup+0x10b [f:\dd\vctools\crt_bld\self_x86\crt\src\crt0.c @ 278]
+003efcc0 77689f72 fffde000 2ebc7f54 00000000 kernel32!BaseThreadInitThunk+0xe
+003efd00 77689f45 00e12703 fffde000 00000000 ntdll!__RtlUserThreadStart+0x70
+003efd18 00000000 00e12703 fffde000 00000000 ntdll!_RtlUserThreadStart+0x1b
+
+
+Conclusion: Unexploitable !
