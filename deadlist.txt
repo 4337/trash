@@ -1,0 +1,610 @@
+AndroidBitmapInfo struct
+width  dd ?
+height dd ?
+stride dd ?
+format dd ? 
+flags  dd ?
+AndroidBitmapInfo ends
+
+BitmapHeader struct
+field_0  dd ?            //2
+width    dd ?
+height   dd ?
+field_c  dw ?            //4
+BitmapHeader ends
+
+.text:00001130 ; _DWORD __cdecl check_params(int, int)                          //width, height nie jest wywolwana w  NativeCacheManagerFactory.flushFontTextureLine
+.text:00001130                 public _Z12check_paramsii
+.text:00001130 _Z12check_paramsii proc near            ; CODE XREF: check_tile_params(int,int,int,int)+26p
+.text:00001130                                         ; Java_com_naviexpert_opengl_NativeCacheManagerFactory_loadTexture+37p
+.text:00001130
+.text:00001130 var_1C          = dword ptr -1Ch
+.text:00001130 var_18          = dword ptr -18h
+.text:00001130 var_14          = dword ptr -14h
+.text:00001130 arg_0           = dword ptr  4
+.text:00001130 arg_4           = dword ptr  8
+.text:00001130
+.text:00001130                 push    ebx
+.text:00001131                 call    safe_esp_in_ebx
+.text:00001136                 add     ebx, 3EBEh
+.text:0000113C                 lea     esp, [esp-18h]
+.text:00001140                 lea     eax, (aInvalidWidth - 4FF4h)[ebx] ; "Invalid width"
+.text:00001146                 mov     ecx, [esp+1Ch+arg_0]
+.text:0000114A                 test    ecx, ecx
+.text:0000114C                 jle     short loc_116E                           //if arg_0 <= 0 error (width)  //1
+.text:0000114E                 mov     edx, [esp+1Ch+arg_4]
+.text:00001152                 mov     eax, 1
+.text:00001157                 test    edx, edx
+.text:00001159                 jle     short loc_1168                           //if arg_4 <= 0 error (height)   //2
+.text:0000115B                 lea     esp, [esp+18h]
+.text:0000115F                 pop     ebx
+.text:00001160                 retn
+.text:00001160 ; ---------------------------------------------------------------------------
+.text:00001161                 align 8
+.text:00001168
+.text:00001168 loc_1168:                               ; CODE XREF: check_params(int,int)+29j
+.text:00001168                 lea     eax, (aInvalidHeight - 4FF4h)[ebx] ; "Invalid height"
+.text:0000116E
+.text:0000116E loc_116E:                               ; CODE XREF: check_params(int,int)+1Cj
+.text:0000116E                 mov     [esp+1Ch+var_14], eax
+.text:00001172                 mov     [esp+1Ch+var_1C], 6
+.text:00001179                 lea     eax, (aLibnativeExten - 4FF4h)[ebx] ; "libnative-extensions"
+.text:0000117F                 mov     [esp+1Ch+var_18], eax
+.text:00001183                 call    ___android_log_print
+.text:00001188                 lea     esp, [esp+18h]
+.text:0000118C                 xor     eax, eax
+.text:0000118E                 pop     ebx
+.text:0000118F                 retn
+.text:0000118F _Z12check_paramsii endp
+
+
+.text:000012F0 ; get_bitmap_info(_JNIEnv *, _jobject *, BitmapHeader &)
+.text:000012F0                 public _Z15get_bitmap_infoP7_JNIEnvP8_jobjectR12BitmapHeader
+.text:000012F0 _Z15get_bitmap_infoP7_JNIEnvP8_jobjectR12BitmapHeader proc near
+.text:000012F0                                         ; CODE XREF: flush_texture(_JNIEnv *,_jobject *,uchar,char const*)+3Cp
+.text:000012F0                                         ; flush_font_texture_line(_JNIEnv *,_jobject *,int,int,uchar,char const*,uint)+48p ...
+.text:000012F0
+.text:000012F0 var_3C          = dword ptr -3Ch
+.text:000012F0 var_38          = dword ptr -38h
+.text:000012F0 var_34          = dword ptr -34h
+.text:000012F0 var_20          = dword ptr -20h
+.text:000012F0 var_1C          = dword ptr -1Ch
+.text:000012F0 var_18          = dword ptr -18h
+.text:000012F0 var_14          = dword ptr -14h
+.text:000012F0 var_10          = dword ptr -10h
+.text:000012F0 arg_0           = dword ptr  4
+.text:000012F0 arg_4           = dword ptr  8
+.text:000012F0 arg_8           = dword ptr  0Ch
+.text:000012F0
+.text:000012F0                 push    esi
+.text:000012F1                 push    ebx
+.text:000012F2                 call    safe_esp_in_ebx ; mov     ebx, [esp+0] / ret
+.text:000012F7                 add     ebx, 3CFDh
+.text:000012FD                 lea     esp, [esp-34h]  ; alokacja zmiennych lokalnych
+.text:00001301                 lea     eax, [esp+(AndroidBitmapInfo.stride+14h)]
+.text:00001305                 mov     [esp+3Ch+var_34], eax
+.text:00001309                 mov     eax, [esp+3Ch+arg_4] ; _jobject *
+.text:0000130D                 mov     esi, [esp+3Ch+arg_8]
+.text:00001311                 mov     [esp+3Ch+var_38], eax ; _jobject *
+.text:00001315                 mov     eax, [esp+3Ch+arg_0] ; _JNIEnv *
+.text:00001319                 mov     [esp+3Ch+var_20], 0 ; AndroidBitmapInfo->width
+.text:00001321                 mov     [esp+3Ch+var_1C], 0 ; AndroidBitmapInfo->height
+.text:00001329                 mov     [esp+3Ch+var_18], 0 ; AndroidBitmapInfo->stride
+.text:00001331                 mov     [esp+3Ch+var_14], 0 ; AndroidBitmapInfo->format
+.text:00001339                 mov     [esp+3Ch+var_10], 0 ; AndroidBitmapInfo->flags
+.text:00001341                 mov     [esp+3Ch+var_3C], eax ; _JNIEnv *
+.text:00001344                 call    _AndroidBitmap_getInfo
+.text:00001349                 test    eax, eax
+.text:0000134B                 jnz     short loc_13B8  ; jesli nie 0 error && return
+.text:0000134D                 cmp     [esp+3Ch+var_14], 1 ; cmp AndroidBitmapInfo->format,1
+.text:00001352                 jnz     short loc_1388  ; if(AndroidBitmapInfo->format != 1) error && return
+.text:00001354                 mov     eax, [esp+3Ch+var_20] ; eax = AndroidBitmapInfo->width
+.text:00001358                 mov     ecx, [esp+3Ch+var_1C] ; ecx = AndroidBitmapInfo->height
+.text:0000135C                 lea     edx, ds:0[eax*4] ; edx = AndroidBitmapInfo->width * 4
+.text:00001363                 cmp     [esp+3Ch+var_18], edx ; if(AndroidBitmapInfo->stride != AndroidBitmapInfo->width * 4)     //3
+.text:00001367                 jnz     short loc_13C0  ; error && return
+.text:00001369                 mov     [esi+4], eax    ; BitmapHeader->off4h = AndroidBitmapInfo->width
+.text:0000136C                 mov     dword ptr [esi], 2 ; BitmapHeader->off0h = 2
+.text:00001372                 mov     [esi+8], ecx    ; BitmapHeader->off8h = AndroidBitmapInfo->height
+.text:00001375                 mov     word ptr [esi+0Ch], 4 ; BitmapHead->off0ch = 4
+.text:0000137B                 lea     esp, [esp+34h]  ; zwalnianie zmiennych lokalnych
+.text:0000137F                 mov     eax, 1
+.text:00001384                 pop     ebx
+.text:00001385                 pop     esi
+.text:00001386                 retn
+.text:00001386 ; ---------------------------------------------------------------------------
+.text:00001387                 align 4
+.text:00001388
+.text:00001388 loc_1388:                               ; CODE XREF: get_bitmap_info(_JNIEnv *,_jobject *,BitmapHeader &)+62j
+.text:00001388                 lea     eax, (aInvalidFormatM - 4FF4h)[ebx] ; "Invalid format, must be RGBA_8888"
+.text:0000138E
+.text:0000138E loc_138E:                               ; CODE XREF: get_bitmap_info(_JNIEnv *,_jobject *,BitmapHeader &)+CEj
+.text:0000138E                                         ; get_bitmap_info(_JNIEnv *,_jobject *,BitmapHeader &)+D6j
+.text:0000138E                 mov     [esp+3Ch+var_34], eax
+.text:00001392                 mov     [esp+3Ch+var_3C], 6
+.text:00001399                 lea     eax, (aLibnativeExten - 4FF4h)[ebx] ; "libnative-extensions"
+.text:0000139F                 mov     [esp+3Ch+var_38], eax
+.text:000013A3                 call    ___android_log_print
+.text:000013A8                 lea     esp, [esp+34h]
+.text:000013AC                 xor     eax, eax
+.text:000013AE                 pop     ebx
+.text:000013AF                 pop     esi
+.text:000013B0                 retn
+.text:000013B0 ; ---------------------------------------------------------------------------
+.text:000013B1                 align 8
+.text:000013B8
+.text:000013B8 loc_13B8:                               ; CODE XREF: get_bitmap_info(_JNIEnv *,_jobject *,BitmapHeader &)+5Bj
+.text:000013B8                 lea     eax, (aErrorGettingBi - 4FF4h)[ebx] ; "Error getting bitmap info"
+.text:000013BE                 jmp     short loc_138E
+.text:000013C0 ; ---------------------------------------------------------------------------
+.text:000013C0
+.text:000013C0 loc_13C0:                               ; CODE XREF: get_bitmap_info(_JNIEnv *,_jobject *,BitmapHeader &)+77j
+.text:000013C0                 lea     eax, (aUnsupportedStr - 4FF4h)[ebx] ; "Unsupported stride"
+.text:000013C6                 jmp     short loc_138E
+.text:000013C6 _Z15get_bitmap_infoP7_JNIEnvP8_jobjectR12BitmapHeader endp
+
+
+
+
+.text:00001F30 ; int __cdecl flush_font_texture_line(int, int, int, GLint, char, char *, int)
+.text:00001F30                 public _Z23flush_font_texture_lineP7_JNIEnvP8_jobjectiihPKcj
+.text:00001F30 _Z23flush_font_texture_lineP7_JNIEnvP8_jobjectiihPKcj proc near
+.text:00001F30                                         ; CODE XREF: Java_com_naviexpert_opengl_NativeCacheManagerFactory_flushFontTextureLine+C0p
+.text:00001F30
+.text:00001F30 size            = dword ptr -7Ch
+.text:00001F30 level           = dword ptr -78h
+.text:00001F30 xoffset         = dword ptr -74h
+.text:00001F30 yoffset         = dword ptr -70h
+.text:00001F30 width           = dword ptr -6Ch
+.text:00001F30 height          = dword ptr -68h
+.text:00001F30 format          = dword ptr -64h
+.text:00001F30 type            = dword ptr -60h
+.text:00001F30 pixels          = dword ptr -5Ch
+.text:00001F30 ptr             = dword ptr -44h
+.text:00001F30 var_40          = dword ptr -40h
+.text:00001F30 var_3C          = dword ptr -3Ch
+.text:00001F30 var_38          = dword ptr -38h
+.text:00001F30 var_34          = dword ptr -34h
+.text:00001F30 var_30          = dword ptr -30h
+.text:00001F30 var_2C          = byte ptr -2Ch
+.text:00001F30 var_28          = dword ptr -28h
+.text:00001F30 var_24          = dword ptr -24h
+.text:00001F30 var_20          = word ptr -20h
+.text:00001F30 var_10          = dword ptr -10h
+.text:00001F30 var_C           = dword ptr -0Ch
+.text:00001F30 var_8           = dword ptr -8
+.text:00001F30 var_4           = dword ptr -4
+.text:00001F30 arg_0           = dword ptr  4
+.text:00001F30 arg_4           = dword ptr  8
+.text:00001F30 arg_8           = dword ptr  0Ch
+.text:00001F30 arg_C           = dword ptr  10h
+.text:00001F30 arg_10          = byte ptr  14h
+.text:00001F30 arg_14          = dword ptr  18h
+.text:00001F30 arg_18          = dword ptr  1Ch
+.text:00001F30
+.text:00001F30                 lea     esp, [esp-7Ch]
+.text:00001F34                 mov     [esp+7Ch+var_10], ebx
+.text:00001F38                 mov     [esp+7Ch+var_8], edi
+.text:00001F3C                 call    safe_esp_in_ebx
+.text:00001F41                 add     ebx, 30B3h
+.text:00001F47                 movzx   edx, [esp+7Ch+arg_10]
+.text:00001F4F                 mov     edi, [esp+7Ch+arg_4]
+.text:00001F56                 mov     byte ptr [esp+7Ch+var_40], dl
+.text:00001F5A                 mov     edx, [esp+7Ch+arg_0]
+.text:00001F61                 mov     [esp+7Ch+var_C], esi
+.text:00001F65                 mov     [esp+7Ch+var_4], ebp
+.text:00001F69                 mov     [esp+7Ch+level], edi ; _jobject
+.text:00001F6D                 lea     ebp, [esp+7Ch+var_2C] ; &BitmapHeader
+.text:00001F71                 mov     [esp+7Ch+size], edx ; _INIEnv
+.text:00001F74                 mov     [esp+7Ch+xoffset], ebp ; ebp = BitmapHeader
+.text:00001F78                 call    _Z15get_bitmap_infoP7_JNIEnvP8_jobjectR12BitmapHeader ; get_bitmap_info(_JNIEnv *,_jobject *,BitmapHeader &)
+.text:00001F7D                 xor     esi, esi
+.text:00001F7F                 test    al, al
+.text:00001F81                 jz      loc_201B
+.text:00001F87                 mov     edx, [esp+7Ch+var_28]
+.text:00001F8B                 cmp     byte ptr [esp+7Ch+var_40], 0
+.text:00001F90                 mov     [esp+7Ch+var_38], edx
+.text:00001F94                 mov     edx, [esp+7Ch+var_24]
+.text:00001F98                 mov     [esp+7Ch+var_34], edx
+.text:00001F9C                 jnz     loc_2038
+.text:00001FA2                 mov     eax, 4
+.text:00001FA7                 mov     [esp+7Ch+var_30], 1908h
+.text:00001FAF                 mov     ecx, 4
+.text:00001FB4
+.text:00001FB4 loc_1FB4:                               ; CODE XREF: flush_font_texture_line(_JNIEnv *,_jobject *,int,int,uchar,char const*,uint)+125j
+.text:00001FB4                 mov     edx, [esp+7Ch+var_34] ; edx = BitmapHeader->something ?!?
+.text:00001FB8                 mov     [esp+7Ch+var_20], cx
+.text:00001FBD                 imul    edx, [esp+7Ch+var_38] ; edx = edx * BitmapHeader->somtehing2 (prawdopodobnie pola width i height)  //4
+.text:00001FC2                 mov     [esp+7Ch+ptr], ecx
+.text:00001FC6                 imul    eax, edx        ; eax = 4 = eax * edx // wartości pobrane z BitmapHeader        //5
+.text:00001FC9                 mov     [esp+7Ch+var_40], edx                            //6
+.text:00001FCD                 mov     [esp+7Ch+size], eax ; size                       //7
+.text:00001FD0                 xor     esi, esi
+.text:00001FD2                 call    _malloc
+.text:00001FD7                 test    eax, eax
+.text:00001FD9                 mov     edx, eax
+.text:00001FDB                 mov     ecx, [esp+7Ch+ptr]
+.text:00001FDF                 jz      short loc_201B
+.text:00001FE1                 mov     eax, [esp+7Ch+var_40] ; var_40 = edx = mnoznik
+.text:00001FE5                 mov     [esp+7Ch+xoffset], edx ; void *
+.text:00001FE9                 movzx   ecx, cx
+.text:00001FEC                 mov     [esp+0Ch], eax  ; int (rozmiar = eax = var_40 = edx) //argument memcpy przed wywołaniem jest mnożony przez 2 ^ 2     //8
+.text:00001FF0                 mov     eax, [esp+7Ch+arg_0]
+.text:00001FF7                 mov     [esp+7Ch+ptr], edx ; malloc buffer (bufor docelowy dla memcpy)
+.text:00001FFB                 mov     [esp+7Ch+width], ecx ; __int16 = musi mieć wartość 4 żeby wywołane było memcpy   (zawsze jest 4 linia 212)
+.text:00001FFF                 mov     [esp+7Ch+level], edi ; int
+.text:00002003                 mov     [esp+7Ch+size], eax ; int
+.text:00002006                 call    _Z15copy_pixel_dataP7_JNIEnvP8_jobjectPhjt ; copy_pixel_data(_JNIEnv *,_jobject *,uchar *,uint,ushort)
+.text:0000200B                 test    al, al
+.text:0000200D                 mov     edx, [esp+7Ch+ptr]
+.text:00002011                 jnz     short loc_2060
+.text:00002013
+.text:00002013 loc_2013:                               ; CODE XREF: flush_font_texture_line(_JNIEnv *,_jobject *,int,int,uchar,char const*,uint)+20Bj
+.text:00002013                 mov     [esp+7Ch+size], edx ; ptr
+.text:00002016                 call    _free
+.text:0000201B
+.text:0000201B loc_201B:                               ; CODE XREF: flush_font_texture_line(_JNIEnv *,_jobject *,int,int,uchar,char const*,uint)+51j
+.text:0000201B                                         ; flush_font_texture_line(_JNIEnv *,_jobject *,int,int,uchar,char const*,uint)+AFj ...
+.text:0000201B                 mov     eax, esi
+.text:0000201D                 mov     ebx, [esp+7Ch+var_10]
+.text:00002021                 mov     esi, [esp+7Ch+var_C]
+.text:00002025                 mov     edi, [esp+7Ch+var_8]
+.text:00002029                 mov     ebp, [esp+7Ch+var_4]
+.text:0000202D                 lea     esp, [esp+7Ch]
+.text:00002031                 retn
+.text:00002031 ; ---------------------------------------------------------------------------
+.text:00002032                 align 8
+.text:00002038
+.text:00002038 loc_2038:                               ; CODE XREF: flush_font_texture_line(_JNIEnv *,_jobject *,int,int,uchar,char const*,uint)+6Cj
+.text:00002038                 test    byte ptr [esp+7Ch+var_38], 1
+.text:0000203D                 jnz     loc_2140
+.text:00002043                 mov     eax, 2
+.text:00002048                 mov     [esp+7Ch+var_30], 190Ah
+.text:00002050                 mov     ecx, 2
+.text:00002055                 jmp     loc_1FB4        ; edx = BitmapHeader->something ?!?
+.text:00002055 ; ---------------------------------------------------------------------------
+.text:0000205A                 align 10h
+.text:00002060
+.text:00002060 loc_2060:                               ; CODE XREF: flush_font_texture_line(_JNIEnv *,_jobject *,int,int,uchar,char const*,uint)+E1j     //flow goes here !!
+.text:00002060                 mov     edi, [esp+7Ch+arg_18]
+.text:00002067                 add     edi, 20h
+.text:0000206A                 mov     [esp+7Ch+size], edi ; size
+.text:0000206D                 call    _malloc
+.text:00002072                 test    eax, eax
+.text:00002074                 mov     esi, eax
+.text:00002076                 mov     [esp+7Ch+var_3C], 0
+.text:0000207E                 mov     edx, [esp+7Ch+ptr]
+.text:00002082                 jz      short loc_20D1
+.text:00002084                 mov     eax, [esp+7Ch+arg_8]
+.text:0000208B                 mov     [esp+7Ch+level], edi ; size_t            //new malloc size
+.text:0000208F                 mov     [esp+7Ch+yoffset], eax ; int
+.text:00002093                 mov     eax, [esp+7Ch+arg_14]
+.text:0000209A                 mov     [esp+7Ch+xoffset], eax ; char *
+.text:0000209E                 mov     [esp+7Ch+size], esi ; char *             //new malloc
+.text:000020A1                 call    _Z13get_line_pathPcjPKci ; get_line_path(char *,uint,char const*,int)
+.text:000020A6                 mov     edx, [esp+7Ch+ptr]                       //old malloc
+.text:000020AA                 mov     [esp+7Ch+xoffset], esi ; char *          //new malloc
+
+.text:000020AE                 mov     [esp+7Ch+level], edx ; int               //old malloc (if Bitmapheader->width,heigth,stride == 0 this buffer is not initialized)   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                                                                                
+
+.text:000020B2                 mov     [esp+7Ch+size], ebp ; ptr                //corrupted bitmapHeader struct
+.text:000020B5                 call    _Z11save_bitmapRK12BitmapHeaderPKhPKc ; save_bitmap(BitmapHeader const&,uchar const*,char const*)         
+.text:000020BA                 mov     edi, eax
+.text:000020BC                 mov     [esp+7Ch+size], esi ; ptr
+.text:000020BF                 call    _free
+.text:000020C4                 mov     eax, edi
+.text:000020C6                 mov     edx, [esp+7Ch+ptr]
+.text:000020CA                 movzx   edi, al
+.text:000020CD                 mov     [esp+7Ch+var_3C], edi
+.text:000020D1
+.text:000020D1 loc_20D1:                               ; CODE XREF: flush_font_texture_line(_JNIEnv *,_jobject *,int,int,uchar,char const*,uint)+152j
+.text:000020D1                 mov     eax, [esp+7Ch+var_30]
+.text:000020D5                 mov     [esp+7Ch+pixels], edx ; pixels
+.text:000020D9                 mov     [esp+7Ch+format], eax ; format
+.text:000020DD                 mov     eax, [esp+7Ch+var_34]
+.text:000020E1                 mov     [esp+7Ch+height], eax ; height
+.text:000020E5                 mov     eax, [esp+7Ch+var_38]
+.text:000020E9                 mov     [esp+7Ch+width], eax ; width
+.text:000020ED                 mov     eax, [esp+7Ch+arg_C]
+.text:000020F4                 mov     [esp+7Ch+ptr], edx
+.text:000020F8                 mov     [esp+7Ch+yoffset], eax ; yoffset
+.text:000020FC                 mov     [esp+7Ch+type], 1401h ; type
+.text:00002104                 mov     [esp+7Ch+xoffset], 0 ; xoffset
+.text:0000210C                 mov     [esp+7Ch+level], 0 ; level
+.text:00002114                 mov     [esp+7Ch+size], 0DE1h ; target
+.text:0000211B                 call    _glTexSubImage2D
+.text:00002120                 lea     eax, (aGltexsubimage2 - 4FF4h)[ebx] ; "glTexSubImage2D"
+.text:00002126                 call    sub_1040
+.text:0000212B                 mov     esi, eax
+.text:0000212D                 mov     edx, [esp+7Ch+ptr]
+.text:00002131                 xor     esi, 1
+.text:00002134                 movzx   eax, byte ptr [esp+7Ch+var_3C]
+.text:00002139                 and     esi, eax
+.text:0000213B                 jmp     loc_2013
+.text:00002140 ; ---------------------------------------------------------------------------
+.text:00002140
+.text:00002140 loc_2140:                               ; CODE XREF: flush_font_texture_line(_JNIEnv *,_jobject *,int,int,uchar,char const*,uint)+10Dj
+.text:00002140                 lea     eax, (aInvalidWidthMu - 4FF4h)[ebx] ; "Invalid width (must be even)"
+.text:00002146                 mov     [esp+7Ch+size], 6
+.text:0000214D                 mov     [esp+7Ch+xoffset], eax
+.text:00002151                 lea     eax, (aLibnativeExten - 4FF4h)[ebx] ; "libnative-extensions"
+.text:00002157                 mov     [esp+7Ch+level], eax
+.text:0000215B                 call    ___android_log_print
+.text:00002160                 jmp     loc_201B
+.text:00002160 _Z23flush_font_texture_lineP7_JNIEnvP8_jobjectiihPKcj endp
+
+.text:000013D0 ; int __cdecl copy_pixel_data(int, int, void *, int, __int16)
+.text:000013D0                 public _Z15copy_pixel_dataP7_JNIEnvP8_jobjectPhjt
+.text:000013D0 _Z15copy_pixel_dataP7_JNIEnvP8_jobjectPhjt proc near
+.text:000013D0                                         ; CODE XREF: flush_font_texture_line(_JNIEnv *,_jobject *,int,int,uchar,char const*,uint)+D6p
+.text:000013D0
+.text:000013D0 dest            = dword ptr -4Ch
+.text:000013D0 src             = dword ptr -48h
+.text:000013D0 n               = dword ptr -44h
+.text:000013D0 var_2E          = byte ptr -2Eh
+.text:000013D0 var_2D          = byte ptr -2Dh
+.text:000013D0 var_20          = dword ptr -20h
+.text:000013D0 arg_0           = dword ptr  4
+.text:000013D0 arg_4           = dword ptr  8
+.text:000013D0 arg_8           = dword ptr  0Ch
+.text:000013D0 arg_C           = dword ptr  10h
+.text:000013D0 arg_10          = word ptr  14h
+.text:000013D0
+.text:000013D0                 push    ebp
+.text:000013D1                 push    edi
+.text:000013D2                 push    esi
+.text:000013D3                 push    ebx
+.text:000013D4                 call    safe_esp_in_ebx
+.text:000013D9                 add     ebx, 3C1Bh
+.text:000013DF                 lea     esp, [esp-3Ch]
+.text:000013E3                 mov     ecx, [esp+4Ch+arg_4]
+.text:000013E7                 lea     eax, [esp+4Ch+var_20]
+.text:000013EB                 mov     [esp+4Ch+src], ecx
+.text:000013EF                 mov     ecx, [esp+4Ch+arg_0]
+.text:000013F3                 mov     esi, [esp+4Ch+arg_8]
+.text:000013F7                 movzx   edi, [esp+4Ch+arg_10]
+.text:000013FC                 mov     [esp+4Ch+var_20], 0
+.text:00001404                 mov     [esp+4Ch+n], eax
+.text:00001408                 mov     [esp+4Ch+dest], ecx
+.text:0000140B                 call    _AndroidBitmap_lockPixels
+.text:00001410                 test    eax, eax
+.text:00001412                 jnz     loc_1550
+.text:00001418                 cmp     di, 2
+.text:0000141C                 jz      loc_14C8
+.text:00001422                 cmp     di, 4                                    //9
+.text:00001426                 jz      short loc_1470
+.text:00001428                 lea     eax, (aInvalidChannel - 4FF4h)[ebx] ; "Invalid channel count"
+.text:0000142E                 mov     [esp+4Ch+dest], 6
+.text:00001435                 mov     [esp+4Ch+n], eax
+.text:00001439                 xor     edi, edi
+.text:0000143B                 lea     eax, (aLibnativeExten - 4FF4h)[ebx] ; "libnative-extensions"
+.text:00001441                 mov     [esp+4Ch+src], eax
+.text:00001445                 call    ___android_log_print
+.text:0000144A
+.text:0000144A loc_144A:                               ; CODE XREF: copy_pixel_data(_JNIEnv *,_jobject *,uchar *,uint,ushort)+C0j
+.text:0000144A                                         ; copy_pixel_data(_JNIEnv *,_jobject *,uchar *,uint,ushort)+103j
+.text:0000144A                 mov     ecx, [esp+4Ch+arg_4]
+.text:0000144E                 mov     [esp+4Ch+src], ecx
+.text:00001452                 mov     ecx, [esp+4Ch+arg_0]
+.text:00001456                 mov     [esp+4Ch+dest], ecx
+.text:00001459                 call    _AndroidBitmap_unlockPixels
+.text:0000145E                 test    eax, eax
+.text:00001460                 jnz     short loc_1498
+.text:00001462                 lea     esp, [esp+3Ch]
+.text:00001466                 mov     eax, edi
+.text:00001468                 pop     ebx
+.text:00001469                 pop     esi
+.text:0000146A                 pop     edi
+.text:0000146B                 pop     ebp
+.text:0000146C                 retn
+.text:0000146C ; ---------------------------------------------------------------------------
+.text:0000146D                 align 10h
+.text:00001470
+.text:00001470 loc_1470:                               ; CODE XREF: copy_pixel_data(_JNIEnv *,_jobject *,uchar *,uint,ushort)+56j
+.text:00001470                 mov     eax, [esp+4Ch+arg_C]
+.text:00001474                 mov     [esp+4Ch+dest], esi ; dest
+.text:00001477                 shl     eax, 2                                   //10
+.text:0000147A                 mov     [esp+4Ch+n], eax ; n
+.text:0000147E                 mov     eax, [esp+4Ch+var_20]
+.text:00001482                 mov     [esp+4Ch+src], eax ; src
+.text:00001486                 call    _memcpy                                  //11
+.text:0000148B
+.text:0000148B loc_148B:                               ; CODE XREF: copy_pixel_data(_JNIEnv *,_jobject *,uchar *,uint,ushort)+179j
+.text:0000148B                 mov     edi, 1
+.text:00001490                 jmp     short loc_144A
+.text:00001490 ; ---------------------------------------------------------------------------
+.text:00001492                 align 8
+.text:00001498
+.text:00001498 loc_1498:                               ; CODE XREF: copy_pixel_data(_JNIEnv *,_jobject *,uchar *,uint,ushort)+90j
+.text:00001498                 lea     eax, (aErrorUnlocking - 4FF4h)[ebx] ; "Error unlocking bitmap pixels"
+.text:0000149E
+.text:0000149E loc_149E:                               ; CODE XREF: copy_pixel_data(_JNIEnv *,_jobject *,uchar *,uint,ushort)+186j
+.text:0000149E                 mov     [esp+4Ch+n], eax
+.text:000014A2                 mov     [esp+4Ch+dest], 6
+.text:000014A9                 lea     eax, (aLibnativeExten - 4FF4h)[ebx] ; "libnative-extensions"
+.text:000014AF                 xor     edi, edi
+.text:000014B1                 mov     [esp+4Ch+src], eax
+.text:000014B5                 call    ___android_log_print
+.text:000014BA                 lea     esp, [esp+3Ch]
+.text:000014BE                 mov     eax, edi
+.text:000014C0                 pop     ebx
+.text:000014C1                 pop     esi
+.text:000014C2                 pop     edi
+.text:000014C3                 pop     ebp
+.text:000014C4                 retn
+.text:000014C4 ; ---------------------------------------------------------------------------
+.text:000014C5                 align 4
+.text:000014C8
+.text:000014C8 loc_14C8:                               ; CODE XREF: copy_pixel_data(_JNIEnv *,_jobject *,uchar *,uint,ushort)+4Cj
+.text:000014C8                 mov     eax, [esp+4Ch+arg_C]
+.text:000014CC                 mov     edi, 1
+.text:000014D1                 test    eax, eax
+.text:000014D3                 jz      loc_144A
+.text:000014D9                 mov     eax, [esp+4Ch+var_20]
+.text:000014DD                 xor     edx, edx
+.text:000014DF                 nop
+.text:000014E0
+.text:000014E0 loc_14E0:                               ; CODE XREF: copy_pixel_data(_JNIEnv *,_jobject *,uchar *,uint,ushort)+177j
+.text:000014E0                 movzx   edi, byte ptr [eax]
+.text:000014E3                 lea     ecx, [eax+1]
+.text:000014E6                 mov     [esp+4Ch+var_20], ecx
+.text:000014EA                 lea     ebp, [eax+2]
+.text:000014ED                 movzx   ecx, byte ptr [eax+1]
+.text:000014F1                 mov     [esp+4Ch+var_20], ebp
+.text:000014F5                 mov     [esp+4Ch+var_2E], cl
+.text:000014F9                 and     edi, 0FFh
+.text:000014FF                 movzx   ecx, byte ptr [eax+2]
+.text:00001503                 lea     ebp, [eax+3]
+.text:00001506                 mov     [esp+4Ch+var_2D], cl
+.text:0000150A                 mov     [esp+4Ch+var_20], ebp
+.text:0000150E                 movzx   ecx, [esp+4Ch+var_2E]
+.text:00001513                 add     edx, 1
+.text:00001516                 imul    ecx, 96h
+.text:0000151C                 imul    edi, 4Dh
+.text:0000151F                 add     edi, ecx
+.text:00001521                 movzx   ecx, [esp+4Ch+var_2D]
+.text:00001526                 imul    ecx, 1Dh
+.text:00001529                 add     ecx, edi
+.text:0000152B                 movzx   ebp, byte ptr [eax+3]
+.text:0000152F                 add     eax, 4
+.text:00001532                 sar     ecx, 8
+.text:00001535                 mov     [esp+4Ch+var_20], eax
+.text:00001539                 mov     [esi], cl
+.text:0000153B                 mov     ecx, ebp
+.text:0000153D                 mov     [esi+1], cl
+.text:00001540                 add     esi, 2
+.text:00001543                 cmp     edx, [esp+4Ch+arg_C]
+.text:00001547                 jnz     short loc_14E0
+.text:00001549                 jmp     loc_148B
+.text:00001549 ; ---------------------------------------------------------------------------
+.text:0000154E                 align 10h
+.text:00001550
+.text:00001550 loc_1550:                               ; CODE XREF: copy_pixel_data(_JNIEnv *,_jobject *,uchar *,uint,ushort)+42j
+.text:00001550                 lea     eax, (aErrorLockingBi - 4FF4h)[ebx] ; "Error locking bitmap pixels"
+.text:00001556                 jmp     loc_149E
+.text:00001556 _Z15copy_pixel_dataP7_JNIEnvP8_jobjectPhjt endp
+
+text:00001560 ; int __cdecl save_bitmap(void *ptr, int, char *)                 /* bląd powinno byc save_bitmap(BitmapHeader const&,uchar const* old_malloc_buff,char const* filename) 
+.text:00001560                 public _Z11save_bitmapRK12BitmapHeaderPKhPKc
+.text:00001560 _Z11save_bitmapRK12BitmapHeaderPKhPKc proc near
+.text:00001560                                         ; CODE XREF: flush_texture(_JNIEnv *,_jobject *,uchar,char const*)+9Ep
+.text:00001560                                         ; flush_font_texture_line(_JNIEnv *,_jobject *,int,int,uchar,char const*,uint)+185p ...
+.text:00001560
+.text:00001560 filename        = dword ptr -2Ch
+.text:00001560 modes           = dword ptr -28h
+.text:00001560 n               = dword ptr -24h
+.text:00001560 s               = dword ptr -20h
+.text:00001560 var_10          = dword ptr -10h
+.text:00001560 var_C           = dword ptr -0Ch
+.text:00001560 var_8           = dword ptr -8
+.text:00001560 var_4           = dword ptr -4
+.text:00001560 ptr             = dword ptr  4
+.text:00001560 arg_4           = dword ptr  8
+.text:00001560 arg_8           = dword ptr  0Ch
+.text:00001560
+.text:00001560                 lea     esp, [esp-2Ch]
+.text:00001564                 mov     [esp+2Ch+var_10], ebx
+.text:00001568                 mov     [esp+2Ch+var_C], esi
+.text:0000156C                 call    sub_1034
+.text:00001571                 add     ebx, 3A83h
+.text:00001577                 lea     eax, (aWb - 4FF4h)[ebx] ; "wb"
+.text:0000157D                 mov     [esp+2Ch+modes], eax ; modes
+.text:00001581                 mov     eax, [esp+2Ch+arg_8]
+.text:00001585                 mov     [esp+2Ch+var_4], ebp
+.text:00001589                 mov     [esp+2Ch+var_8], edi
+.text:0000158D                 mov     ebp, [esp+2Ch+ptr]
+.text:00001591                 mov     [esp+2Ch+filename], eax ; filename
+.text:00001594                 call    _fopen
+.text:00001599                 mov     esi, eax
+.text:0000159B                 xor     eax, eax
+.text:0000159D                 test    esi, esi
+.text:0000159F                 jz      short loc_1602
+.text:000015A1                 mov     edi, [ebp+8]    ; ebp = BitmapHeader
+.text:000015A4                 imul    edi, [ebp+4]
+.text:000015A8                 movzx   eax, word ptr [ebp+0Ch]
+.text:000015AC                 mov     [esp+0Ch], esi  ; s
+.text:000015B0                 imul    edi, eax
+.text:000015B3                 mov     dword ptr [esp+8], 1 ; n
+.text:000015BB                 mov     dword ptr [esp+4], 10h ; size
+.text:000015C3                 mov     [esp], ebp      ; ptr = BitmapHeader
+.text:000015C6                 call    _fwrite         ; fwrite ( const void * ptr, size_t size, size_t count, FILE * stream )
+.text:000015CB                 cmp     eax, 1
+.text:000015CE                 jz      short loc_1618
+.text:000015D0
+.text:000015D0 loc_15D0:                               ; CODE XREF: save_bitmap(BitmapHeader const&,uchar const*,char const*)+C2j
+.text:000015D0                 mov     eax, [esp+2Ch+arg_4]
+.text:000015D4                 mov     [esp+8], esi    ; s (deskryptor pliku)
+.text:000015D8                 mov     [esp+4], edi    ; int  BitmapHeader->field * BitmapHeader->field 
+.text:000015DC                 mov     [esp], eax      ; uchar const* niezainicjalizowany buffor   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+.text:000015DF                 call    _Z4packPKhjP7__sFILE ; pack(uchar const*,uint,__sFILE *)
+
+                               /* ************************************************ *
+                                * dalej juz mi sie nie chce ... moze kiedy indziej * 
+                                * ************************************************ */
+
+.text:000015E4                 mov     [esp+2Ch+filename], esi ; stream
+.text:000015E7                 call    _fflush
+.text:000015EC                 mov     [esp+2Ch+filename], esi ; stream
+.text:000015EF                 call    _fclose
+.text:000015F4
+.text:000015F4 loc_15F4:                               ; CODE XREF: save_bitmap(BitmapHeader const&,uchar const*,char const*)+100j
+.text:000015F4                 mov     eax, [esp+2Ch+arg_8]
+.text:000015F8                 mov     [esp+2Ch+filename], eax ; filename
+.text:000015FB                 call    _remove
+.text:00001600                 xor     eax, eax
+.text:00001602
+.text:00001602 loc_1602:                               ; CODE XREF: save_bitmap(BitmapHeader const&,uchar const*,char const*)+3Fj
+.text:00001602                                         ; save_bitmap(BitmapHeader const&,uchar const*,char const*)+107j
+.text:00001602                 mov     ebx, [esp+2Ch+var_10]
+.text:00001606                 mov     esi, [esp+2Ch+var_C]
+.text:0000160A                 mov     edi, [esp+2Ch+var_8]
+.text:0000160E                 mov     ebp, [esp+2Ch+var_4]
+.text:00001612                 lea     esp, [esp+2Ch]
+.text:00001616                 retn
+.text:00001616 ; ---------------------------------------------------------------------------
+.text:00001617                 align 4
+.text:00001618
+.text:00001618 loc_1618:                               ; CODE XREF: save_bitmap(BitmapHeader const&,uchar const*,char const*)+6Ej
+.text:00001618                 mov     [esp+2Ch+filename], esi ; stream
+.text:0000161B                 call    _ferror
+.text:00001620                 test    eax, eax
+.text:00001622                 jnz     short loc_15D0
+.text:00001624                 mov     eax, [esp+2Ch+arg_4]
+.text:00001628                 mov     [esp+2Ch+modes], edi ; int
+.text:0000162C                 mov     [esp+2Ch+n], esi ; s
+.text:00001630                 mov     [esp+2Ch+filename], eax ; int
+.text:00001633                 call    _Z4packPKhjP7__sFILE ; pack(uchar const*,uint,__sFILE *)
+.text:00001638                 mov     ebp, eax
+.text:0000163A                 mov     [esp+2Ch+filename], esi ; stream
+.text:0000163D                 call    _fflush
+.text:00001642                 test    eax, eax
+.text:00001644                 mov     [esp+2Ch+filename], esi ; stream
+.text:00001647                 setz    al
+.text:0000164A                 movzx   eax, al
+.text:0000164D                 mov     edi, eax
+.text:0000164F                 call    _fclose
+.text:00001654                 and     edi, ebp
+.text:00001656                 test    eax, eax
+.text:00001658                 setz    al
+.text:0000165B                 movzx   eax, al
+.text:0000165E                 test    edi, eax
+.text:00001660                 jz      short loc_15F4
+.text:00001662                 mov     eax, 1
+.text:00001667                 jmp     short loc_1602
+.text:00001667 _Z11save_bitmapRK12BitmapHeaderPKhPKc endp
+
+
+FLOW:
+
+2. get_bitmap_info(_JNIEnv *, _jobject *, BitmapHeader &)
+   if(AndroidBitmapInfo->stride != AndroidBitmapInfo->width * 4) error
+   pole "stride" musi byc równe polu "width * 4"  linia:104
+3. flush_font_texture_line(int, int, int, GLint, char, char *, int)
+4. get_line_path(char *,uint,char const*,int)
+5. save_bitmap(BitmapHeader const&,uchar const*,char const*)
+6. pack(uchar const*,uint,__sFILE *)
+7. zlib deflateInit 
+8. zlib deflate
+9. ...
+   
