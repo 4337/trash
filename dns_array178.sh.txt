@@ -1,0 +1,273 @@
+#!/bin/bash
+
+##################################################################################
+#   Dns_chck v 1.7.0 30.09.2014                                                 #
+#   ..................................                                          #
+##################################################################################
+
+error_cnt=0
+BASE_FILE="./base.txt"   #change if u must
+
+DNS_SERVER="8.8.8.8" #google dns
+
+DEEP_LEVEL=2  # 0 = malo errorw | 1 = sprawdz czy ilosc wpisow w bazie rowna 
+              # sie ilosci wpisow w wynikach jesli nie wysli mail
+              # 2 = 1 + sprawdz czy soft fail spf|neutral|pass jesli tak wysli mail
+OIFS="$IFS"
+
+MAIL_FT="From: DNS_Check\nTo: dns <dns@mr.su>\nCc: m.r <marcin.ressel@mr.su>\nSubject: "
+MAIL_BODY=""
+
+###############################################################################
+
+function _set_env { #void
+         base_dir="$(dirname $0)"
+         cd $base_dir
+}
+
+###############################################################################
+
+MY_DEBUG=1           # 1=create debug file on fail | 2=create file on file && send msg to stdout
+DEBUG_FILE="./dns_chck_dbg_msg.txt"
+
+function _debug_msg { #msg_str
+         if [ "$MY_DEBUG" -ne 0 ]; then
+             __time__="$(date)"
+             echo "(dns_chck) $__time__ : $1" >> $DEBUG_FILE 
+             echo "dbg msg done!"
+         fi
+}
+
+function _debug_out { #msg_str
+         if [ "$MY_DEBUG" -eq 2 ]; then 
+             echo "$1"
+         fi
+}
+
+##############################################################################
+
+function _alert {  #arg1 arg2
+   echo -e "$MAIL_BODY" | /usr/sbin/sendmail -F"DNS_Check" "marcin.ressel@mr.su"  ##
+}
+
+function _add_mail_header { #subject #body
+         text_ver=$( echo "$2" | sed -e 's/<br[^>]*>/\n/g' -e 's/<[^>]*>//g' )
+         MAIL_BODY="$MAIL_FT$1\nMIME-Version: 1.0\nContent-Type: multipart/alternative; boundary=\"my_bound\"\n\nIgnored prolog\n--my_bound\nContent-Type: text/html;  charset=utf-8\n\n$2\n--my_bound\nContent-Type: text/plain; charset=utf-8\n\n$text_ver\n\n--my_bound--"
+}
+
+function _create_mail_body { #body
+         MAIL_BODY="$MAIL_BODY$1"
+}       
+
+##############################################################################
+
+function _chck_spf { #dns_server, domain
+         domain=$2
+         dns_srv=$1
+         _debug_out "DEBUG sent txt request spf chck!"
+         date_time=$(date)
+         dirty_result=$(host -t txt $domain $dns_srv)
+         if [ "$?" -eq 0 ]; then     #domain has txt record and query is ok
+             spf=$(echo $dirty_result | grep "spf")
+             if [ -z $spf ]; then     #spf is zero (no spf)
+                 _debug_out "DEBUG domain $domain has no spf record !"
+                 _create_mail_body "<b>Domena $domain nie ma zdefiniowanego rekordu SPF !</b><br/><b>Domena:</b> $domain<br/><b>Czas zapytania:</b> $date_time<br/><hr/>"
+                 ((++error_cnt))
+                 return;
+             else 
+                 _debug_out "DEBUG has spf record: $spf"
+                 if [ $DEEP_LEVEL -eq 2 ]; then # chck "~,+,?" soft fail,pass,neutral spf 
+                    : #
+                      #
+                 fi
+                 return
+             fi
+         fi
+}
+
+function _chck_axfr {  #domain ns1 ns2 nsX ...
+         i=1
+         args=("$@")
+         domain=$1
+         dirty_result=()
+         date_time=""
+
+         for(( ;i<${#args[@]}; )); do
+             tmp=${args[$i]}
+             len=${#tmp}
+             tmp=${tmp:0:((len - 1))}
+             tmp=$( echo "$tmp" | tr -d ' ')
+             _debug_out "DEBUG (send axfr request) host -l $domain $tmp:"
+             date_time=$(date)
+             dirty_result=$(host -a -l $domain $tmp)
+             if [ "$?" -eq 0 ]; then                       #no_error
+                 _debug_out "DEBUG (axfr success host -a -l $domain $tmp) = TRUE !!"
+                 _create_mail_body "<b>Możliwy transfer strefy dla domeny $domain !!</b><br/><b>Domena: </b>$domain<br/><b>Czas zapytania:</b> $date_time<br/><br/><font color=\"navy\">$dirty_result</font><br/><hr/>"
+                 ((++error_cnt))
+                 break;
+             fi
+             ((i++))
+         done
+}
+        
+##############################################################################
+
+function _queries {   # _queries server domain ns1 ns2 nsX ns...
+
+          OIFS="$IFS"
+          args=("$@")
+  
+          dns_server=$( echo ${args[0]} | tr -d ' ')
+          domain=$( echo ${args[1]} | tr -d ' ')
+          chck_spf=$( echo ${args[2]} | tr -d  ' ')
+ 
+          ns_array=()
+   
+          i=3
+          k=0
+          j=${#args[@]}
+          for(( ;i<j; )); do
+               ns_array[$k]=$( echo ${args[$i]} | tr -d ' ')
+               ((i++))
+               ((k++))
+          done
+
+          _debug_out "DEBUG (send request) host -t ns $domain $dns_server"
+
+          date_time="$(date)"
+          dirty_result=$(host -t ns $domain $dns_server | grep "name server")
+          if [ "$?" -eq 1 ]; then 
+             _debug_msg "host -t ns $domain $dns_server [fail] !!"
+             exit;
+          fi
+ 
+          j=0
+          i=0
+          IFS=" "
+          INDEX_OFF=3
+          ns_result=()
+          array_result=( $dirty_result )
+          for(( ;i<${#array_result[@]}; )); do
+              if [ "$i" -ne 0 ]; then
+                  mod=$(( $i % 3 ))
+                  if [ $mod == 0 ]; then
+                      ns_result[$j]=${array_result[$i]}
+                      ((++j))
+                  fi
+               fi
+               ((i++))
+          done
+          IFS="$OIFS"
+
+          i=0
+          size=${#ns_result[@]}
+          ((--size))
+          for(( ;i<$size; )); do 
+               len1=${#ns_result[$i]} 
+               len2=${#domain}
+               tmp=${ns_result[$i]:0:((len1 - len2))}
+               ns_result[$i]=$(echo $tmp | tr -d ' ')
+               ((i++))
+          done
+          
+          ns_res_size=${#ns_result[@]}
+          ns_arr_size=${#ns_array[@]}
+
+          ###################################################################################
+          # if result ns != array ns 
+          # jesli jest więcej dns w wyniku zapytania dla konkretnej domeny
+          # niż w pliku base.txt to zależnie od zmiennej DEEP_LEVEL podejmi stosowną akcje
+          # if(DEEP_LEVEL > 0) mail 
+          # else continue
+          ###################################################################################
+    
+          _debug_out "DEBUG (chck response ns count != base ns count) response:$ns_res_size base:$ns_arr_size"
+
+          if [ "$ns_res_size" -ne "$ns_arr_size" ]; then 
+              if [ "$DEEP_LEVEL" -gt 0 ]; then 
+                 ((++error_cnt))
+                 prev_ns="${ns_array[@]/#/}"
+                 _create_mail_body "<br/><b>Dodano lub usunięto serwery nazw dla domeny $domain !!</b><br/><b>Czas zapytania:</b> $date_time<br/><b>Poprzednie rekordy NS:</b>$prev_ns<br/><b>Aktualne rekordy NS:</b> $dirty_result<br/><hr/>"
+                 return;
+              fi
+          fi
+
+##########################################
+   
+
+          i=0
+          j=0
+          err_flag=0
+          for(( ;i<$ns_res_size; )); do
+ 
+              j=0
+
+              for(( ;j<$ns_arr_size; )); do
+ 
+                   rtmp=$( echo ${ns_result[$i]} | tr -d ' ' )
+                   ltmp=$( echo ${ns_array[$j]} | tr -d ' ' )
+ 
+                   if [ "$ltmp" == "$rtmp" ]; then                      #wtf false-positive
+                      _debug_out "DEBUG (chck l_ns == r_ns) $ltmp == $rtmp (TRUE) err_flag: $err_flag!"
+                      ((++err_flag))
+                      break; 
+                    fi
+
+                   ((++j))
+               done
+               ((++i))
+            done
+          
+            if [ "$err_flag" -ne "$ns_arr_size" ]; then
+               prev_ns="${ns_array[@]/#/}"
+               _create_mail_body "<b>Zmieniono serwery nazw dla domen należących do mr.su !!</b><br><b>Domena: </b>$domain<br/><b>Czas zapytania:</b> $date_time<br/><b>Aktualne rekordy NS:</b> $dirty_result<br/><b>Poprzednie rekordy NS:</b> $prev_ns<br/><hr/>"
+               error_cnt="$err_flag"
+            fi
+   
+            _chck_axfr $domain "${ns_result[@]/#/ }"
+         
+            if [ "$chck_spf" -eq 1 ]; then 
+                _chck_spf  $dns_server $domain
+            fi
+}
+
+##############################################################################
+
+_set_env
+
+IFS=$'\r' 
+a_file=( $(cat $BASE_FILE) )
+if [ "$?" -eq 1 ]; then 
+   _debug_out "DEBUG (no base file) $BASE_FILE !!"
+   _debug_msg "no $BASE_FILE !!"
+   IFS="$OIFS"
+   exit;
+fi
+
+IFS=$'\n'
+a_file=( ${a_file} )
+
+index=0
+IFS=':'
+for(( ;index<${#a_file[@]}; )); do
+   tmp_array=( ${a_file[$index]} )
+   _queries $DNS_SERVER "${tmp_array[@]/#/ }" $1
+   ((++index))
+done
+IFS="$OIFS"   #restore IFS
+
+_debug_out "DEBUG (error count) : $error_cnt !!"
+
+
+if [ "$error_cnt" -ne 0 ] ; then               #jeden zbiorczy email (jak chcesz po jednym dla każdej domeny to przenieś to do pętli)
+    _debug_out "DEBUG (send alert) !!"
+   _add_mail_header "DnsCHCK OPL Domain !" "$MAIL_BODY"
+   _alert 
+fi
+
+if [ "$MY_DEBUG" -eq 1 ]; then    #cron 
+    _time_=$(date)
+    echo "Run on $_time_" >> ./cron_run_chck.txt
+fi
+
+
