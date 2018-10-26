@@ -1,0 +1,11 @@
+"Struktura" pliku base.txt
+
+domena.pl:     1:   dns-1.domena.pl.:dns-2.domena.pl.
+   |           |               |                            |
+   |           +--+            +------------+               +-------------+
+domena którą      |                         |                             |
+monitorujemy     Sprawdz SPF            Name serwer N              Name serwer N+1
+                wartość true||false
+               (nie każda domena ma
+                zdefiniowany spf i
+                nie każda musi)
