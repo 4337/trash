@@ -2053,7 +2053,7 @@ bp 66c673a5 ".printf \"val=0x%x\\r\\n\",ecx;g;"
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
 
-! alokacja shadera ! 1  ! ; alokacja shadera ?!!? NDXGI::CDevice::AllocateCB
+! alokacja shadera ! 1  ! ; alokacja shadera ! NDXGI::CDevice::AllocateCB
 
 bp d3d11!NDXGI::CDevice::AllocateCB ".printf \" structure = 0x%x D3DKMT_HANDLE = 0x%x CntAllocations = 0x%x\\r\\n\",poi(esp+8),poi(poi(esp+8) + 0x0c),poi(poi(esp+8) + 0x10);g;"
 
@@ -2062,7 +2062,6 @@ bp d3d11!NDXGI::CDevice::AllocateCB ".printf \" structure = 0x%x D3DKMT_HANDLE =
 bp 6bd65dcc ".printf \" info->hAllocation = 0x%x \\r\\n\",poi(poi(esp+8) + 0x18);g;"   //,poi(poi(esp+8) + 0x18 + 4);g;"
   
 **********************************************************************************
---- kolejny bp tu TODO: musimy ustalić adres prawidłowy - bo aslr lol
 
 6665737C | 8B07                     | mov eax,dword ptr ds:[edi]                                               | ;hnd_allocatioon - ultra mega waze to jest HANDLER do shareda 
 
