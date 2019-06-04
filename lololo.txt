@@ -4,7 +4,7 @@ Funckja to StringCchCopyNEx która operuje na prostych typach danych (tablice zn
 Wiemy również że tylko dwa ze wszystkich rejsetrów procesora które są istotne w przebiegu wykonania 
 funkcji wskazują na pamięć dynamiczną EBX (źródło), EDX (cel), korespondują one 
 z argumentami pszSrc i pszDest. 
-Reszta rejstrów EDI, EAX, ESI słóżą jako liczniki i indeksy w wykonowywanej pętli kopiującej dane.
+Reszta rejstrów EDI, EAX, ESI służą jako liczniki i indeksy w wykonowywanej pętli kopiującej dane.
 Rejstr ECX służy jako zmienna tymczasowa przy procesie kopiowania.
 Pozostałe rejstry nie mają znaczenia.
 Wstępnie możemy również powiedzieć że mamy 13 wywołań StringCchCopyNEx w IE11, są to oczywiście 
