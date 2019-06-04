@@ -12,6 +12,7 @@ wywołania bezpośrednie.
 Wiemy że funkcja to __fastcall więc nie ma sensu wyszukiewanie na stosie  (EBP||ESP) referencji do pszDest oraz
 pszSrc (są przekazywane przez ECX oraz EDX) - przynajmniej w samym wywołaniu StringCchCopyNEx, a 
 nie dysponujemy "callstackiem".
+Wiemy że funkcja nie ma FPO więc ESP i EBP jest wykorzystywany jako wskaźnik stosu, argumentów i zmiennych lokalych.
    
 ------------------------------------------------------------------------------------
 xref : wstępnie 13 wywołań StringCchCopyNEx 
@@ -153,7 +154,7 @@ Code disassembly:
 Z analizy wiemy że błąd pojawia się w pierwszej iterakcji pętli, już przy próbie skopiowania 
 *pszDest = pszSrc[0], wskazuje na to wartośći rejestru ESI = 00000000.
 Błędna instrukcja to próba odczytu wartości WORD z bufora źródłowego wskazywanego przez rejestr EBX (245f3000).
-Z wartości resjestrów EBX (źródło), EDX (cel) i porównania ich z wartością resjtru ESP możemy wywnioskować 
+Z wartości resjestrów EBX (źródło), EDX (cel) i porównania ich z wartością resjtru ESP i EBP (normalna ramka stosu, brak FPO) możemy wywnioskować 
 że ciągi znaków na których operuje funkcja to pamięć dynamiczna - to może umożliwić pewne założenia :
 Pamięć dynamiczna i błąd w pierwszej interacji pętli może wskazywać na błąd typu UAF.
 To zkolei może wyjaśniać dlaczego "repro" jest nie stabilne (garbage collerctor - pamieć być może nie jest zwalaniana w każdym przydpadku,
