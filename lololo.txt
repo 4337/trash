@@ -13,6 +13,12 @@ Wiemy że funkcja to __fastcall więc nie ma sensu wyszukiewanie na stosie  (EBP
 pszSrc (są przekazywane przez ECX oraz EDX) - przynajmniej w samym wywołaniu StringCchCopyNEx, a 
 nie dysponujemy "callstackiem".
 Wiemy że funkcja nie ma FPO więc ESP i EBP jest wykorzystywany jako wskaźnik stosu, argumentów i zmiennych lokalych.
+Wiemy że rozmiar docelowego buffora wynosi +-0x0a bajtów.
+Adres bufora źródłowego wskazywnageo przez rejestr EBX (245f3000) ma wysoką wartość, jeśli ktoś kiedyś pracował 
+przy ekspolitacji błędów rezydujących na stercie w Windows to wie że tak wysokie adresy jeśli w ogóle to są wykorzystywane 
+przez znacznie większe wilkości danych niż +-0x0A to trochę psuje nam początkowe założenie co do 
+typu błędu z jakim mamy doczynienia, ale narazie jesteśmy tylko na etapie założeń
+
    
 ------------------------------------------------------------------------------------
 xref : wstępnie 13 wywołań StringCchCopyNEx 
@@ -36,7 +42,7 @@ xref : wstępnie 13 wywołań StringCchCopyNEx
 
 72E9F797 | 8BCA                     | mov ecx,edx                                  | ;ecx = edx = arg1 = cchDest
 
-72E9F799 | 81E6 00010000            | and esi,100                                  | ;if( !( esi = dwFlags  & 0x4)  ) 
+72E9F799 | 81E6 00010000            | and esi,100                                  | ;if( !( esi = dwFlags  & 0x100)  ) 
 72E9F79F | 0F85 62F81F00            | jne <mshtml._dwFlags_and_0x4_false_>         |
 
 72E9F7A5 | 85C9                     | test ecx,ecx                                 | ;if( cchDest == 0 )
@@ -64,6 +70,7 @@ xref : wstępnie 13 wywołań StringCchCopyNEx
 72E9F7E0 | 0F85 59F81F00            | jne mshtml.7309F03F                          |
 
 72E9F7E6 | 33F6                     | xor esi,esi                                  | esi:_DbgUiRemoteBreakin@4
+
 72E9F7E8 | F745 18 00E0FFFF         | test dword ptr ss:[ebp+18],FFFFE000          | if (! (dwFlags & 0xFFFFE000) )
 72E9F7EF | 0F85 5EF81F00            | jne mshtml.7309F053                          |
 
