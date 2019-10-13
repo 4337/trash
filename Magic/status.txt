@@ -123,3 +123,5 @@
 
              Aktualnie globalna klasa nie jest modyfikowana przy ustawianiu właściwości, trzeba dodać modyfikacje 
 			 w js_let, assign, var, const
+			 
+			 albo zrbimy metodę js_protperty(obj, prop, value = null) która będzie obsługiwała tego typu sytuacje 
