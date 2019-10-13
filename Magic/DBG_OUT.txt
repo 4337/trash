@@ -1,0 +1,146 @@
+D:\Magic>php test.php
+[DBG] random_main_class :: c_name : _Symbol
+[DBG] get___base_class_name__ :: js_object : jsv_cyf1c8l type _Symbol n : Symbol
+[DBG] get_methods_by_object :: js_object : jsv_cyf1c8l class[name='Symbol'] size of methods : 7
+[DBG] get_properties_by_object :: js_object : jsv_cyf1c8l class[name='Symbol'] size of properties : 2
+[DBG] random_main_class :: c_name : _Function
+[DBG] get___base_class_name__ :: js_object : jsv_ka9ynzh type _Function n : Function
+[DBG] get_methods_by_object :: js_object : jsv_ka9ynzh class[name='Function'] size of methods : 11
+[DBG] get_properties_by_object :: js_object : jsv_ka9ynzh class[name='Function'] size of properties : 6
+[DBG] random_main_class :: c_name : _Number
+[DBG] get___base_class_name__ :: js_object : Number type _Number n : Number
+[DBG] get_methods_by_object :: js_object : Number class[name='Number'] size of methods : 14
+[DBG] get_properties_by_object :: js_object : Number class[name='Number'] size of properties : 11
+[DBG] random_main_class :: c_name : _Array
+[DBG] get___base_class_name__ :: js_object : jsv_av8jmj8 type _Array n : Array
+[DBG] get_methods_by_object :: js_object : jsv_av8jmj8 class[name='Array'] size of methods : 2
+[DBG] get_properties_by_object :: js_object : jsv_av8jmj8 class[name='Array'] size of properties : 3
+[DBG] random_main_class :: c_name : _Array
+[DBG] get___base_class_name__ :: js_object : jsv_bqiyekl type _Array n : Array
+[DBG] get_methods_by_object :: js_object : jsv_bqiyekl class[name='Array'] size of methods : 2
+[DBG] get_properties_by_object :: js_object : jsv_bqiyekl class[name='Array'] size of properties : 3
+[DBG] random_main_class :: c_name : _Boolean
+[DBG] get___base_class_name__ :: js_object : jsv_kngrv5u type _Boolean n : Boolean
+[DBG] get___base_class_name__ :: (type != JS_PARENT_TYPE) n : Function
+[DBG] get_methods_by_object :: js_object : jsv_kngrv5u class[name='Function'] size of methods : 11
+[DBG] get_properties_by_object :: js_object : jsv_kngrv5u class[name='Function'] size of properties : 6
+0].
+   var-name     : jsv_cyf1c8l
+   var-type     : Symbol
+   has-instance : 1
+1].
+   var-name     : jsv_ka9ynzh
+   var-type     : Function
+   has-instance : 1
+2].
+   var-name     : Number
+   var-type     : Number
+   has-instance : 0
+[DBG] context->var_index_1 :: vars[0] : jsv_cyf1c8l js_object : jsv_cyf1c8l
+[DBG] JS_GRAMMAR::context::js_var : index : 0 r_value :  o-l : jsv_cyf1c8l
+var jsv_cyf1c8l = Symbol(Symbol.prototype,"de");
+[DBG] JS_GRAMMAR::random_property : js_object : jsv_av8jmj8 p : __proto__
+[DBG] JS_PRIMITIVES::__get : name : __proto__
+[DBG] JS_PRIMITIVES::__get : name : __proto__
+[DBG] get___base_class_name__ :: js_object : jsv_av8jmj8.__proto__ type ___proto__ n : __proto__
+[DBG] get___base_class_name__ :: (type == JS_PARENT_TYPE) : __prev__->has_varname == TRUE : n : Array
+[DBG] get_properties_by_object :: js_object : jsv_av8jmj8.__proto__ class[name='Array'] size of properties : 3
+[DBG] JS_PRIMITIVES::__get : name : __proto__
+[DBG] get___base_class_name__ :: js_object : jsv_av8jmj8.__proto__ type ___proto__ n : __proto__
+[DBG] get___base_class_name__ :: (type == JS_PARENT_TYPE) : __prev__->has_varname == TRUE : n : Array
+[DBG] get_methods_by_object :: js_object : jsv_av8jmj8.__proto__ class[name='Array'] size of methods : 2
+[DBG] JS_PRIMITIVES::__get : name : __proto__
+[DBG] JS_GRAMMAR::random_property : js_object : jsv_av8jmj8 p : prototype
+[DBG] JS_PRIMITIVES::__get : name : prototype
+[DBG] JS_PRIMITIVES::__get : name : prototype
+[DBG] get___base_class_name__ :: js_object : jsv_av8jmj8.prototype type _prototype n : prototype
+[DBG] get___base_class_name__ :: (type == JS_PARENT_TYPE) : __prev__->has_varname == TRUE : n : Array
+[DBG] get_properties_by_object :: js_object : jsv_av8jmj8.prototype class[name='Array'] size of properties : 3
+[DBG] JS_PRIMITIVES::__get : name : prototype
+[DBG] get___base_class_name__ :: js_object : jsv_av8jmj8.prototype type _prototype n : prototype
+[DBG] get___base_class_name__ :: (type == JS_PARENT_TYPE) : __prev__->has_varname == TRUE : n : Array
+[DBG] get_methods_by_object :: js_object : jsv_av8jmj8.prototype class[name='Array'] size of methods : 2
+[DBG] JS_PRIMITIVES::__get : name : prototype
+[DBG] JS_GRAMMAR::random_property : js_object : jsv_av8jmj8 p : __proto__
+[DBG] JS_PRIMITIVES::__get : name : __proto__
+[DBG] JS_PRIMITIVES::__get : name : __proto__
+[DBG] get___base_class_name__ :: js_object : jsv_av8jmj8.__proto__ type ___proto__ n : __proto__
+[DBG] get___base_class_name__ :: (type == JS_PARENT_TYPE) : __prev__->has_varname == TRUE : n : Array
+[DBG] get_properties_by_object :: js_object : jsv_av8jmj8.__proto__ class[name='Array'] size of properties : 3
+[DBG] JS_PRIMITIVES::__get : name : __proto__
+[DBG] get___base_class_name__ :: js_object : jsv_av8jmj8.__proto__ type ___proto__ n : __proto__
+[DBG] get___base_class_name__ :: (type == JS_PARENT_TYPE) : __prev__->has_varname == TRUE : n : Array
+[DBG] get_methods_by_object :: js_object : jsv_av8jmj8.__proto__ class[name='Array'] size of methods : 2
+[DBG] JS_PRIMITIVES::__get : name : __proto__
+[DBG] JS_GRAMMAR::random_property : js_object : jsv_av8jmj8 p : __proto__
+[DBG] JS_PRIMITIVES::__get : name : __proto__
+[DBG] JS_PRIMITIVES::__get : name : __proto__
+[DBG] get___base_class_name__ :: js_object : jsv_av8jmj8.__proto__ type ___proto__ n : __proto__
+[DBG] get___base_class_name__ :: (type == JS_PARENT_TYPE) : __prev__->has_varname == TRUE : n : Array
+[DBG] get_properties_by_object :: js_object : jsv_av8jmj8.__proto__ class[name='Array'] size of properties : 3
+[DBG] JS_PRIMITIVES::__get : name : __proto__
+[DBG] get___base_class_name__ :: js_object : jsv_av8jmj8.__proto__ type ___proto__ n : __proto__
+[DBG] get___base_class_name__ :: (type == JS_PARENT_TYPE) : __prev__->has_varname == TRUE : n : Array
+[DBG] get_methods_by_object :: js_object : jsv_av8jmj8.__proto__ class[name='Array'] size of methods : 2
+[DBG] JS_PRIMITIVES::__get : name : __proto__
+[DBG] JS_GRAMMAR::random_property : js_object : jsv_bqiyekl p : prototype
+[DBG] JS_PRIMITIVES::__get : name : prototype
+[DBG] JS_PRIMITIVES::__get : name : prototype
+[DBG] get___base_class_name__ :: js_object : jsv_bqiyekl.prototype type _prototype n : prototype
+[DBG] get___base_class_name__ :: (type == JS_PARENT_TYPE) : __prev__->has_varname == TRUE : n : Array
+[DBG] get_properties_by_object :: js_object : jsv_bqiyekl.prototype class[name='Array'] size of properties : 3
+[DBG] JS_PRIMITIVES::__get : name : prototype
+[DBG] get___base_class_name__ :: js_object : jsv_bqiyekl.prototype type _prototype n : prototype
+[DBG] get___base_class_name__ :: (type == JS_PARENT_TYPE) : __prev__->has_varname == TRUE : n : Array
+[DBG] get_methods_by_object :: js_object : jsv_bqiyekl.prototype class[name='Array'] size of methods : 2
+[DBG] JS_PRIMITIVES::__get : name : prototype
+[DBG] JS_GRAMMAR::random_property : js_object : jsv_av8jmj8 p : constructor
+[DBG] JS_PRIMITIVES::__get : name : constructor
+[DBG] JS_PRIMITIVES::__get : name : constructor
+[DBG] get___base_class_name__ :: js_object : jsv_av8jmj8.constructor type _constructor n : constructor
+[DBG] get___base_class_name__ :: (type != JS_PARENT_TYPE) n : Function
+[DBG] get_properties_by_object :: js_object : jsv_av8jmj8.constructor class[name='Function'] size of properties : 6
+[DBG] JS_PRIMITIVES::__get : name : constructor
+[DBG] get___base_class_name__ :: js_object : jsv_av8jmj8.constructor type _constructor n : constructor
+[DBG] get___base_class_name__ :: (type != JS_PARENT_TYPE) n : Function
+[DBG] get_methods_by_object :: js_object : jsv_av8jmj8.constructor class[name='Function'] size of methods : 11
+[DBG] JS_PRIMITIVES::__get : name : constructor
+[DBG] JS_GRAMMAR::random_property : js_object : jsv_bqiyekl p : constructor
+[DBG] JS_PRIMITIVES::__get : name : constructor
+[DBG] JS_PRIMITIVES::__get : name : constructor
+[DBG] get___base_class_name__ :: js_object : jsv_bqiyekl.constructor type _constructor n : constructor
+[DBG] get___base_class_name__ :: (type != JS_PARENT_TYPE) n : Function
+[DBG] get_properties_by_object :: js_object : jsv_bqiyekl.constructor class[name='Function'] size of properties : 6
+[DBG] JS_PRIMITIVES::__get : name : constructor
+[DBG] get___base_class_name__ :: js_object : jsv_bqiyekl.constructor type _constructor n : constructor
+[DBG] get___base_class_name__ :: (type != JS_PARENT_TYPE) n : Function
+[DBG] get_methods_by_object :: js_object : jsv_bqiyekl.constructor class[name='Function'] size of methods : 11
+[DBG] JS_PRIMITIVES::__get : name : constructor
+[DBG] context->var_index_1 :: vars[0] : jsv_cyf1c8l js_object : jsv_ka9ynzh
+[DBG] context->var_index_1 :: vars[1] : jsv_ka9ynzh js_object : jsv_ka9ynzh
+[DBG] JS_GRAMMAR::context::js_let : index : 1 r_value :  o-l : jsv_ka9ynzh
+let jsv_ka9ynzh = new Function("a","b","c","d","e","b0=jsv_av8jmj8.__proto__;a1=jsv_av8jmj8.prototype;c2=jsv_av8jmj8.__proto__;d3=jsv_bqiyekl.prototype;e4=jsv_av8jmj8.constructor;evil=(b0 += jsv_cyf1c8l)|(a1 instanceof Object)*(jsv_av8jmj8.__proto__ ^ a1)%(c2++)/(c2 instanceof Object)===(jsv_ka9ynzh in jsv_cyf1c8l)||(jsv_ka9ynzh in jsv_cyf1c8l)||(e4 * Number)&(e4 ^= jsv_ka9ynzh)==(e4 instanceof Boolean)*(jsv_bqiyekl.constructor == e4);return jsv_ka9ynzh;");
+var jsv_cyf1c8l type is : _Symbol
+[DBG] JS_PRIMITIVES::__get : name : __proto__
+[DBG] get___base_class_name__ :: js_object : jsv_ka9ynzh type _Function n : Function
+[DBG] get___base_class_name__ :: js_object : Function type _Function n : Function
+[DBG] get_properties_by_object :: js_object : Function class[name='Function'] size of properties : 5
+[DBG] get___base_class_name__ :: js_object : Function type _Function n : Function
+[DBG] get_methods_by_object :: js_object : Function class[name='Function'] size of methods : 11
+[DBG] context->var_index_1 :: vars[0] : jsv_cyf1c8l js_object : jsv_cyf1c8l
+jsv_cyf1c8l.__proto__ = jsv_ka9ynzh;
+var jsv_cyf1c8l type is : _Function
+0].
+   var-name     : jsv_cyf1c8l
+   var-type     : Function
+   has-instance : 0
+1].
+   var-name     : jsv_ka9ynzh
+   var-type     : Function
+   has-instance : 1
+2].
+   var-name     : Number
+   var-type     : Number
+   has-instance : 0
+
+D:\Magic>

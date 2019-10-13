@@ -1,0 +1,106 @@
+21.08.2019 - TODO: Dokończenie js_primitives.php: emulated part: __defineGetter__, __lookupGetter__, __defineSetter__, __lookupSetter__
+21.08.2019 - js_primitives.php: emulated part - jest skończone
+21.08.2019 - TODO: Dokończenie payload.php
+25.08.2019 - Payload skończony
+27.08.2019 - TODO: rozwiązanie problemu w utils::value_type, przypadek is_array
+28.08.2019 - (P_ID:1) Informacje o typie muszą być pobierane z xml-a ? a nie tak jak teraz z poziomu PHP (albo tak i tak)
+             eg. utils::value_type( $val )
+			 ...
+			 jsv_351dk1d = jsv_8v2xhby.arguments;
+             var jsv_351dk1d type is : _String
+			 
+			 arguments jest typu JS_ARRAY, ale weryfikując to za pomocą utils::value_type 
+			 dostaniemy JS_STRING.
+			 utils::value_type jest do całkowitej zmiany !?! Musi się opierać o info z xml-a
+
+             koncepcja rozwiązania:
+			 if( is_object( val ) == false ) :
+			     return check_type_in_xml( val )
+			 else :
+			      old_utils::value_type( val )
+30.08.2019 - (P_ID:1) - wstępnie został poprawiony | context->property_info
+30.08.2019 - TODO: js_let, js_assign - dokończyć i przetestować
+05.09.2019 - (P_ID:2) - Gdzieś zmieniana jest wartość __has_instance__ - chociaż w danym przypadku raczej nie powinna być zmieniana
+
+             0].
+                var-name     : jsv_xz1av36
+                var-type     : Boolean
+                has-instance : 1
+			 1].
+                var-name     : jsv_jdlfiqm
+                var-type     : Array
+                has-instance : 1
+				
+		    let jsv_xz1av36 = Boolean(Array());
+			...
+			jsv_xz1av36 = jsv_jdlfiqm;
+			...
+            jsv_xz1av36 = 1337
+			...
+			jsv_xz1av36 = jsv_jdlfiqm.prototype;
+			...
+			jsv_xz1av36.__proto__.constructor.__proto__.constructor.__proto__.constructor.__proto__.constructor.__proto__ = jsv_jdlfiqm.prototype;
+			...
+			jsv_xz1av36.length.constructor.__proto__ = "ALAMAKOTA_TO_BARDZODOBRARZECZ";
+			...
+			
+			0].
+               var-name     : jsv_xz1av36
+               var-type     : Array
+               has-instance : 0
+            1].
+               var-name     : jsv_jdlfiqm
+               var-type     : Array
+               has-instance : 1
+			   
+05.09.2019 - (P_ID:2) - Nadal nie działa, problem leży gdzie indziej
+05.09.2019 - (P_ID:2) - Problem został wyeliminowany. Żródłem prblemu była sytuacja kiedy
+                        lewy i prawy są tego samego typu, wtedy metoda js_assign zwracała return $l_object.' = '.$r_value;
+			i kończyła działanie nie uwzględniając faktu że prawy może nie mieć instancji a lewy tak i odwrotnie :P
+			
+08.09.2019 - wprowadzono zmiany związane z generowaniem funkcji.
+             Poprzednio podczas generowania funkcji mogły zostać wykorzystane zmienne z context->__vars__, ale ponieważ 
+			 tworzenie ciała funkcji występuje zazwyczaj na początku cyklu budowania kodu (danego kontekstu) 
+			 to pojawiał się problem wynikający z faktu że między deklaracją funkcji a jej wywołaniem typy zmienych z których 
+			 taka funkcja korzysta się zmienią, w związku z czym funkcja będzie operować na zmiennych wkorzystując nieprawidłowe typy.
+			 eg:
+			 
+			 var a = new Object();
+			 var b = new Function("x","t = a.assign();");
+			 a = new String("");
+			 b( 1337 ) //<- a.assign() powoduje błąd
+			 
+			 Problem został naprawiony przez dodanie metody context->immutable() 
+			 która przenosi mniej więcej 1/3 utworzonych zmiennych z context->__vars__ do context->__immutable__ 
+			 zmienne z context->__immutable__ nigdy nie są modyfikowane. 
+			 
+			 Dodano również wersje call_var o nazwie call_var_ex ktora operuje na zmiennych z context->__immutable__
+			 oraz context->random_immutable() zwracającą losową zmienną z context->__immutable__
+
+                         Pozostaje oczywiście jeszcze kwestia taka jak :
+
+
+                         a = Object;
+                         c = new Object();
+                         b = new Function("x","a.zrob_cos()");
+                         c.constructor.__proto__ = null; //<- modyfikuje (globalnie) widoczność metod w Object więc wywołanie a.zrob_cos() moze powodować błąd, ale 
+                                                         // akceptujemy to w końcu to generator kodu a nie silnik javascriptu 
+                         
+			 
+			 
+13.09.2019 - immutable() zmieniono na set_immutable() - jest bardziej intuicyjnie - wywołanie nadal musi być manualne
+18.09.2019 - Trzeba ograniczyć ilość złożonych typów przekazywanych jako parametry przy tworzeniu tablic bo jest ich za dużo
+19.09.2019 - dokonczyc js_const - brzydko ale skonczone i dziala
+11.10.2019 - (P_ID:3) - todo :
+
+           Fatal error: Uncaught Exception: JS_GRAMMAR::context::js_assign : redeclaration of const jsv_ywfmd2l.object in D:\Magic\js_grammar.php:600
+           Stack trace:
+           #0 D:\Magic\test.php(40): context->js_assign(Object(_Symbol), Object(_Array))
+           #1 {main}
+           thrown in D:\Magic\js_grammar.php on line 600
+		   
+		   Trzeba pamiętać aby rozwiązać problem przekazywania stałych jako parametry operacji przypisań
+		   Możemy to np. obsłużyć w bloku try/catch (php) i zrobić skip line, albo zaimplementować na poziomie 
+		   poszczególnych metod generatora 
+		   
+11.10.2019 - TODO: dokończyć random_method_by_o i js_call
