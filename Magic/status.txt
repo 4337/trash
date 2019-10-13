@@ -104,3 +104,22 @@
 		   poszczególnych metod generatora 
 		   
 11.10.2019 - TODO: dokończyć random_method_by_o i js_call
+13.10.2019 - TODO:
+
+             String;
+             function String()
+
+             <<String.prototype.b;
+             >>undefined
+             <<a = new String("A");
+             >>String { "A" }
+
+             <<a.__proto__.b = 1337
+             >>1337
+             <<String.prototype.b;
+             >>1337
+             <<a.b;
+             >>1337
+
+             Aktualnie globalna klasa nie jest modyfikowana przy ustawianiu właściwości, trzeba dodać modyfikacje 
+			 w js_let, assign, var, const
