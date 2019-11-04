@@ -163,7 +163,11 @@ class payload {
 							 if( self::$jsc != null ) {
                                  $t .= self::$jsc->random_var()->object;
                              } else {
-							   $t .= $arg1;
+							   if( R(0,1) > 0 ) {
+								   $t .= self::simple_arg( JS_NUMBER );
+							   } else {
+							     $t .= $arg1;
+							   }
 							 }
 					     } else {
 						   $t .= $arg1;
