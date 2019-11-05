@@ -166,7 +166,6 @@ class payload {
                                  $t .= self::$jsc->random_var()->object;
                              } else {
 							     $t .= $arg1;
-							   }
 							 }
 					     } else {
 						   $t .= $arg1;
