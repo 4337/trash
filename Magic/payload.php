@@ -160,12 +160,11 @@ class payload {
 						 $t  = $arg;
 						 $t .= ' '.$mid[ R(0, sizeof($mid) - 1) ].' ';
 						 if( R(0, 1) > 0) {
-							 if( self::$jsc != null ) {
+							 if( R(0,1) > 0 ) {
+								   $t .= self::simple_arg( JS_NUMBER );
+							 } elseif( self::$jsc != null ) {
                                  $t .= self::$jsc->random_var()->object;
                              } else {
-							   if( R(0,1) > 0 ) {
-								   $t .= self::simple_arg( JS_NUMBER );
-							   } else {
 							     $t .= $arg1;
 							   }
 							 }
