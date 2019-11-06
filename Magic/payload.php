@@ -123,6 +123,11 @@ class payload {
 	  */
 	  public static function function_body( $argv ) {
 		   
+		   
+		     if( R(0,1) == 0) {
+				 return ""; 
+			 }
+		   
 		     $r = '';
 			 $f = '';
 		     $operations = [];
