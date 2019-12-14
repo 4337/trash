@@ -6,7 +6,6 @@ void xAllocator();
 
 void xAllocator() {
 	 
-	const unsigned int alloc_size = 0x38;
 	unsigned char* alloc_hnd[BE_HEAP] = { nullptr };
 	unsigned char* alloc_copy[BE_HEAP] = { nullptr };
 
