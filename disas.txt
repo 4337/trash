@@ -1,0 +1,199 @@
+00007FFD404B93D1 | 8BC4                     | mov eax,esp                                                      |
+00007FFD404B93D3 | 4C:8940 18               | mov qword ptr ds:[rax+18],r8                                     |
+00007FFD404B93D7 | 48:8950 10               | mov qword ptr ds:[rax+10],rdx                                    |
+00007FFD404B93DB | 48:8948 08               | mov qword ptr ds:[rax+8],rcx                                     |
+
+00007FFD404B93DF | 55                       | push rbp                                                         |
+00007FFD404B93E0 | 56                       | push rsi                                                         |
+00007FFD404B93E1 | 57                       | push rdi                                                         |
+00007FFD404B93E2 | 41:54                    | push r12                                                         |
+00007FFD404B93E4 | 41:55                    | push r13                                                         |
+00007FFD404B93E6 | 41:56                    | push r14                                                         |
+00007FFD404B93E8 | 41:57                    | push r15                                                         |
+
+00007FFD404B93EA | 48:83EC 40               | sub rsp,40                                                       |
+
+00007FFD404B93EE | 48:C740 A8 FEFFFFFF      | mov qword ptr ds:[rax-58],FFFFFFFFFFFFFFFE                       |
+00007FFD404B93F6 | 48:8958 20               | mov qword ptr ds:[rax+20],rbx                                    |
+
+00007FFD404B93FA | 49:8BF1                  | mov rsi,r9                                                       |
+00007FFD404B93FD | 48:8BF9                  | mov rdi,rcx                                                      |
+00007FFD404B9400 | 45:33F6                  | xor r14d,r14d                                                    | ;0
+00007FFD404B9403 | 41:8BCE                  | mov ecx,r14d                                                     | ;ecx = 0
+00007FFD404B9406 | 41:8BDE                  | mov ebx,r14d                                                     | ;ebx = 0
+00007FFD404B9409 | 0F1F80 00000000          | nop dword ptr ds:[rax],eax                                       |
+00007FFD404B9410 | 8BC3                     | mov eax,ebx                                                      |
+00007FFD404B9412 | 4C:39B4C7 38050000       | cmp qword ptr ds:[rdi+rax*8+538],r14                             | ;if( base + rax * 8 + 0x538 == 0)
+00007FFD404B941A | 74 11                    | je atidxx64.7FFD404B942D                                         |
+00007FFD404B941C | 898F 34050000            | mov dword ptr ds:[rdi+534],ecx                                   |
+00007FFD404B9422 | 48:8BD6                  | mov rdx,rsi                                                      |
+00007FFD404B9425 | 48:8BCF                  | mov rcx,rdi                                                      |
+00007FFD404B9428 | E8 9396FFFF              | call <atidxx64.sub_7FFD404B2AC0>                                 | ;rax 
+00007FFD404B942D | 8D4B 01                  | lea ecx,qword ptr ds:[rbx+1]                                     | ;increment counter
+00007FFD404B9430 | 8BD9                     | mov ebx,ecx                                                      |
+00007FFD404B9432 | 83F9 07                  | cmp ecx,7                                                        | ;if(counter < 7)
+00007FFD404B9435 | 72 D9                    | jb <atidxx64.cln_internal_loop_00>                               |
+00007FFD404B9437 | 44:88B7 610B0000         | mov byte ptr ds:[rdi+B61],r14b                                   |
+00007FFD404B943E | 4C:8D2D A39A4401         | lea r13,qword ptr ds:[<&sub_7FFD404B85A0>]                       |
+00007FFD404B9445 | 4C:8D3D 5C544601         | lea r15,qword ptr ds:[<&sub_7FFD406C8900>]                       |
+00007FFD404B944C | 4C:8D25 AD6BEAFF         | lea r12,qword ptr ds:[7FFD40360000]                              |
+00007FFD404B9453 | 48:8B4F 10               | mov rcx,qword ptr ds:[rdi+10]                                    |
+00007FFD404B9457 | 48:8BD4                  | mov rdx,rsp                                                      |
+00007FFD404B945A | E8 610E8100              | call <atidxx64.cln_init_maybe_constructor_or_zeroes>             |
+00007FFD404B945F | 48:8BBC24 80000000       | mov rdi,qword ptr ss:[rsp+80]                                    |
+00007FFD404B9467 | 85C0                     | test eax,eax                                                     | ;eax zawsze jest 0
+00007FFD404B9469 | 0F85 11020000            | jne <atidxx64.cln_return_0>                                      |
+00007FFD404B946F | 41:8BCE                  | mov ecx,r14d                                                     | ;ecx = 0
+00007FFD404B9472 | 41:8BDE                  | mov ebx,r14d                                                     | ;ebx = 0
+00007FFD404B9475 | 666666:0F1F8400 00000000 | nop word ptr ds:[rax+rax],ax                                     |
+00007FFD404B9480 | 8BC3                     | mov eax,ebx                                                      |
+00007FFD404B9482 | 48:83BCC7 38050000 00    | cmp qword ptr ds:[rdi+rax*8+538],0                               |
+00007FFD404B948B | 74 15                    | je atidxx64.7FFD404B94A2                                         |
+00007FFD404B948D | 898F 34050000            | mov dword ptr ds:[rdi+534],ecx                                   |
+00007FFD404B9493 | 48:8D8F 580B0000         | lea rcx,qword ptr ds:[rdi+B58]                                   |
+00007FFD404B949A | 48:8BD7                  | mov rdx,rdi                                                      |
+00007FFD404B949D | E8 7E920D00              | call atidxx64.7FFD40592720                                       | ; narazie nie istotne
+00007FFD404B94A2 | 8D4B 01                  | lea ecx,qword ptr ds:[rbx+1]                                     | ;increment counter
+00007FFD404B94A5 | 8BD9                     | mov ebx,ecx                                                      |
+00007FFD404B94A7 | 83F9 07                  | cmp ecx,7                                                        |
+00007FFD404B94AA | 72 D4                    | jb <atidxx64.cln_some_internal_loop>                             |
+00007FFD404B94AC | 48:8B07                  | mov rax,qword ptr ds:[rdi]                                       | ;rdi = table->function_off0x00
+00007FFD404B94AF | 4C:8B40 28               | mov r8,qword ptr ds:[rax+28]                                     | ; r8 = table->function_off0x28
+00007FFD404B94B3 | 49:3BC5                  | cmp rax,r13                                                      |
+00007FFD404B94B6 | 0F85 29020000            | jne <atidxx64.cln_call_some_0>                                   |
+00007FFD404B94BC | 4C:89B7 88030000         | mov qword ptr ds:[rdi+388],r14                                   |
+00007FFD404B94C3 | 44:89B7 B4010000         | mov dword ptr ds:[rdi+1B4],r14d                                  |
+00007FFD404B94CA | 41:8BDE                  | mov ebx,r14d                                                     | ;licznik petli ; zapewe 0
+00007FFD404B94CD | 0F1F00                   | nop dword ptr ds:[rax],eax                                       |
+00007FFD404B94D0 | 48:63C3                  | movsxd rax,ebx                                                   |
+00007FFD404B94D3 | 48:8D34C7                | lea rsi,qword ptr ds:[rdi+rax*8]                                 |
+00007FFD404B94D7 | 48:83BE 20020000 00      | cmp qword ptr ds:[rsi+220],0                                     |
+00007FFD404B94DF | 75 40                    | jne atidxx64.7FFD404B9521                                        |
+00007FFD404B94E1 | BA 38000000              | mov edx,38                                                       | ; rozmiar = 0x38
+00007FFD404B94E6 | 48:8B8F D0010000         | mov rcx,qword ptr ds:[rdi+1D0]                                   |
+00007FFD404B94ED | FF97 C8010000            | call qword ptr ds:[rdi+1C8]                                      | [rdi+1C8]:cln_allocate_heap
+00007FFD404B94F3 | 48:85C0                  | test rax,rax                                                     |
+00007FFD404B94F6 | 0F84 D7010000            | je <atidxx64.cln_heap_alloc_fail>                                |
+00007FFD404B94FC | 4C:8938                  | mov qword ptr ds:[rax],r15                                       |
+00007FFD404B94FF | 48:8978 08               | mov qword ptr ds:[rax+8],rdi                                     |
+00007FFD404B9503 | 4C:8970 10               | mov qword ptr ds:[rax+10],r14                                    |
+00007FFD404B9507 | 4C:8970 18               | mov qword ptr ds:[rax+18],r14                                    |
+00007FFD404B950B | 4C:8970 20               | mov qword ptr ds:[rax+20],r14                                    |
+00007FFD404B950F | 4C:8970 28               | mov qword ptr ds:[rax+28],r14                                    |
+00007FFD404B9513 | C740 30 007F0000         | mov dword ptr ds:[rax+30],7F00                                   |
+00007FFD404B951A | 48:8986 20020000         | mov qword ptr ds:[rsi+220],rax                                   | ;allocated_heap_size_0x38_ptr
+00007FFD404B9521 | FFC3                     | inc ebx                                                          |
+00007FFD404B9523 | 83FB 05                  | cmp ebx,5                                                        | ; while(ebx < 5)
+00007FFD404B9526 | 7C A8                    | jl <atidxx64.cln_internal_loop_alloc_heap>                       | ;...
+00007FFD404B9528 | 41:8BF6                  | mov esi,r14d                                                     | ;esi = 0
+00007FFD404B952B | 48:8BAC24 90000000       | mov rbp,qword ptr ss:[rsp+90]                                    |
+00007FFD404B9533 | 48:8B85 E0000000         | mov rax,qword ptr ss:[rbp+E0]                                    |
+00007FFD404B953A | 0FB648 06                | movzx ecx,byte ptr ds:[rax+6]                                    |
+00007FFD404B953E | 83F9 06                  | cmp ecx,6                                                        |
+00007FFD404B9541 | 77 3C                    | ja <atidxx64.cln_label_call_cln_alloc>                           |
+00007FFD404B9543 | 41:8B8C8C F4961500       | mov ecx,dword ptr ds:[r12+rcx*4+1596F4]                          |
+00007FFD404B954B | 49:03CC                  | add rcx,r12                                                      |
+00007FFD404B954E | FFE1                     | jmp rcx                                                          |
+00007FFD404B9550 | BE 04000000              | mov esi,4                                                        |
+00007FFD404B9555 | EB 28                    | jmp <atidxx64.cln_label_call_cln_alloc>                          |
+00007FFD404B9557 | BE 02000000              | mov esi,2                                                        |
+00007FFD404B955C | EB 21                    | jmp <atidxx64.cln_label_call_cln_alloc>                          |
+00007FFD404B955E | BE 10000000              | mov esi,10                                                       |
+00007FFD404B9563 | EB 1A                    | jmp <atidxx64.cln_label_call_cln_alloc>                          |
+00007FFD404B9565 | BE 20000000              | mov esi,20                                                       | 20:' '
+00007FFD404B956A | EB 13                    | jmp <atidxx64.cln_label_call_cln_alloc>                          |
+00007FFD404B956C | BE 00010000              | mov esi,100                                                      |
+00007FFD404B9571 | EB 0C                    | jmp <atidxx64.cln_label_call_cln_alloc>                          |
+00007FFD404B9573 | BE 40000000              | mov esi,40                                                       | 40:'@'
+00007FFD404B9578 | EB 05                    | jmp <atidxx64.cln_label_call_cln_alloc>                          |
+00007FFD404B957A | BE 80000000              | mov esi,80                                                       |
+00007FFD404B957F | 48:8B9F 28020000         | mov rbx,qword ptr ds:[rdi+228]                                   | ; rdi = buff || this / rbx = buff->off_0x228
+00007FFD404B9586 | 48:895C24 28             | mov qword ptr ss:[rsp+28],rbx                                    |
+00007FFD404B958B | BA 30000000              | mov edx,30                                                       | 30:'0'
+00007FFD404B9590 | 48:8BCB                  | mov rcx,rbx                                                      |
+00007FFD404B9593 | E8 18F42000              | call <atidxx64.cln_alloc>                                        |
+00007FFD404B9598 | 48:8918                  | mov qword ptr ds:[rax],rbx                                       | ;*ptr = rbx = buff->off_0x228
+00007FFD404B959B | 4C:8D40 08               | lea r8,qword ptr ds:[rax+8]                                      | ; r8 = &*ptr->prev_or_next
+00007FFD404B959F | 4C:894424 30             | mov qword ptr ss:[rsp+30],r8                                     |
+00007FFD404B95A4 | 4D:85C0                  | test r8,r8                                                       | ;*ptr->prev_or_next == nullptr
+00007FFD404B95A7 | 74 15                    | je <atidxx64.cln_ptr_next_or_prev_is_null>                       |
+00007FFD404B95A9 | 49:8938                  | mov qword ptr ds:[r8],rdi                                        | ;*ptr->prev_or_nex = rdi = buff
+00007FFD404B95AC | 41:8970 08               | mov dword ptr ds:[r8+8],esi                                      | *ptr->off_0x8 = esi = ilosc elementow ?!?
+00007FFD404B95B0 | 41:C740 0C 01000000      | mov dword ptr ds:[r8+C],1                                        |
+00007FFD404B95B8 | 4D:8970 20               | mov qword ptr ds:[r8+20],r14                                     | ;linked list albo stl moze vector w kazdym razie pojebane
+00007FFD404B95BC | EB 03                    | jmp atidxx64.7FFD404B95C1                                        |
+00007FFD404B95BE | 4D:8BC6                  | mov r8,r14                                                       |
+00007FFD404B95C1 | 49:8968 10               | mov qword ptr ds:[r8+10],rbp                                     |
+00007FFD404B95C5 | 4D:8970 18               | mov qword ptr ds:[r8+18],r14                                     |
+00007FFD404B95C9 | 48:8B9424 88000000       | mov rdx,qword ptr ss:[rsp+88]                                    |
+00007FFD404B95D1 | 48:8997 58030000         | mov qword ptr ds:[rdi+358],rdx                                   |
+00007FFD404B95D8 | 41:8B48 08               | mov ecx,dword ptr ds:[r8+8]                                      | ; ecx = ptr->off_0x8 = ilosc elementow
+00007FFD404B95DC | 8BC1                     | mov eax,ecx                                                      |
+00007FFD404B95DE | C1E8 02                  | shr eax,2                                                        |
+00007FFD404B95E1 | A8 01                    | test al,1                                                        |
+00007FFD404B95E3 | 74 0C                    | je atidxx64.7FFD404B95F1                                         |
+00007FFD404B95E5 | C782 0C020000 01000000   | mov dword ptr ds:[rdx+20C],1                                     |
+00007FFD404B95EF | EB 78                    | jmp atidxx64.7FFD404B9669                                        |
+00007FFD404B95F1 | 8BC1                     | mov eax,ecx                                                      |
+00007FFD404B95F3 | D1E8                     | shr eax,1                                                        |
+00007FFD404B95F5 | A8 01                    | test al,1                                                        |
+00007FFD404B95F7 | 74 09                    | je atidxx64.7FFD404B9602                                         |
+00007FFD404B95F9 | 44:89B2 0C020000         | mov dword ptr ds:[rdx+20C],r14d                                  |
+00007FFD404B9600 | EB 67                    | jmp atidxx64.7FFD404B9669                                        |
+00007FFD404B9602 | 8BC1                     | mov eax,ecx                                                      |
+00007FFD404B9604 | C1E8 04                  | shr eax,4                                                        |
+00007FFD404B9607 | A8 01                    | test al,1                                                        |
+00007FFD404B9609 | 74 0C                    | je atidxx64.7FFD404B9617                                         |
+00007FFD404B960B | C782 0C020000 02000000   | mov dword ptr ds:[rdx+20C],2                                     |
+00007FFD404B9615 | EB 52                    | jmp atidxx64.7FFD404B9669                                        |
+00007FFD404B9617 | 8BC1                     | mov eax,ecx                                                      |
+00007FFD404B9619 | C1E8 05                  | shr eax,5                                                        |
+00007FFD404B961C | A8 01                    | test al,1                                                        |
+00007FFD404B961E | 74 0C                    | je atidxx64.7FFD404B962C                                         |
+00007FFD404B9620 | C782 0C020000 03000000   | mov dword ptr ds:[rdx+20C],3                                     |
+00007FFD404B962A | EB 3D                    | jmp atidxx64.7FFD404B9669                                        |
+00007FFD404B962C | 8BC1                     | mov eax,ecx                                                      |
+00007FFD404B962E | C1E8 06                  | shr eax,6                                                        |
+00007FFD404B9631 | A8 01                    | test al,1                                                        |
+00007FFD404B9633 | 74 0C                    | je atidxx64.7FFD404B9641                                         |
+00007FFD404B9635 | C782 0C020000 05000000   | mov dword ptr ds:[rdx+20C],5                                     |
+00007FFD404B963F | EB 28                    | jmp atidxx64.7FFD404B9669                                        |
+00007FFD404B9641 | 8BC1                     | mov eax,ecx                                                      |
+00007FFD404B9643 | C1E8 07                  | shr eax,7                                                        |
+00007FFD404B9646 | A8 01                    | test al,1                                                        |
+00007FFD404B9648 | 74 0C                    | je atidxx64.7FFD404B9656                                         |
+00007FFD404B964A | C782 0C020000 04000000   | mov dword ptr ds:[rdx+20C],4                                     |
+00007FFD404B9654 | EB 13                    | jmp atidxx64.7FFD404B9669                                        |
+00007FFD404B9656 | C1E9 08                  | shr ecx,8                                                        |
+00007FFD404B9659 | 80E1 01                  | and cl,1                                                         |
+00007FFD404B965C | F6D9                     | neg cl                                                           |
+00007FFD404B965E | 1BC0                     | sbb eax,eax                                                      |
+00007FFD404B9660 | 83E0 06                  | and eax,6                                                        |
+00007FFD404B9663 | 8982 0C020000            | mov dword ptr ds:[rdx+20C],eax                                   |
+00007FFD404B9669 | 8B87 90030000            | mov eax,dword ptr ds:[rdi+390]                                   |
+00007FFD404B966F | 8982 10020000            | mov dword ptr ds:[rdx+210],eax                                   |
+00007FFD404B9675 | 49:8BD0                  | mov rdx,r8                                                       |
+00007FFD404B9678 | 48:8BCF                  | mov rcx,rdi                                                      |
+00007FFD404B967B | E8 20F30000              | call atidxx64.7FFD404C89A0                                       |
+00007FFD404B9680 | 4C:89B7 68020000         | mov qword ptr ds:[rdi+268],r14                                   |
+00007FFD404B9687 | 4C:89B7 B8020000         | mov qword ptr ds:[rdi+2B8],r14                                   |
+00007FFD404B968E | 4C:89B7 C0020000         | mov qword ptr ds:[rdi+2C0],r14                                   |
+00007FFD404B9695 | 48:8B07                  | mov rax,qword ptr ds:[rdi]                                       |
+00007FFD404B9698 | 33D2                     | xor edx,edx                                                      |
+00007FFD404B969A | 48:8BCF                  | mov rcx,rdi                                                      |
+00007FFD404B969D | FF50 20                  | call qword ptr ds:[rax+20]                                       |
+00007FFD404B96A0 | 80BF 600B0000 00         | cmp byte ptr ds:[rdi+B60],0                                      |
+00007FFD404B96A7 | 74 0C                    | je <atidxx64.cln_break_main_loop>                                |
+00007FFD404B96A9 | C687 600B0000 00         | mov byte ptr ds:[rdi+B60],0                                      |
+00007FFD404B96B0 | E9 9EFDFFFF              | jmp <atidxx64.cln_alloc_loop>                                    |
+00007FFD404B96B5 | 8B87 B4010000            | mov eax,dword ptr ds:[rdi+1B4]                                   |
+00007FFD404B96BB | 48:8B9C24 98000000       | mov rbx,qword ptr ss:[rsp+98]                                    |
+00007FFD404B96C3 | 48:83C4 40               | add rsp,40                                                       |
+00007FFD404B96C7 | 41:5F                    | pop r15                                                          |
+00007FFD404B96C9 | 41:5E                    | pop r14                                                          |
+00007FFD404B96CB | 41:5D                    | pop r13                                                          |
+00007FFD404B96CD | 41:5C                    | pop r12                                                          |
+00007FFD404B96CF | 5F                       | pop rdi                                                          |
+00007FFD404B96D0 | 5E                       | pop rsi                                                          |
+00007FFD404B96D1 | 5D                       | pop rbp                                                          |
+00007FFD404B96D2 | C3                       | ret                                                              |
