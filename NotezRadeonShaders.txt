@@ -1,0 +1,124 @@
+class unknow_object {
+       //vtable ptr +0
+	   unknow_object* next; //+8
+	   unknow_object* prev; //+16
+	   //...
+	   //...
+	   //...
+
+       public:
+	   
+       virtual ~unknow_object();
+}
+
+
+!lmi atidxx64 
+
+RVA: atidxx64 + 0x4BFEE2 = 00007FFD7BC2FEE2 | 0F85 F8FDFFFF            | jne <atidxx64.vuln_method_loop>                                             |
+
+atidxx64!AmdDxGsaFreeCompiledShader+0x45902f ".printf \"ptr=0x%p ptr->next=0x%p ptr->prev=0x%p\\r\\n\",@rbx,@r15,poi(@rbx+0x10);heap -p -a @rbx L6;g;"
+
+atidxx64!AmdDxGsaFreeCompiledShader+0x45902f ".printf \"ptr=0x%p ptr->next=0x%p ptr->prev=0x%p\\r\\n\",@rbx,@r15,poi(@rbx+0x10);g;"
+
+////////////////////////////////////////////////////////////////////////
+
+0:045> bp atidxx64!AmdDxGsaFreeCompiledShader+0x45902f ".printf \"ptr=0x%p ptr->next=0x%p ptr->prev=0x%p\\r\\n\",@rbx,@r15,poi(@rbx+0x10);g;"
+0:045> bl
+     0 e Disable Clear  00007ff9`a5affedf     0001 (0001)  0:**** atidxx64!AmdDxGsaFreeCompiledShader+0x45902f ".printf \"ptr=0x%p ptr->next=0x%p ptr->prev=0x%p\\r\\n\",@rbx,@r15,poi(@rbx+0x10);g;"
+0:045> g
+ptr=0x000001b5b395e910 ptr->next=0x000001b5b395e788 ptr->prev=0x000001b5b395ec28
+ptr=0x000001b5b395e788 ptr->next=0x000001b5b395dba0 ptr->prev=0x000001b5b395e910
+ptr=0x000001b5b395dba0 ptr->next=0x000001b5b395daf0 ptr->prev=0x000001b5b395e788
+ptr=0x000001b5b395daf0 ptr->next=0x000001b5b395bbd0 ptr->prev=0x000001b5b395dba0
+ptr=0x000001b5b395bbd0 ptr->next=0x000001b5b395ea98 ptr->prev=0x000001b5b395daf0
+ptr=0x000001b5b395ea98 ptr->next=0x000001b5b395da10 ptr->prev=0x000001b5b395bbd0
+ptr=0x000001b5b395da10 ptr->next=0x000001b5b395bf48 ptr->prev=0x000001b5b395ea98
+ptr=0x000001b5b395bf48 ptr->next=0x000001b5b395be68 ptr->prev=0x000001b5b395da10
+ptr=0x000001b5b395be68 ptr->next=0x000001b5b395bd88 ptr->prev=0x000001b5b395bf48
+ptr=0x000001b5b395bd88 ptr->next=0x000001b5b395bca8 ptr->prev=0x000001b5b395be68
+ptr=0x000001b5b395bca8 ptr->next=0x000001b5b395baf0 ptr->prev=0x000001b5b395bd88
+ptr=0x000001b5b395baf0 ptr->next=0x000001b5b395b850 ptr->prev=0x000001b5b395bca8
+ptr=0x000001b5b395b850 ptr->next=0x000001b5b395b930 ptr->prev=0x000001b5b395baf0
+ptr=0x000001b5b395b930 ptr->next=0x000001b5b395aea8 ptr->prev=0x000001b5b395b850
+ptr=0x000001b5b395aea8 ptr->next=0x0000000000000000 ptr->prev=0x000001b5b395b930  //wiedziałem ze to lista dwukierunkowa ^^
+
+0:038> u atidxx64!AmdDxGsaFreeCompiledShader+0x45902f
+atidxx64!AmdDxGsaFreeCompiledShader+0x45902f:
+00007ff9`a5affedf 4d85ff          test    r15,r15
+00007ff9`a5affee2 0f85f8fdffff    jne     atidxx64!AmdDxGsaFreeCompiledShader+0x458e30 (00007ff9`a5affce0)
+00007ff9`a5affee8 4584e4          test    r12b,r12b
+00007ff9`a5affeeb 742a            je      atidxx64!AmdDxGsaFreeCompiledShader+0x459067 (00007ff9`a5afff17)
+00007ff9`a5affeed 498b06          mov     rax,qword ptr [r14]
+00007ff9`a5affef0 488b88a0080000  mov     rcx,qword ptr [rax+8A0h]
+00007ff9`a5affef7 80b9a00d000000  cmp     byte ptr [rcx+0DA0h],0
+00007ff9`a5affefe 7517            jne     atidxx64!AmdDxGsaFreeCompiledShader+0x459067 (00007ff9`a5afff17)
+
+0:038> u 00007ff9`a5affed8
+atidxx64!AmdDxGsaFreeCompiledShader+0x459028:
+00007ff9`a5affed8 498bdf          mov     rbx,r15                      //rbx = &unknow_object
+00007ff9`a5affedb 4d8b7f08        mov     r15,qword ptr [r15+8]        //r15 = &unknow_object->next
+00007ff9`a5affedf 4d85ff          test    r15,r15                      //if( unknow_object->next != nullptr ) continue; //iterator listy dwukierunkowej 
+00007ff9`a5affee2 0f85f8fdffff    jne     atidxx64!AmdDxGsaFreeCompiledShader+0x458e30 (00007ff9`a5affce0)
+
+00007ff9`a5affee8 4584e4          test    r12b,r12b
+00007ff9`a5affeeb 742a            je      atidxx64!AmdDxGsaFreeCompiledShader+0x459067 (00007ff9`a5afff17)
+00007ff9`a5affeed 498b06          mov     rax,qword ptr [r14]
+00007ff9`a5affef0 488b88a0080000  mov     rcx,qword ptr [rax+8A0h]
+
+
+
+[JavaScript Error: "Kodowanie znaków dokumentu HTML nie zostało zadeklarowane. Podczas wyświetlania tego dokumentu w niektórych konfiguracjach przeglądarki niektóre znaki spoza zakresu US-ASCII (o ile występują) mogą wyglądać nieprawidłowo. Kodowanie znaków strony musi być zadeklarowane w dokumencie lub w protokole przesyłania." {file: "http://localhost/MSEDge-Firefox-atidxx64%21AmdDxGsaFreeCompiledShader-v1.html" line: 0}]
+(17ac.123c): Access violation - code c0000005 (first chance)
+First chance exceptions are reported before any exception handling.
+This exception may be expected and handled.
+atidxx64!AmdDxGsaFreeCompiledShader+0x45901d:
+00007ff9`a5affecd 83bba000000013  cmp     dword ptr [rbx+0A0h],13h ds:000001b5`b3cd2000=????????
+0:038> r @rbx
+rbx=000001b5b3cd1f60
+0:038> d poi(@rbx+0x10)
+000001b5`b3ccb680  80 30 be a6 f9 7f 00 00-60 1f cd b3 b5 01 00 00  .0......`.......
+000001b5`b3ccb690  00 00 00 00 00 00 00 00-e8 a1 cc b3 b5 01 00 00  ................
+000001b5`b3ccb6a0  00 00 00 00 00 00 00 00-40 be cc b3 b5 01 00 00  ........@.......
+000001b5`b3ccb6b0  ff ff ff ff 00 00 00 00-68 b7 cc b3 b5 01 00 00  ........h.......
+000001b5`b3ccb6c0  a0 b7 cc b3 b5 01 00 00-d8 b7 cc b3 b5 01 00 00  ................
+000001b5`b3ccb6d0  10 b8 cc b3 b5 01 00 00-00 00 00 00 00 00 00 00  ................
+000001b5`b3ccb6e0  00 00 00 00 00 00 00 00-a0 fe cc b3 b5 01 00 00  ................
+000001b5`b3ccb6f0  00 00 00 00 00 00 00 00-a0 fe cc b3 b5 01 00 00  ................
+0:038> d poi(@rbx+0x8)
+000001b5`b3cd1448  b8 cd bf a6 f9 7f 00 00-c0 12 cd b3 b5 01 00 00  ................
+000001b5`b3cd1458  60 1f cd b3 b5 01 00 00-4b 00 00 00 36 01 00 00  `.......K...6...
+000001b5`b3cd1468  a0 c0 cc b3 b5 01 00 00-c0 4f cb b3 b5 01 00 00  .........O......
+000001b5`b3cd1478  90 14 cd b3 b5 01 00 00-01 00 00 00 00 00 00 00  ................
+000001b5`b3cd1488  03 00 00 00 00 00 00 00-20 14 cd b3 b5 01 00 00  ........ .......
+000001b5`b3cd1498  08 00 00 00 00 00 00 00-00 00 00 00 00 00 00 00  ................
+000001b5`b3cd14a8  00 00 00 00 00 00 00 00-00 00 00 00 00 00 00 00  ................
+000001b5`b3cd14b8  00 00 00 00 00 00 00 00-50 b6 cc b3 b5 01 00 00  ........P.......
+0:038> r @r15
+r15=000001b5b3cd1448
+0:038> !heap -p -a 000001b5`b3ccb680
+    address 000001b5b3ccb680 found in
+    _DPH_HEAP_ROOT @ 1b59dc01000
+    in busy allocation (  DPH_HEAP_BLOCK:         UserAddr         UserSize -         VirtAddr         VirtSize)
+                             1b5b34137b8:      1b5b3cca0f0             7f10 -      1b5b3cca000             9000
+    00007ff9b3fa47c7 ntdll!RtlDebugAllocateHeap+0x000000000000003f
+    00007ff9b3f54996 ntdll!RtlpAllocateHeap+0x0000000000077b26
+    00007ff9b3edba3b ntdll!RtlpAllocateHeapInternal+0x00000000000001cb
+    00007ff9a59a8a05 atidxx64!AmdDxGsaFreeCompiledShader+0x0000000000301b55
+    00007ff9a5cdf263 atidxx64!AmdDxGsaFreeCompiledShader+0x00000000006383b3
+    00007ff9a5cde802 atidxx64!AmdDxGsaFreeCompiledShader+0x0000000000637952
+    00007ff9a5a19891 atidxx64!AmdDxGsaFreeCompiledShader+0x00000000003729e1
+    00007ff9a57aa7db atidxx64!AmdDxGsaFreeCompiledShader+0x000000000010392b
+    00007ff9a57a949b atidxx64!AmdDxGsaFreeCompiledShader+0x00000000001025eb
+    00007ff9a5799680 atidxx64!AmdDxGsaFreeCompiledShader+0x00000000000f27d0
+    00007ff9a5778e8a atidxx64!AmdDxGsaFreeCompiledShader+0x00000000000d1fda
+    00007ff9a56c51f4 atidxx64!AmdDxGsaFreeCompiledShader+0x000000000001e344
+    00007ff9a5e809ce atidxx64!AmdDxGsaFreeCompiledShader+0x00000000007d9b1e
+    00007ff9a5e7b950 atidxx64!AmdDxGsaFreeCompiledShader+0x00000000007d4aa0
+    00007ff9a5e56a26 atidxx64!AmdDxGsaFreeCompiledShader+0x00000000007afb76
+    00007ff9a56dedcb atidxx64!AmdDxGsaFreeCompiledShader+0x0000000000037f1b
+    00007ff9a56de6a9 atidxx64!AmdDxGsaFreeCompiledShader+0x00000000000377f9
+    00007ff9a5f82114 atidxx64!AmdLiquidVrD3D11WrapDeviceContext+0x00000000000a4654
+    00007ff9b2f67bd4 KERNEL32!BaseThreadInitThunk+0x0000000000000014
+    00007ff9b3f0ce51 ntdll!RtlUserThreadStart+0x0000000000000021
+
+// tbc.
