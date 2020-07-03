@@ -46,12 +46,6 @@ ptr=0x000001b5b395aea8 ptr->next=0x0000000000000000 ptr->prev=0x000001b5b395b930
 atidxx64!AmdDxGsaFreeCompiledShader+0x45902f:
 00007ff9`a5affedf 4d85ff          test    r15,r15
 00007ff9`a5affee2 0f85f8fdffff    jne     atidxx64!AmdDxGsaFreeCompiledShader+0x458e30 (00007ff9`a5affce0)
-00007ff9`a5affee8 4584e4          test    r12b,r12b
-00007ff9`a5affeeb 742a            je      atidxx64!AmdDxGsaFreeCompiledShader+0x459067 (00007ff9`a5afff17)
-00007ff9`a5affeed 498b06          mov     rax,qword ptr [r14]
-00007ff9`a5affef0 488b88a0080000  mov     rcx,qword ptr [rax+8A0h]
-00007ff9`a5affef7 80b9a00d000000  cmp     byte ptr [rcx+0DA0h],0
-00007ff9`a5affefe 7517            jne     atidxx64!AmdDxGsaFreeCompiledShader+0x459067 (00007ff9`a5afff17)
 
 0:038> u 00007ff9`a5affed8
 atidxx64!AmdDxGsaFreeCompiledShader+0x459028:
@@ -59,7 +53,7 @@ atidxx64!AmdDxGsaFreeCompiledShader+0x459028:
 00007ff9`a5affedb 4d8b7f08        mov     r15,qword ptr [r15+8]        //r15 = &unknow_object->next
 00007ff9`a5affedf 4d85ff          test    r15,r15                      //if( unknow_object->next != nullptr ) continue; //iterator listy dwukierunkowej 
 00007ff9`a5affee2 0f85f8fdffff    jne     atidxx64!AmdDxGsaFreeCompiledShader+0x458e30 (00007ff9`a5affce0)
-
+                                                                       //else clean_and_return
 00007ff9`a5affee8 4584e4          test    r12b,r12b
 00007ff9`a5affeeb 742a            je      atidxx64!AmdDxGsaFreeCompiledShader+0x459067 (00007ff9`a5afff17)
 00007ff9`a5affeed 498b06          mov     rax,qword ptr [r14]
