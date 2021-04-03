@@ -8,6 +8,8 @@ static echo_clean( flag ) {
 		  DelStruc( GetStrucIdByName("ECHO_IMAGE_FILE_HEADER"));
 		  DelStruc( GetStrucIdByName("ECHO_IMAGE_OPTIONAL_HEADER"));
 		  DelStruc( GetStrucIdByName("ECHO_IMAGE_NT_HEADERS"));
+		  DelStruc( GetStrucIdByName("ECHO_SYSTEM_MODULE_ENTRY"));
+		  DelStruc( GetStrucIdByName("ECHO_SYSTEM_MODULE_INFORMATION"));
 	   }
 }
 
@@ -90,6 +92,31 @@ static echo_add_structures( ) {
 	   AddStrucMember(p_struct, "FileHeader", 0, FF_BYTE, -1, GetStrucSize(GetStrucIdByName("ECHO_IMAGE_FILE_HEADER")));
        AddStrucMember(p_struct, "OptionalHeader", GetStrucSize(GetStrucIdByName("ECHO_IMAGE_FILE_HEADER")), FF_BYTE, -1, GetStrucSize(GetStrucIdByName("ECHO_IMAGE_OPTIONAL_HEADER")));
 
+
+       p_struct = AddStrucEx(-1,"ECHO_SYSTEM_MODULE_ENTRY",0);  //SYSTEM_MODULE_ENTRY
+	   if(p_struct == -1) {
+	      return echo_error(-1,"AddStrucEx(-1,ECHO_SYSTEM_MODULE_ENTRY,0) FAIL !");
+	   }
+   
+       AddStrucMember(p_struct, "Section", 0, FF_BYTE, -1, 4);
+	   AddStrucMember(p_struct, "MappedBase", 4, FF_BYTE, -1, 4);
+	   AddStrucMember(p_struct, "ModuleBaseAddress", 8, FF_BYTE, -1, 4);
+	   AddStrucMember(p_struct, "ModuleSize", 12, FF_BYTE, -1, 4);
+	   AddStrucMember(p_struct, "Unknow", 16, FF_BYTE, -1, 4);
+	   AddStrucMember(p_struct, "ModuleEntryIndex", 20, FF_BYTE, -1, 4);
+	   AddStrucMember(p_struct, "ModuleNameLength", 24, FF_BYTE, -1, 2);
+	   AddStrucMember(p_struct, "ModuleNameOffset", 26, FF_BYTE, -1, 2);
+	   AddStrucMember(p_struct, "ModuleName", 28, FF_BYTE, -1, 256);
+	   
+	   p_struct = AddStrucEx(-1,"ECHO_SYSTEM_MODULE_INFORMATION",0); 
+	   if(p_struct == -1) {
+	      return echo_error(-1,"AddStrucEx(-1,ECHO_SYSTEM_MODULE_INFORMATION,0) FAIL !");
+	   }
+	   
+	   AddStrucMember(p_struct, "Count", 0, FF_BYTE, -1, 4);
+	   AddStrucMember(p_struct, "Module", 4, FF_BYTE, -1, GetStrucSize(GetStrucIdByName("ECHO_SYSTEM_MODULE_ENTRY")) * 2);
+	   
+	  
        return 1;
 }
 
