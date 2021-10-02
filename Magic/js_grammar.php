@@ -685,7 +685,7 @@ class context {
 			  
              _DBG("JS_GRAMMAR::context::js_var : l_object : ".$l_object." r : ".$r);
 			  
-		     return "let ".$l_object." = ".$r_value;	
+		     return "const ".$l_object." = ".$r_value;	
 
 	  }
 	  
@@ -751,7 +751,7 @@ class context {
 			  
              _DBG("JS_GRAMMAR::context::js_var : l_object : ".$l_object." r : ".$r);
 			  
-		     return "let ".$l_object." = ".$r_value;	
+		     return "var ".$l_object." = ".$r_value;	
 			 
 	  }
 	  
