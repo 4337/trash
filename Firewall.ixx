@@ -47,7 +47,7 @@ namespace Juche {
 			};
 
 			/// <summary>
-			/// Metoda pomocnicza, zwalnia raw 
+			/// Procedura pomocnicza, zwalnia raw 
 			/// </summary>
 			/// <typeparam name="T">Typ wskaznikowy do instacji klasy z któr¹ siê przyjaŸni</typeparam>
 			/// <param name="ref">this</param>
@@ -55,14 +55,14 @@ namespace Juche {
 			template<typename T>
 			inline void raw_release(T ptr) noexcept {
 				 
-				size_t sz = ref->policies.size();
+				size_t sz = ptr->policies.size();
 
 				for (size_t i = 0; i < sz; i++) {
 
-					if (ref->policies[i].raw != nullptr) {
+					if (ptr->policies[i].raw != nullptr) {
 
-						ref->policies[i].raw->Release();
-						ref->policies[i].raw = nullptr;
+						ptr->policies[i].raw->Release();
+						ptr->policies[i].raw = nullptr;
 
 				    }
 
