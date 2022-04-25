@@ -95,10 +95,8 @@ namespace Juche {
 
 			public:
 
-				  const 
-				  Settings<INetFwAuthorizedApplication>* is_authorized(const string_t& app, 
-				                                                       NET_FW_SCOPE scope = NET_FW_SCOPE_ALL,
-					                                                   const string_t& raddr_pattern = TEXT("\\*")) noexcept(false);
+				  int is_authorized(const string_t& app, NET_FW_SCOPE scope = NET_FW_SCOPE_ALL,
+					                const string_t& raddr_pattern = TEXT("\\*")) noexcept(false);
 
 				  explicit AuthorizedApplications(bool com_init = true,
 					                              NET_FW_SCOPE scope = NET_FW_SCOPE_ALL,

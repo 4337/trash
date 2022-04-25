@@ -572,7 +572,7 @@ Juche::Firewall::Firewall::in_exception(const string_t& name, bool include_autho
 	
 	if (include_authorized_app == true) {
 
-		if (aa->is_authorized(name) != nullptr) {
+		if (aa->is_authorized(name) == 1) {
 			return true;
 		}
 
@@ -875,20 +875,21 @@ Juche::Firewall::AuthorizedApplications::rules(NET_FW_SCOPE scope, const string_
 /// <param name="scope">Zakres</param>
 /// <param name="raddr_pattern">Wyra¿enie reguralne do porównania zdalnego adresu sieciowego</param>
 /// <returns>
-/// WskaŸnik do polityki lub nullptr
+///  1 = prawda
+///  0 = falsz
+/// -1 = error
 /// </returns>
-const 
-Juche::Firewall::Settings<INetFwAuthorizedApplication>*
+int
 Juche::Firewall::AuthorizedApplications::is_authorized(const string_t& app, NET_FW_SCOPE scope, const string_t& raddr_pattern) noexcept(false) {
 
 
-	Settings<INetFwAuthorizedApplication>* ret = nullptr;
+	int ret = 1;
 
 	size_t sz = policies.size();                           
 	for (size_t i = 0; i < sz; i++) {
 		
 		if (policies[i].app_path == app) {
-			ret = &policies[i];
+			return ret;
 		 }
 
 	}
@@ -914,18 +915,8 @@ Juche::Firewall::AuthorizedApplications::is_authorized(const string_t& app, NET_
 				
 				if (enabled == VARIANT_TRUE) {
 
-					int res = parse(authed_app, scope, raddr_pattern);
-
-					if (res == -1) {
-
-						SysFreeString(ole_app);               //TODO: fix :/ 
-
-						throw std::runtime_error("Juche::Firewall::AuthorizedApplications::is_authorized()->parse FAIL");
-
-					}
-				
-					ret = &(policies.back());           
-
+					ret = parse(authed_app, scope, raddr_pattern);
+        
 				}
 
 			}
