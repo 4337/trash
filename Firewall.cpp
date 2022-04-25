@@ -997,7 +997,7 @@ Juche::Firewall::AuthorizedApplications::~AuthorizedApplications() {
 
 	if (aa.use_count() == 1) {
 
-		if (*aa != nullptr) {
+		if ((*aa) != nullptr) {
 
 			(*aa)->Release();
 
