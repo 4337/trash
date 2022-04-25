@@ -26,7 +26,7 @@ import Helpers;
 /// </summary>
 Juche::Firewall::Firewall::~Firewall() {
 
-	raw_release<Firewall*>(this);
+	raw_release<Firewall>(this);
 
 	if ((*fw) != nullptr) {
 		(*fw)->Release();
@@ -517,7 +517,7 @@ Juche::Firewall::Firewall::refresh(const string_t& raddr_pattern,
 	                               NET_FW_PROFILE_TYPE2 profile) noexcept(false) {
 
 
-	raw_release<Firewall*>(this);
+	raw_release<Firewall>(this);
 
 	policies.erase(policies.begin(), policies.end());
 
@@ -969,7 +969,7 @@ Juche::Firewall::AuthorizedApplications::~AuthorizedApplications() {
 	dbg->write(TEXT("Juche::Firewall::AuthorizedApplications::~AuthorizedApplications() DESTRUCTOR policies.size() %d\r\n"), policies.size());
 #endif
 
-	raw_release<AuthorizedApplications*>(this);
+	raw_release<AuthorizedApplications>(this);
 
 	if (policies.size() > 0) {
 

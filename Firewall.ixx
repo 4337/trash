@@ -53,7 +53,7 @@ namespace Juche {
 			/// <param name="ref">this</param>
 			/// <returns>void</returns>
 			template<typename T>
-			inline void raw_release(T ptr) noexcept {
+			inline void raw_release(T* ptr) noexcept {
 				 
 				size_t sz = ptr->policies.size();
 
@@ -82,7 +82,7 @@ namespace Juche {
 				  HRESULT aa_instance(NET_FW_PROFILE_TYPE profile = NET_FW_PROFILE_CURRENT) noexcept;
 
 				  template<typename T>
-				  friend void raw_release(T ptr) noexcept;
+				  friend void raw_release(T* ptr) noexcept;
 
 			protected:
 
@@ -134,7 +134,7 @@ namespace Juche {
 				  AuthorizedApplications* aa; 
 
 				  template<typename T>
-				  friend void raw_release(T ptr) noexcept;
+				  friend void raw_release(T* ptr) noexcept;
 
 			protected:
 
