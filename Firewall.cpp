@@ -639,7 +639,8 @@ Juche::Firewall::AuthorizedApplications::operator=(AuthorizedApplications&& appl
 /// Referencja do r-wartoœci typu AuthorizedApplications
 /// (obiekt tymczasowy) 
 /// </param>
-Juche::Firewall::AuthorizedApplications::AuthorizedApplications(AuthorizedApplications&& applications) noexcept(false) : policies(0) {  
+Juche::Firewall::AuthorizedApplications::AuthorizedApplications(AuthorizedApplications&& applications) noexcept(false) : policies(0), 
+                                                                                                                         aa(std::make_shared<INetFwAuthorizedApplications*>(nullptr)) {
 
 	*this = std::move(applications);
 
