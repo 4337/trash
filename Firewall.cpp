@@ -884,13 +884,12 @@ Juche::Firewall::AuthorizedApplications::is_authorized(const string_t& app, NET_
 
 
 	int ret = -1;
-
-	size_t sz = policies.size();                           
-	for (size_t i = 0; i < sz; i++) {
-		
-		if (policies[i].app_path == app) {
+	
+	for (const auto& item : policies) {
+		 
+		if (item.app_path == app) {
 			return 1;
-		 }
+		}
 
 	}
 
