@@ -1018,7 +1018,7 @@ Juche::Firewall::AuthorizedApplications::~AuthorizedApplications() {
 /// </summary>
 /// <param name="other">R-Referencja do Firewall</param>
 /// <returns>nic</returns>
-Juche::Firewall::Firewall::Firewall(Firewall&& other) noexcept(false) {
+Juche::Firewall::Firewall::Firewall(Firewall&& other) noexcept(false) : aa(nullptr), policies(0) {
 
 	*this = std::move(other);
 
