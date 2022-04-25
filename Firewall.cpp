@@ -1019,7 +1019,8 @@ Juche::Firewall::AuthorizedApplications::~AuthorizedApplications() {
 /// </summary>
 /// <param name="other">R-Referencja do Firewall</param>
 /// <returns>nic</returns>
-Juche::Firewall::Firewall::Firewall(Firewall&& other) noexcept(false) : aa(nullptr), policies(0) {
+Juche::Firewall::Firewall::Firewall(Firewall&& other) noexcept(false) : aa(nullptr), policies(0), 
+                                                                                     fw(std::make_shared<INetFwPolicy2*>(nullptr)) {
 
 	*this = std::move(other);
 
