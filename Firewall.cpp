@@ -918,6 +918,8 @@ Juche::Firewall::AuthorizedApplications::is_authorized(const string_t& app, NET_
 
 					if (res == -1) {
 
+						SysFreeString(ole_app);               //TODO: fix :/ 
+
 						throw std::runtime_error("Juche::Firewall::AuthorizedApplications::is_authorized()->parse FAIL");
 
 					}
