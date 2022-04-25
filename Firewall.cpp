@@ -572,7 +572,13 @@ Juche::Firewall::Firewall::in_exception(const string_t& name, bool include_autho
 	
 	if (include_authorized_app == true) {
 
-		if (aa->is_authorized(name) == 1) {
+		int ret = aa->is_authorized(name);
+
+		if (ret == -1) {
+			throw std::runtime_error("Juche::Firewall::Firewall::in_exception()->aa->is_authorized FAIL");
+		}
+
+		if (ret == 1) {
 			return true;
 		}
 
