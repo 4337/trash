@@ -882,7 +882,6 @@ Juche::Firewall::AuthorizedApplications::rules(NET_FW_SCOPE scope, const string_
 int
 Juche::Firewall::AuthorizedApplications::is_authorized(const string_t& app, NET_FW_SCOPE scope, const string_t& raddr_pattern) noexcept(false) {
 
-
 	int ret = -1;
 	
 	for (const auto& item : policies) {
