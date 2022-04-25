@@ -881,11 +881,14 @@ const
 Juche::Firewall::Settings<INetFwAuthorizedApplication>*
 Juche::Firewall::AuthorizedApplications::is_authorized(const string_t& app, NET_FW_SCOPE scope, const string_t& raddr_pattern) noexcept(false) {
 
+
+	Settings<INetFwAuthorizedApplication>* ret = nullptr;
+
 	size_t sz = policies.size();                           
 	for (size_t i = 0; i < sz; i++) {
 		
 		if (policies[i].app_path == app) {
-			return &policies[i];
+			ret = &policies[i];
 		 }
 
 	}
@@ -919,7 +922,7 @@ Juche::Firewall::AuthorizedApplications::is_authorized(const string_t& app, NET_
 
 					}
 				
-					return &(policies.back());           
+					ret = &(policies.back());           
 
 				}
 
@@ -931,7 +934,7 @@ Juche::Firewall::AuthorizedApplications::is_authorized(const string_t& app, NET_
 
 	}
 
-	return nullptr;
+	return ret;
 
 }
 
