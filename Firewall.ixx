@@ -53,7 +53,7 @@ namespace Juche {
 			/// <param name="ref">this</param>
 			/// <returns>void</returns>
 			template<typename T>
-			void raw_release(T ref) noexcept {
+			inline void raw_release(T ref) noexcept {
 				 
 				size_t sz = ref->policies.size();
 
