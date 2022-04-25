@@ -22,34 +22,11 @@ import Firewall;
 import Helpers;
 
 /// <summary>
-/// Prywatna metoda do zwalniania zasobów INetFwRule 
-/// z std::vector<Settings<INetFwRule>> policies
-/// </summary>
-/// <returns>void</returns>
-void 
-Juche::Firewall::Firewall::raw_release() noexcept {
-
-	size_t s = policies.size();
-
-	for (size_t i = 0; i < s; i++) {
-
-		if (policies[i].raw != nullptr) {
-
-			policies[i].raw->Release();  
-			policies[i].raw = nullptr;
-
-		 }
-
-	}
-
-}
-
-/// <summary>
 /// Destruktor klasy Firewall
 /// </summary>
 Juche::Firewall::Firewall::~Firewall() {
 
-	raw_release();
+	raw_release<Firewall*>(this);
 
 	if ((*fw) != nullptr) {
 		(*fw)->Release();
@@ -540,7 +517,7 @@ Juche::Firewall::Firewall::refresh(const string_t& raddr_pattern,
 	                               NET_FW_PROFILE_TYPE2 profile) noexcept(false) {
 
 
-	raw_release();
+	raw_release<Firewall*>(this);
 
 	policies.erase(policies.begin(), policies.end());
 
@@ -982,12 +959,17 @@ Juche::Firewall::AuthorizedApplications::AuthorizedApplications(bool com_init, N
 
 }
 
+/// <summary>
+/// AuthorizedApplications destruktor
+/// </summary>
 Juche::Firewall::AuthorizedApplications::~AuthorizedApplications() {
 
 #ifdef __J_DEBUG__
 	Juche::Helpers::DebugConsole* dbg = Juche::Helpers::DebugConsole::instance();
 	dbg->write(TEXT("Juche::Firewall::AuthorizedApplications::~AuthorizedApplications() DESTRUCTOR policies.size() %d\r\n"), policies.size());
 #endif
+
+	raw_release<AuthorizedApplications*>(this);
 
 	if (policies.size() > 0) {
 

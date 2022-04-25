@@ -46,6 +46,30 @@ namespace Juche {
 
 			};
 
+			/// <summary>
+			/// Metoda pomocnicza, zwalnia raw 
+			/// </summary>
+			/// <typeparam name="T">Typ wskaznikowy do instacji klasy z któr¹ siê przyjaŸni</typeparam>
+			/// <param name="ref">this</param>
+			/// <returns>void</returns>
+			template<typename T>
+			void raw_release(T ref) noexcept {
+				 
+				size_t sz = ref->policies.size();
+
+				for (size_t i = 0; i < sz; i++) {
+
+					if (ref->policies[i].raw != nullptr) {
+
+						ref->policies[i].raw->Release();
+						ref->policies[i].raw = nullptr;
+
+				    }
+
+				}
+
+			}
+
 			class AuthorizedApplications {  
 
 				  bool com_uninit;
@@ -56,6 +80,9 @@ namespace Juche {
 				  std::shared_ptr<INetFwAuthorizedApplications*> aa;
 
 				  HRESULT aa_instance(NET_FW_PROFILE_TYPE profile = NET_FW_PROFILE_CURRENT) noexcept;
+
+				  template<typename T>
+				  friend void raw_release(T ptr) noexcept;
 
 			protected:
 
@@ -108,7 +135,8 @@ namespace Juche {
 
 				  AuthorizedApplications* aa; 
 
-				  void raw_release() noexcept;
+				  template<typename T>
+				  friend void raw_release(T ptr) noexcept;
 
 			protected:
 
