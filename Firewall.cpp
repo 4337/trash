@@ -883,13 +883,13 @@ int
 Juche::Firewall::AuthorizedApplications::is_authorized(const string_t& app, NET_FW_SCOPE scope, const string_t& raddr_pattern) noexcept(false) {
 
 
-	int ret = 1;
+	int ret = -1;
 
 	size_t sz = policies.size();                           
 	for (size_t i = 0; i < sz; i++) {
 		
 		if (policies[i].app_path == app) {
-			return ret;
+			return 1;
 		 }
 
 	}
