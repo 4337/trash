@@ -955,7 +955,8 @@ Juche::Firewall::AuthorizedApplications::is_authorized(const string_t& app, NET_
 /// <returns>brak</returns>
 Juche::Firewall::AuthorizedApplications::AuthorizedApplications(bool com_init, NET_FW_SCOPE scope, 
 	                                                            const string_t& raddr_pattern) noexcept(false) :
-	                                                            com_uninit(com_init), aa(nullptr), 
+	                                                            com_uninit(com_init), 
+	                                                            aa(std::make_shared<INetFwAuthorizedApplications*>(nullptr)),
 	                                                            policies(0) {
 
 	if (com_init == true) {
