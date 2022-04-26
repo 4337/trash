@@ -915,22 +915,26 @@ Juche::Firewall::AuthorizedApplications::is_authorized(const string_t& app, NET_
 
 		INetFwAuthorizedApplication* authed_app = nullptr;
 
-		if (SUCCEEDED((*aa)->Item(ole_app, &authed_app))) {
+		if (!SUCCEEDED((*aa)->Item(ole_app, &authed_app))) {
 
-			VARIANT_BOOL enabled;
+			ret = 0;
 
-			if (SUCCEEDED(authed_app->get_Enabled(&enabled))) {
+		} else {
+
+		  VARIANT_BOOL enabled;
+
+		  if (SUCCEEDED(authed_app->get_Enabled(&enabled))) {
 				
-				if (enabled != VARIANT_TRUE) {
+			 if (enabled != VARIANT_TRUE) {
 					
-					ret = 0;
+				 ret = 0;
 
-				} else {
+			 } else {
 
-					ret = parse(authed_app, scope, raddr_pattern);
+				ret = parse(authed_app, scope, raddr_pattern);
 
-				}
-			}
+			 }
+		  }
 			
 		}
 
