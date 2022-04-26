@@ -32,12 +32,12 @@ Juche::Firewall::Firewall::~Firewall() {
 		(*fw)->Release();
 	}
 
-	if (com_uninit == true) {
-		CoUninitialize();
-	}
-
 	if (aa != nullptr) {
 		delete aa;
+	}
+
+	if (com_uninit == true) {
+		CoUninitialize();
 	}
 
 }
