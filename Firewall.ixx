@@ -117,7 +117,7 @@ namespace Juche {
 				  /// <summary>
 				  /// Przenoszenie jest mo¿liwe.
 				  /// </summary>
-				  AuthorizedApplications(AuthorizedApplications&& applications) noexcept(false);
+				  inline AuthorizedApplications(AuthorizedApplications&& applications) noexcept(false);
 				  AuthorizedApplications& operator=(AuthorizedApplications&& applications) noexcept(false);  
 
 			};
@@ -155,7 +155,7 @@ namespace Juche {
 
 			public:
 
-				  Firewall(Firewall&& other) noexcept(false);              
+				  inline Firewall(Firewall&& other) noexcept(false);              
 				  Firewall& operator=(Firewall&& other) noexcept(false);  
 
 				  /// <summary>
