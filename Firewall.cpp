@@ -28,9 +28,13 @@ Juche::Firewall::Firewall::~Firewall() {
 
 	raw_release<Firewall>(this);
 
-	if ((*fw) != nullptr) {
-		(*fw)->Release();
-	}
+	if (fw.use_count() == 1) {
+	
+	    if ((*fw) != nullptr) {
+		    (*fw)->Release();
+	    }
+    
+    }
 
 	if (aa != nullptr) {
 		delete aa;
