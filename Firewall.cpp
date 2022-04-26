@@ -919,12 +919,13 @@ Juche::Firewall::AuthorizedApplications::is_authorized(const string_t& app, NET_
 				
 				if (enabled != VARIANT_TRUE) {
 					
-					return 0;
+					ret = 0;
+
+				} else {
+
+					ret = parse(authed_app, scope, raddr_pattern);
 
 				}
-
-				ret = parse(authed_app, scope, raddr_pattern);
-
 			}
 			
 		}
