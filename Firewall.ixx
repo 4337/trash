@@ -107,7 +107,7 @@ namespace Juche {
 
 				  /// <summary>
 				  /// Kopiowanie jest wy³¹czone z uwagi na wskaŸniki do obiektów COM,
-				  /// które s¹ sk³adowymi klasy. Nie umiem i chyba siê w ogóle nieda
+				  /// które s¹ sk³adowymi klasy. Nie umiem i chyba siê w ogóle nie da
 				  /// skopiowaæ ich w taki sposób aby nie tworzyæ "spl¹tanych" obiektów.
 				  /// (chocia¿ w sumie to nie jestem pewien czy one s¹ "spl¹tane", ale zostaje jak jest, nie chce mi siê sprawdzaæ)
 				  /// </summary>
