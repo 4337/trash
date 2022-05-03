@@ -676,7 +676,7 @@ Juche::Firewall::AuthorizedApplications::AuthorizedApplications(AuthorizedApplic
 /// Wartoœæ definiuje profil firewall, aktualnie wspierany jest tylko aktualny profil.
 /// </param>
 /// <returns>
-/// Wartoœæ HRESULT zwrócona przez ostatnie nieporawne wywo³anie metody COM lub
+/// Wartoœæ HRESULT zwrócona przez ostatnie niepoprawne wywo³anie metody COM lub
 /// S_OK (w przypadku kiedy podczas wywo³ywania metody nie pojawi³ siê ¿aden b³¹d).
 /// </returns>
 HRESULT 
