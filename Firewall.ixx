@@ -178,6 +178,8 @@ namespace Juche {
 
 				  int are_outbound_connection_allowed(NET_FW_PROFILE_TYPE2 profile = NET_FW_PROFILE2_PUBLIC) const noexcept(false);
 
+				  virtual int enabled(NET_FW_PROFILE_TYPE2 profile = NET_FW_PROFILE2_PUBLIC) const noexcept(false);
+
 				  bool refresh(const string_t& raddr_pattern = TEXT("\\*"),
 					           const string_t& rport_pattern = TEXT("\\*"),
 					           const string_t& lport_pattern = TEXT("\\*"),

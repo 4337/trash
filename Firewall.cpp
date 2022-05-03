@@ -457,7 +457,7 @@ Juche::Firewall::Firewall::Firewall(bool com_init,
 }
 
 /// <summary>
-/// Weryfikuje czy dla wskazanego prodilu dozwolone s¹ po³¹czenia wychodz¹ce 
+/// Weryfikuje czy dla wskazanego profilu dozwolone s¹ po³¹czenia wychodz¹ce 
 /// (domyœlnie s¹).
 /// </summary>
 /// <param name="profile">
@@ -472,12 +472,22 @@ Juche::Firewall::Firewall::Firewall(bool com_init,
 int 
 Juche::Firewall::Firewall::are_outbound_connection_allowed(NET_FW_PROFILE_TYPE2 profile) const noexcept(false) {
 
+	/*
 	VARIANT_BOOL enabled;
 	if (!SUCCEEDED((*fw)->get_FirewallEnabled(profile,&enabled))) {
 		return -1;
 	}
 
 	if (enabled == VARIANT_FALSE) {
+		return 1;
+	} */
+
+	int res = enabled(profile); 
+	if (res == -1) {
+		return -1;
+	}
+
+	if (res == 0) {
 		return 1;
 	}
 
@@ -487,6 +497,32 @@ Juche::Firewall::Firewall::are_outbound_connection_allowed(NET_FW_PROFILE_TYPE2 
 	}
 
 	if (action != NET_FW_ACTION_BLOCK) {
+		return 1;
+	}
+
+	return 0;
+
+}
+
+/// <summary>
+/// Sprawdza czy zapora jest w³¹czona dla okreœlonego profilu. 
+/// Sprawdzenie jest wykonywane na poziomie LPO (polityk lokalnych, nie GPO).
+/// </summary>
+/// <param name="profile">profil (domenowy, lokalny, publiczny). Domyœlnie NET_FW_PROFILE2_PUBLIC</param>
+/// <returns>
+/// 1 = zapora w³¹czona
+/// 0 = zapora wy³¹czona
+/// -1 = error
+/// </returns>
+int 
+Juche::Firewall::Firewall::enabled(NET_FW_PROFILE_TYPE2 profile) const noexcept(false) {
+
+	VARIANT_BOOL enabled;
+	if (!SUCCEEDED((*fw)->get_FirewallEnabled(profile, &enabled))) {
+		return -1;
+	}
+
+	if (enabled == VARIANT_TRUE) {
 		return 1;
 	}
 
