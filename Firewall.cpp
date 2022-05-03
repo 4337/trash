@@ -531,7 +531,7 @@ Juche::Firewall::Firewall::enabled(NET_FW_PROFILE_TYPE2 profile) const noexcept(
 }
 
 /// <summary>
-/// Odœwierza informacje o regu³ach FW na bazie przekazanych parametrów.
+/// Odœwie¿a informacje o regu³ach FW na bazie przekazanych parametrów.
 /// Np. Instancja Firewall mo¿e zostaæ utworzona dla regu³ okreœlonego protoko³u, kierunku po³¹czeñ etc.
 /// Metoda refres pozwala zmieniæ te parametry, dziêki temu mo¿emy sprawdziæ np. regu³y wychodz¹ce a póŸniej 
 /// za pomoc¹ refresh pobraæ i sprawdziæ regu³y dla ruchu przychodz¹cego.
