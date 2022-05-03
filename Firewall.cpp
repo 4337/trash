@@ -472,16 +472,6 @@ Juche::Firewall::Firewall::Firewall(bool com_init,
 int 
 Juche::Firewall::Firewall::are_outbound_connection_allowed(NET_FW_PROFILE_TYPE2 profile) const noexcept(false) {
 
-	/*
-	VARIANT_BOOL enabled;
-	if (!SUCCEEDED((*fw)->get_FirewallEnabled(profile,&enabled))) {
-		return -1;
-	}
-
-	if (enabled == VARIANT_FALSE) {
-		return 1;
-	} */
-
 	int res = enabled(profile); 
 	if (res == -1) {
 		return -1;
