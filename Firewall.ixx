@@ -176,20 +176,20 @@ namespace Juche {
 				   
 				  virtual ~Firewall();
 
-				  int are_outbound_connection_allowed(NET_FW_PROFILE_TYPE2 profile = NET_FW_PROFILE2_PUBLIC) const noexcept(false);
+				  virtual int are_outbound_connection_allowed(NET_FW_PROFILE_TYPE2 profile = NET_FW_PROFILE2_PUBLIC) const noexcept(false);
 
 				  virtual int enabled(NET_FW_PROFILE_TYPE2 profile = NET_FW_PROFILE2_PUBLIC) const noexcept(false);
 
-				  bool refresh(const string_t& raddr_pattern = TEXT("\\*"),
-					           const string_t& rport_pattern = TEXT("\\*"),
-					           const string_t& lport_pattern = TEXT("\\*"),
-					           NET_FW_IP_PROTOCOL protocol = NET_FW_IP_PROTOCOL_TCP,
-					           TrafficType direction = TrafficType::OUTBOUND,
-					           NET_FW_ACTION action = NET_FW_ACTION_ALLOW,
-					           NET_FW_PROFILE_TYPE2 profile = NET_FW_PROFILE2_PUBLIC) noexcept(false);
+				  virtual bool refresh(const string_t& raddr_pattern = TEXT("\\*"),
+					                   const string_t& rport_pattern = TEXT("\\*"),
+					                   const string_t& lport_pattern = TEXT("\\*"),
+					                   NET_FW_IP_PROTOCOL protocol = NET_FW_IP_PROTOCOL_TCP,
+					                   TrafficType direction = TrafficType::OUTBOUND,
+					                   NET_FW_ACTION action = NET_FW_ACTION_ALLOW,
+					                   NET_FW_PROFILE_TYPE2 profile = NET_FW_PROFILE2_PUBLIC) noexcept(false);
 
 
-				  bool in_exception(const string_t& name, bool include_authorized_app = true) const noexcept(false);
+				  virtual bool in_exception(const string_t& name, bool include_authorized_app = true) const noexcept(false);
 
 			};
 
