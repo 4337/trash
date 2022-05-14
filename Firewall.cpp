@@ -169,6 +169,11 @@ Juche::Firewall::Firewall::parse(INetFwRule* rule, const string_t& raddr_pattern
 #else
 
 	std::unique_ptr<char[]> tmp_address(Juche::Helpers::U2A(remote_address));
+	
+	if (!tmp_address) {
+		return -1;
+	}
+
 	std::string n_address = tmp_address.get();
 
 #endif
@@ -187,6 +192,11 @@ Juche::Firewall::Firewall::parse(INetFwRule* rule, const string_t& raddr_pattern
 #else
 
 	    std::unique_ptr<char[]> tmp_rports(Juche::Helpers::U2A(remote_ports));
+
+		if (!tmp_rports) {
+			return -1;
+		}
+
 	    std::string n_rports = tmp_rports.get();
 
 #endif
@@ -206,6 +216,13 @@ Juche::Firewall::Firewall::parse(INetFwRule* rule, const string_t& raddr_pattern
 #else
 
 	   std::unique_ptr<char[]> tmp_lports(Juche::Helpers::U2A(local_ports));
+
+	   if (!tmp_lports) {
+
+		   return -1;
+
+	   }
+
 	   std::string n_lports = tmp_lports.get();
 
 #endif
@@ -244,6 +261,11 @@ Juche::Firewall::Firewall::parse(INetFwRule* rule, const string_t& raddr_pattern
 #ifndef UNICODE   
 
 	    std::unique_ptr<CHAR[]> tmp_appname(Juche::Helpers::U2A(app_name));
+
+		if (!tmp_appname) {
+			return -1;
+		}
+
 	    n_appname = tmp_appname.get();
 
 #else
@@ -262,6 +284,11 @@ Juche::Firewall::Firewall::parse(INetFwRule* rule, const string_t& raddr_pattern
 #ifndef UNICODE 
 
 	std::unique_ptr<CHAR[]> tmp_rulename(Juche::Helpers::U2A(rule_name));
+
+	if (!tmp_rulename) {
+		return -1;
+	}
+
 	std::string n_rulename = tmp_rulename.get();
 
 #else
@@ -782,12 +809,27 @@ Juche::Firewall::AuthorizedApplications::parse(INetFwAuthorizedApplication* app,
 
 #ifndef UNICODE
 	std::unique_ptr<char[]> tmp_address(Juche::Helpers::U2A(r_address));
+
+	if (!tmp_address) {
+		return -1;
+	}
+
 	std::string n_address = tmp_address.get();
 
-	std::unique_ptr<char[]> tmp_rule_name(Juche::Helpers::U2A(rule_name));      
+	std::unique_ptr<char[]> tmp_rule_name(Juche::Helpers::U2A(rule_name));   
+
+	if (!tmp_rule_name) {
+		return -1;
+	}
+
 	std::string n_rulename = tmp_rule_name.get();
 
 	std::unique_ptr<char[]> tmp_file_name(Juche::Helpers::U2A(image_filename)); 
+
+	if (!tmp_file_name) {
+		return -1;
+	}
+
 	std::string n_filename = tmp_file_name.get();
 	//TODO: konwersja rule_name i image_filename
 #else
@@ -930,6 +972,11 @@ Juche::Firewall::AuthorizedApplications::is_authorized(const string_t& app, NET_
 
 #ifndef UNICODE 
 	std::unique_ptr<wchar[]> tmp_app(Juche::Helpers::A2U(app));
+
+	if (!tmp_app) {
+		return -1;
+	}
+
 	std::wstring n_app = tmp_app.get();
 #else
 	std::wstring n_app = app;
