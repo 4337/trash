@@ -971,7 +971,7 @@ Juche::Firewall::AuthorizedApplications::is_authorized(const string_t& app, NET_
 	}
 
 #ifndef UNICODE 
-	std::unique_ptr<wchar[]> tmp_app(Juche::Helpers::A2U(app));
+	std::unique_ptr<WCHAR[]> tmp_app(Juche::Helpers::A2U(app.c_str()));
 
 	if (!tmp_app) {
 		return -1;
