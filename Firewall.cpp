@@ -966,7 +966,7 @@ Juche::Firewall::AuthorizedApplications::is_authorized(const string_t& app, NET_
 	std::unique_ptr<WCHAR[]> tmp_app(Juche::Helpers::A2U(app.c_str()));
 
 	if (!tmp_app) {
-		return -1;
+		return ret;
 	}
 
 	std::wstring n_app = tmp_app.get();
