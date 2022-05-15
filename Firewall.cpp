@@ -32,7 +32,6 @@ Juche::Firewall::Firewall::~Firewall() {
 	   fw->Release();
 	}
     
-	
 	if (aa != nullptr) {
 		delete aa;
 	}
@@ -1061,14 +1060,11 @@ Juche::Firewall::AuthorizedApplications::~AuthorizedApplications() {
 
 	}
 
-
-
 	if (com_uninit == true) {
 
 		CoUninitialize();
 
 	}
-
 
 }
 
