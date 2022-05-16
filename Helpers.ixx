@@ -109,7 +109,8 @@ namespace Juche {
 #endif
 			/// <summary>
 			/// Koncepcja szablonu.
-			/// Typ musi posiadaæ metodê what(), która zwraca wartoœæ typu const char*
+			/// Typ musi posiadaæ metodê what(), która zwraca wartoœæ typu const char* lub wartoœæ 
+			/// która mo¿e byæ rzutowana na const char*.
 			/// </summary>
 			template<typename T>
 			concept valid_exception_type = requires (T t) {
