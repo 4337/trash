@@ -111,7 +111,7 @@ namespace Juche {
 			/// Koncepcja szablonu.
 			/// Typ musi posiadaæ metodê what(), która zwraca wartoœæ typu const char*
 			/// </summary>
-			template <typename T>
+			template<typename T>
 			concept valid_exception_type = requires (T t) {
 				{t.what()} -> std::convertible_to<const char*>;
 			};
