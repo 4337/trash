@@ -107,6 +107,14 @@ namespace Juche {
 			enum : size_t { MAX_EXCEPTION_JOURNAL_SIZE = 4096 * 1024 };
 			extern const std::string EXCEPTION_JOURNAL("process.log");
 #endif
+			/// <summary>
+			/// Koncepcja szablonu.
+			/// Typ musi posiadaæ metodê what(), która zwraca wartoœæ typu const char*
+			/// </summary>
+			template <typename T>
+			concept valid_exception_type = requires (T t) {
+				{t.what()} -> std::convertible_to<const char*>;
+			};
 
 			/// <summary>
 			/// Procedura obs³ugi wyj¹tków, 
@@ -117,7 +125,7 @@ namespace Juche {
 			/// <param name="exception">Sta³a referencja do std::exception lub typu pochodnego.</param>
 			/// <returns>Procedura nie wraca, wywo³uje exit()</returns>
 			template<typename T>
-			requires std::derived_from<T, std::exception> || std::same_as<T, std::exception>
+			requires valid_exception_type<T>
 			[[ noreturn ]]
 			void exception_handler(const T& exception) noexcept {
 
