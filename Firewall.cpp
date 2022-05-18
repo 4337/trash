@@ -653,7 +653,9 @@ Juche::Firewall::AuthorizedApplications::operator=(AuthorizedApplications&& appl
 
 	if (this != &applications) {
 
-		aa = applications.aa;              
+		aa = applications.aa;   
+
+		applications.aa = nullptr;
 
 		com_uninit = applications.com_uninit;
 
@@ -1092,6 +1094,8 @@ Juche::Firewall::Firewall::operator=(Firewall&& other) noexcept(false) {
 		com_uninit = other.com_uninit;
 
 		fw = other.fw;
+
+		other.fw = nullptr;
 
 		std::swap(aa, other.aa);
 
