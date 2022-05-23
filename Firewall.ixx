@@ -179,7 +179,7 @@ namespace Juche {
 				   
 				  virtual ~Firewall();
 
-				  virtual int are_outbound_connection_allowed(NET_FW_PROFILE_TYPE2 profile = NET_FW_PROFILE2_PUBLIC) const noexcept(false);
+				  virtual int are_connection_allowed(TrafficType traffic, NET_FW_PROFILE_TYPE2 profile = NET_FW_PROFILE2_PUBLIC) const noexcept(false);
 
 				  virtual int enabled(NET_FW_PROFILE_TYPE2 profile = NET_FW_PROFILE2_PUBLIC) const noexcept(false);
 

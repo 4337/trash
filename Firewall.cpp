@@ -479,22 +479,21 @@ Juche::Firewall::Firewall::Firewall(bool com_init,
 }
 
 /// <summary>
-/// Weryfikuje czy dla wskazanego profilu dozwolone s¹ po³¹czenia wychodz¹ce 
+/// Weryfikuje czy dla wskazanego profilu zale¿nie 
+/// od prametru traffic dozwolone s¹ po³¹czenia wychodz¹ce lub przych¹dz¹ce.
 /// (domyœlnie s¹).
 /// </summary>
-/// <param name="profile">
-/// Wartoœæ okreœlaj¹ca profil, aktualnie profil aktualny.
-/// Docelowo prywatny, domenowy, publiczny 
-/// </param>
+/// <param name="traffic">TrafficType : OUTBOUND lub INBOUND</param>
+/// <param name="profile">NET_FW_PROFILE_TYPE2 (domain || private || public || all)</param>
 /// <returns>
-/// -1 = error (mo¿na rzuciæ wyj¹tkiem)
-///  0 = fa³sz (po³¹czenia wychodz¹ce s¹ zablokowane)
-///  1 = prawda (po³¹czenia wychodz¹ce s¹ dozwolone)
+/// 0 = po³¹czenia nie s¹ dozowlone 
+/// 1 = po³¹czenia s¹ dozwolone
+/// -1 = error
 /// </returns>
 int 
-Juche::Firewall::Firewall::are_outbound_connection_allowed(NET_FW_PROFILE_TYPE2 profile) const noexcept(false) {
+Juche::Firewall::Firewall::are_connection_allowed(TrafficType traffic, NET_FW_PROFILE_TYPE2 profile) const noexcept(false) {
 
-	int res = enabled(profile); 
+	int res = enabled(profile);
 	if (res == -1) {
 		return -1;
 	}
@@ -503,18 +502,32 @@ Juche::Firewall::Firewall::are_outbound_connection_allowed(NET_FW_PROFILE_TYPE2 
 		return 1;
 	}
 
-	NET_FW_ACTION action;
-	if (!SUCCEEDED(fw->get_DefaultOutboundAction(profile, &action))) {
-		return -1;
+	if (traffic == Juche::Firewall::TrafficType::OUTBOUND) {
+		NET_FW_ACTION action;
+		if (!SUCCEEDED(fw->get_DefaultOutboundAction(profile, &action))) {
+			return -1;
+		}
+
+		if (action != NET_FW_ACTION_BLOCK) {
+			return 1;
+		}
 	}
 
-	if (action != NET_FW_ACTION_BLOCK) {
-		return 1;
+	if (traffic == Juche::Firewall::TrafficType::INBOUND) {
+		NET_FW_ACTION action;
+		if (!SUCCEEDED(fw->get_DefaultInboundAction(profile, &action))) {
+			return -1;
+		}
+
+		if (action != NET_FW_ACTION_BLOCK) {
+			return 1;
+		}
 	}
 
 	return 0;
 
 }
+
 
 /// <summary>
 /// Sprawdza czy zapora jest w³¹czona dla okreœlonego profilu. 
