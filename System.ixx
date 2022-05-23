@@ -190,8 +190,7 @@ namespace Juche {
 			/// <summary>
 			/// Klasa System udostêpnia informacje zwi¹zane z kontem u¿ytkownika 
 			/// który jest powi¹zany z aktualnie wykonywanym procesem, nazwê komputera,
-			/// strukturê SYSTEM_INFO, która zawiera mn. informacje o architekturze procesora.
-			/// Klasa pozwala równie¿ manipulowaæ tokenem i uprawnieniami u¿ytkownika.
+			/// itp. Klasa pozwala równie¿ manipulowaæ tokenem i uprawnieniami u¿ytkownika.
 			/// </summary>
 			class System {
 	
@@ -210,9 +209,9 @@ namespace Juche {
 
 				System& operator=(const System& copy) noexcept(false);
 
-				inline System(System&& other) noexcept(false);
+				//inline System(System&& other) noexcept(false);
 
-				System& operator=(System&& other) noexcept(false);
+				//System& operator=(System&& other) noexcept(false);
 
 				//////////
 
