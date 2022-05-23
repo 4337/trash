@@ -209,9 +209,9 @@ namespace Juche {
 
 				System& operator=(const System& copy) noexcept(false);
 
-				//inline System(System&& other) noexcept(false);
+				inline System(System&& other) noexcept(false);
 
-				//System& operator=(System&& other) noexcept(false);
+				System& operator=(System&& other) noexcept(false);
 
 				//////////
 
