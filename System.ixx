@@ -1,5 +1,5 @@
 //////////////////////////////////////////////////////////////
-///23/05/2022 20:50
+///24/05/2022 11:50
 ///Modu³ udostepnia informacje o systemie operacyjnym,
 ///aktualnie wykorzystywanym koncie u¿ytkownika oraz 
 ///udostêpnia interfejs do manipulowania podstawowym tokenem 
@@ -105,7 +105,7 @@ namespace Juche {
 				/// </returns>
 				int luid_2_privs() noexcept;
 
-				bool set_username() noexcept;
+				int set_username() noexcept;
 
 				int set_token() noexcept;
 
