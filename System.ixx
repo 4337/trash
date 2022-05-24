@@ -1,9 +1,9 @@
 //////////////////////////////////////////////////////////////
-///24/05/2022 11:50
+///24/05/2022 16:49
 ///Modu³ udostepnia informacje o systemie operacyjnym,
 ///aktualnie wykorzystywanym koncie u¿ytkownika oraz 
 ///udostêpnia interfejs do manipulowania podstawowym tokenem 
-///dostêpowym, a tak¿e do dodawania nowy uprawnieñ do aktualnie 
+///dostêpowym, a tak¿e do dodawania nowych uprawnieñ do aktualnie 
 ///wykorzystywanego konta u¿tkownika - jeœli dysponujemy prawami 
 ///administratora. 
 /////////////////////////////////////////////////////////////
