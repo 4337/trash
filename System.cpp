@@ -308,7 +308,6 @@ Juche::System::Account::operator=(Account&& other) noexcept(false) {
         sid_.sid_size = other.sid_.sid_size;
         user_name_ = other.user_name_;
 
-        
         if (other.token_.privs != nullptr) {
 
             token_.privs = new TOKEN_PRIVILEGES[other.token_.privs->PrivilegeCount];
