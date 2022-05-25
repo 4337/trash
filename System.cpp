@@ -558,7 +558,7 @@ Juche::System::Account::assign_privilege(const std::wstring& priv) noexcept {
     int ret = 1;
     LSA_HANDLE lsa_hnd;
     LSA_OBJECT_ATTRIBUTES lsa_attrib = { 0 };
-    if (!NT_SUCCESS(LsaOpenPolicy(NULL, &lsa_attrib, POLICY_CREATE_ACCOUNT | POLICY_LOOKUP_NAMES, &lsa_hnd))) {
+    if (!NT_SUCCESS(LsaOpenPolicy(NULL, &lsa_attrib, POLICY_LOOKUP_NAMES, &lsa_hnd))) {
         return -1;
     }
 
