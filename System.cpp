@@ -288,7 +288,7 @@ Juche::System::Account&
 Juche::System::Account::operator=(Account&& other) noexcept(false) { 
 
     if (this != &other) {
-
+ 
         primary_token_ = other.primary_token_;
         other.primary_token_ = NULL;
 
@@ -308,6 +308,7 @@ Juche::System::Account::operator=(Account&& other) noexcept(false) {
         sid_.sid_size = other.sid_.sid_size;
         user_name_ = other.user_name_;
 
+        
         if (other.token_.privs != nullptr) {
 
             token_.privs = new TOKEN_PRIVILEGES[other.token_.privs->PrivilegeCount];
@@ -317,6 +318,14 @@ Juche::System::Account::operator=(Account&& other) noexcept(false) {
             memcpy(token_.privs, other.token_.privs, 
                    other.token_.privs->PrivilegeCount * sizeof(TOKEN_PRIVILEGES)); 
 
+        } else { 
+            /// <summary>
+            /// Ogólnie moglibyœmy to olaæ, semantyka przenoszenia i kopiowania nie powinna wp³ywaæ na 
+            /// zawartoœæ Ÿród³a przenoszonych i kopiowanych obiektów ? 
+            /// Jeœli obiekt jest zepsuty i user go przenosi lub kopiuje to ma problem, celem konstruktorów kopiowania 
+            /// lub przenoszenia nie jest naprawianie obiektów. 
+            /// </summary>
+            token_.privs = nullptr;
         }
 
         std::swap(token_.privs_names, other.token_.privs_names);
