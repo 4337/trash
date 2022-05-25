@@ -320,7 +320,7 @@ Juche::System::Account::operator=(Account&& other) noexcept(false) {
         } else { 
             /// <summary>
             /// Ogólnie moglibyœmy to olaæ, semantyka przenoszenia i kopiowania nie powinna wp³ywaæ na 
-            /// zawartoœæ Ÿród³a przenoszonych i kopiowanych obiektów ? 
+            /// poprawnoœæ Ÿród³a/celu przenoszonych i kopiowanych obiektów ? 
             /// Jeœli obiekt jest zepsuty i user go przenosi lub kopiuje to ma problem, celem konstruktorów kopiowania 
             /// lub przenoszenia nie jest naprawianie obiektów. 
             /// </summary>
