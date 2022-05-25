@@ -355,7 +355,7 @@ Juche::System::Account::Account(const Account& copy) noexcept(false) {
 /// <param name="copy">Kopia/Ÿród³o</param>
 /// <returns>Obiekt Account utworzony na podstawie kopi.</returns>
 Juche::System::Account&
-Juche::System::Account::operator=(const Account& copy) noexcept(false) {   //TODO: trzeba to przetestowaæ bardzo 
+Juche::System::Account::operator=(const Account& copy) noexcept(false) {   
 
     if (this != &copy) {
 
