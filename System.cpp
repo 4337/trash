@@ -171,9 +171,6 @@ Juche::System::Account::luid_2_privs() noexcept { //TODO: TEST
 int 
 Juche::System::Account::set_token() noexcept {
 
-    /// <summary>
-    /// Powinniœmy zrobiæ DuplicateTokenEx, ale w sumie nie musimy.
-    /// </summary>
     primary_token_ = primary_token(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_DUPLICATE | TOKEN_QUERY);
     if (primary_token_ == NULL) {
         return -1;
