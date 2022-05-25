@@ -73,6 +73,7 @@ namespace Juche {
 
 			struct SidEx {
 				bool init;
+				DWORD sid_size;
 				/// <summary>
 				/// WskaŸnik do struktury SID, struktura jest alokowana via operator new[] 
 				/// i powinna zostaæ zwolniona przy pomocy wyra¿enia delete[].
@@ -137,7 +138,7 @@ namespace Juche {
 
 				}
 
-				inline Account(const Account& copy) noexcept;
+				inline Account(const Account& copy) noexcept(false);
 
 				Account& operator=(const Account& copy) noexcept(false);
 
