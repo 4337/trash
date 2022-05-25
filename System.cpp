@@ -556,7 +556,7 @@ Juche::System::Account::assign_privilege(const std::wstring& priv) noexcept {
 
     size_t priv_len = priv.length();
     if (priv_len > 0x7ffe) {
-        return -1;
+        return 0;
     }
 
     LSA_UNICODE_STRING lsa_priv;
