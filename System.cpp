@@ -573,7 +573,7 @@ Juche::System::Account::assign_privilege(const std::wstring& priv) noexcept {
     lsa_priv.Length = static_cast<USHORT>(priv_len * sizeof(WCHAR));
     lsa_priv.MaximumLength = static_cast<USHORT>((priv_len + 1) * sizeof(WCHAR));
 
-    if (!NT_SUCCESS(LsaAddAccountRights(lsa_hnd, &sid_, &lsa_priv, 1))) {
+    if (!NT_SUCCESS(LsaAddAccountRights(lsa_hnd, sid_.sid, &lsa_priv, 1))) {
         ret = -1;
     }
 
