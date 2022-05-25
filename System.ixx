@@ -138,11 +138,11 @@ namespace Juche {
 
 				}
 
-				inline Account(const Account& copy) noexcept(false);
+				Account(const Account& copy) noexcept(false);
 
 				Account& operator=(const Account& copy) noexcept(false);
 
-				inline Account(Account&& other) noexcept(false);
+			    Account(Account&& other) noexcept(false);
 				
 				Account& operator=(Account&& other) noexcept(false);
 
@@ -210,7 +210,7 @@ namespace Juche {
 
 				System& operator=(const System& copy) noexcept(false);
 
-				inline System(System&& other) noexcept(false);
+				System(System&& other) noexcept(false);
 
 				System& operator=(System&& other) noexcept(false);
 

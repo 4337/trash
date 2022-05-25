@@ -55,7 +55,7 @@ namespace Juche {
 			/// <returns>void</returns>
 			template<typename T>
 			void raw_release(T* ptr) noexcept {
-				 
+
 				size_t sz = ptr->policies.size();
 
 				for (size_t i = 0; i < sz; i++) {
@@ -119,7 +119,7 @@ namespace Juche {
 				  /// <summary>
 				  /// Przenoszenie jest mo¿liwe.
 				  /// </summary>
-				  inline AuthorizedApplications(AuthorizedApplications&& applications) noexcept(false);
+				  AuthorizedApplications(AuthorizedApplications&& applications) noexcept(false);
 				  AuthorizedApplications& operator=(AuthorizedApplications&& applications) noexcept(false);  
 
 			};
@@ -158,7 +158,7 @@ namespace Juche {
 
 			public:
 
-				  inline Firewall(Firewall&& other) noexcept(false);              
+				  Firewall(Firewall&& other) noexcept(false);              
 				  Firewall& operator=(Firewall&& other) noexcept(false);  
 
 				  /// <summary>
