@@ -559,12 +559,12 @@ Juche::System::Account::assign_privilege(const std::wstring& priv) noexcept {
     LSA_HANDLE lsa_hnd;
     LSA_OBJECT_ATTRIBUTES lsa_attrib = { 0 };
     if (!NT_SUCCESS(LsaOpenPolicy(NULL, &lsa_attrib, POLICY_LOOKUP_NAMES, &lsa_hnd))) {
-        return -1;
+        return 0;
     }
 
     size_t priv_len = priv.length();
     if (priv_len > 0x7ffe) {
-        return 0;
+        return -1;
     }
 
     LSA_UNICODE_STRING lsa_priv;
@@ -574,7 +574,7 @@ Juche::System::Account::assign_privilege(const std::wstring& priv) noexcept {
     lsa_priv.MaximumLength = static_cast<USHORT>((priv_len + 1) * sizeof(WCHAR));
 
     if (!NT_SUCCESS(LsaAddAccountRights(lsa_hnd, sid_.sid, &lsa_priv, 1))) {
-        ret = -1;
+        ret = 0;
     }
 
     LsaClose(lsa_hnd);
