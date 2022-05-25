@@ -59,7 +59,7 @@ Juche::System::Account::~Account() {
         delete[] sid_.sid;
     }
 
-    if (primary_token_ != NULL && primary_token_ != INVALID_HANDLE_VALUE) { //Access violation
+    if (primary_token_ != NULL && primary_token_ != INVALID_HANDLE_VALUE) { 
         CloseHandle(primary_token_);
     }
 
