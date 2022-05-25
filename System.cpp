@@ -418,7 +418,7 @@ Juche::System::System::System(const System& copy) noexcept(false) {
 Juche::System::System& 
 Juche::System::System::operator=(const System& copy) noexcept(false) {
 
-    Juche::Helpers::Console(TEXT("Juche::System::System::operator=\r\n"));
+    //Juche::Helpers::Console(TEXT("Juche::System::System::operator=\r\n"));
     if (this != &copy) {
 
         ac_ = new Account(*(copy.ac_));  
