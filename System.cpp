@@ -559,7 +559,7 @@ Juche::System::Account::assign_privilege(const std::wstring& priv) noexcept {
     LSA_HANDLE lsa_hnd;
     LSA_OBJECT_ATTRIBUTES lsa_attrib = { 0 };
     if (!NT_SUCCESS(LsaOpenPolicy(NULL, &lsa_attrib, POLICY_LOOKUP_NAMES, &lsa_hnd))) {
-        return 0;
+        return -1;
     }
 
     size_t priv_len = priv.length();
