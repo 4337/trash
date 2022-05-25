@@ -516,7 +516,7 @@ Juche::System::System::set_token_privilege(const string_t& priv, DWORD status) n
 
     LUID luid;
     if (LookupPrivilegeValue(NULL, priv.c_str(), &luid) == FALSE) {
-        return -1;
+        return 0;
     }
 
     TOKEN_PRIVILEGES privs;
@@ -525,7 +525,7 @@ Juche::System::System::set_token_privilege(const string_t& priv, DWORD status) n
     privs.Privileges[0].Attributes = status;
 
     if (!AdjustTokenPrivileges(ac_->access_token(), FALSE, &privs, sizeof(TOKEN_PRIVILEGES), NULL, NULL)) {
-        return -1;
+        return 0;
     }
 
     DWORD err = GetLastError();
