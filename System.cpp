@@ -357,8 +357,6 @@ Juche::System::Account::Account(const Account& copy) noexcept(false) {
 Juche::System::Account&
 Juche::System::Account::operator=(const Account& copy) noexcept(false) {   //TODO: trzeba to przetestowaæ bardzo 
 
-    Juche::Helpers::Console(TEXT("Juche::System::Account::operator=\r\n"));
-
     if (this != &copy) {
 
         sid_.sid = new SID[copy.sid_.sid_size]; 
