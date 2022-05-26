@@ -1,5 +1,5 @@
 //////////////////////////////////////////////////////////////
-///24/05/2022 16:49
+///26/05/2022 21:28
 ///Modu³ udostepnia informacje o systemie operacyjnym,
 ///aktualnie wykorzystywanym koncie u¿ytkownika oraz 
 ///udostêpnia interfejs do manipulowania podstawowym tokenem 
@@ -224,7 +224,7 @@ namespace Juche {
 				/// RAII, exception safety 
 				/// </summary>
 				/// <returns></returns>
-				System() noexcept : ac_(new Account()) {
+				System() noexcept(false) : ac_(new Account()) {
 
 					set_computername();
 
