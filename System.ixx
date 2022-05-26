@@ -221,7 +221,7 @@ namespace Juche {
 				}
 
 				/// <summary>
-				/// RAII, exception safety 
+				/// RAII
 				/// </summary>
 				/// <returns></returns>
 				System() noexcept(false) : ac_(new Account()) {
