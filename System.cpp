@@ -1,5 +1,5 @@
 //////////////////////////////////////////////////////////////
-///23/05/2022 20:50
+///28/05/2022 20:00
 ///Modu³ udostepnia informacje o systemie operacyjnym,
 ///aktualnie wykorzystywanym koncie u¿ytkownika oraz 
 ///udostêpnia interfejs do manipulowania podstawowym tokenem 
@@ -426,7 +426,6 @@ Juche::System::System::System(const System& copy) noexcept(false) {
 Juche::System::System& 
 Juche::System::System::operator=(const System& copy) noexcept(false) {
 
-    //Juche::Helpers::Console(TEXT("Juche::System::System::operator=\r\n"));
     if (this != &copy) {
 
         ac_ = new Account(*(copy.ac_));  
@@ -442,6 +441,11 @@ Juche::System::System::operator=(const System& copy) noexcept(false) {
 
 }
 
+/// <summary>
+/// Przenoszenie: konstruktor i operator przypisania
+/// </summary>
+/// <param name="other">System&&</param>
+/// <returns>none</returns>
 Juche::System::System::System(System&& other) noexcept(false) {
 
     *this = std::move(other);
@@ -451,10 +455,14 @@ Juche::System::System::System(System&& other) noexcept(false) {
 Juche::System::System& 
 Juche::System::System::operator=(System&& other) noexcept(false) {
 
-    //...
-    //...
+    if (this != &other) {
+        std::swap(ac_, other.ac_);
+        computer_name_ = other.computer_name_;
+        other.computer_name_ = TEXT("");
+    }
 
     return *this;
+
 }
 
 /// <summary>
