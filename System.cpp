@@ -455,7 +455,6 @@ Juche::System::System::System(System&& other) noexcept(false) {
 Juche::System::System& 
 Juche::System::System::operator=(System&& other) noexcept(false) { //
 
-   // Juche::Helpers::Console(TEXT("Juche::System::System::operator=(System&& other) this=0x%p other=0x%p\r\n"),this, &other);
     if (this != &other) {
         ac_ = other.ac_;
         other.ac_ = nullptr;
