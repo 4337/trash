@@ -460,7 +460,6 @@ Juche::System::System::operator=(System&& other) noexcept(false) { //
         ac_ = other.ac_;
         other.ac_ = nullptr;
         computer_name_ = other.computer_name_;
-        other.computer_name_ = TEXT("");
     }
 
     return *this;
