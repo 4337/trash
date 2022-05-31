@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////
-///31/05/2022 14:04
+///31/05/2022 21:21
 ///Modu³ pomocniczy.
 ///Udostêpnia funkcje konwersji, konsole debugowania,
 ///procedure obs³ugi wyj¹tków ...
@@ -38,7 +38,7 @@ namespace Juche {
 			/// String jest alokowany na stercie, wiêc po tym jak przestanie byæ potrzeby 
 			/// nale¿y zwolniæ zasoby przy pomocy delete[].
 			/// </returns>
-			inline WCHAR* A2U(const CHAR* a_str) noexcept(false);
+			WCHAR* A2U(const CHAR* a_str) noexcept(false);
 
 			/// <summary>
 			/// Konwersja UNICODE -> ASCII
@@ -49,7 +49,7 @@ namespace Juche {
 			/// String jest alokowany na stercie, wiêc po tym jak przestanie byæ potrzeby 
 			/// nale¿y zwolniæ zasoby przy pomocy delete[].
 			/// </returns>
-			inline CHAR* U2A(const WCHAR* wide_str) noexcept(false);
+			CHAR* U2A(const WCHAR* wide_str) noexcept(false);
 
 #ifdef __J_DEBUG__
 			/// <summary>
