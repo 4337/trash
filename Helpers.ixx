@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////
-///23/04/2022 10:35
+///31/05/2022 14:04
 ///Modu³ pomocniczy.
 ///Udostêpnia funkcje konwersji, konsole debugowania,
 ///procedure obs³ugi wyj¹tków ...
@@ -161,7 +161,8 @@ namespace Juche {
 				catch (...) {
 				
 				}
-
+#else 
+				UNREFERENCED_PARAMETER(excepion);
 #endif
 				exit(-1);
 
