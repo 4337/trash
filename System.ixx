@@ -1,5 +1,5 @@
 //////////////////////////////////////////////////////////////
-///26/05/2022 21:28
+///02/06/2022 11:51
 ///Modu³ udostepnia informacje o systemie operacyjnym,
 ///aktualnie wykorzystywanym koncie u¿ytkownika oraz 
 ///udostêpnia interfejs do manipulowania podstawowym tokenem 
@@ -32,7 +32,7 @@ namespace Juche {
 			/// Helpers.
 			/// </summary>
 
-			inline SYSTEM_INFO info() noexcept {
+			SYSTEM_INFO info() noexcept {
 				SYSTEM_INFO ret;
 				GetSystemInfo(&ret);
 				return ret;
@@ -221,7 +221,7 @@ namespace Juche {
 				}
 
 				/// <summary>
-				/// RAII
+				/// RAII.
 				/// </summary>
 				/// <returns></returns>
 				System() noexcept(false) : ac_(new Account()) {
