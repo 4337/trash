@@ -54,7 +54,7 @@ namespace Juche {
 			/// Prawa dostêpu z jakimi tworzymy uchwyt.
 			/// </param>
 			/// <returns>Uchwyt lub NULL w przypadku b³êdu.</returns>
-			inline HANDLE primary_token(HANDLE proc, DWORD access) noexcept {
+			HANDLE primary_token(HANDLE proc, DWORD access) noexcept {
 				HANDLE token;
 				if (OpenProcessToken(proc, access, &token)) {
 					return token;
