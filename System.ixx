@@ -32,7 +32,7 @@ namespace Juche {
 			/// Helpers.
 			/// </summary>
 
-			SYSTEM_INFO info() noexcept {
+			inline SYSTEM_INFO info() noexcept {
 				SYSTEM_INFO ret;
 				GetSystemInfo(&ret);
 				return ret;
