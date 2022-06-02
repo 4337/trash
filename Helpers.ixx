@@ -1,8 +1,9 @@
 /////////////////////////////////////////////////////////
-///31/05/2022 21:21
+///02/06/2022 17:56
 ///Modu≥ pomocniczy.
 ///UdostÍpnia funkcje konwersji, konsole debugowania,
-///procedure obs≥ugi wyjπtkÛw ...
+///procedure obs≥ugi wyjπtkÛw, wskaüniki do funckji oraz 
+///funkcje pomocnicze ...
 ////////////////////////////////////////////////////////
 
 module;
@@ -168,6 +169,56 @@ namespace Juche {
 
 			}
 
+
+		}
+
+	}
+
+	/// <summary>
+	/// Wskaüniki do funckji i procedur oraz funckja pomocnicza 
+	/// do inicjalizacji wskaünika.
+	/// </summary>
+	namespace Api {
+
+		export { 
+
+			/// <summary>
+			/// Wkaüniki do funkcji.
+			/// </summary>
+			using NtCompareTokens = NTSTATUS(NTAPI*)(HANDLE, HANDLE, PBOOLEAN);
+
+			/// <summary>
+			/// Inicjalizacja wskaünika do funckji.
+			/// </summary>
+			/// <param name="lib">Nazwa lub úcieøka biblioteki dll lub pliku exe</param>
+			/// <param name="proc">Nazwa procedury</param>
+			/// <param name="present">Modu≥ obency w pamiÍci procesu lub nie obency</param>
+			/// <returns>Adres szukanej funkcji/procedury</returns>
+			FARPROC function(const string_t& lib, const string_t& proc, bool present = false) noexcept(false) {
+
+				HMODULE mod = (present == true) ? GetModuleHandle(lib.c_str()) : LoadLibrary(lib.c_str());
+				if (mod == nullptr) {
+					return nullptr;
+				}
+
+#ifndef UNICODE
+				std::string ascii_proc = proc;
+#else
+				char* converted_str = Juche::Helpers::U2A(proc.c_str());
+				if (converted_str == nullptr) {
+					throw std::runtime_error("Juche::Helpers::Api::function()->U2A FAIL");
+				}
+				std::string ascii_proc = converted_str;
+#endif
+				FARPROC ret = GetProcAddress(mod, ascii_proc.c_str());
+
+#ifdef UNICODE
+				delete[] converted_str;
+#endif
+
+				return ret;
+
+			}
 
 		}
 
