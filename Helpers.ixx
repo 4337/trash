@@ -192,11 +192,10 @@ namespace Juche {
 			/// </summary>
 			/// <param name="lib">Nazwa lub œcie¿ka biblioteki dll lub pliku exe</param>
 			/// <param name="proc">Nazwa procedury</param>
-			/// <param name="present">Modu³ obency w pamiêci procesu lub nie obency</param>
 			/// <returns>Adres szukanej funkcji/procedury</returns>
-			FARPROC function(const string_t& lib, const string_t& proc, bool present = false) noexcept(false) {
+			FARPROC function(const string_t& lib, const string_t& proc) noexcept(false) {
 
-				HMODULE mod = (present == true) ? GetModuleHandle(lib.c_str()) : LoadLibrary(lib.c_str());
+				HMODULE mod = LoadLibrary(lib.c_str());
 				if (mod == nullptr) {
 					return nullptr;
 				}
