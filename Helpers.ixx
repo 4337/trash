@@ -192,9 +192,16 @@ namespace Juche {
 				/// 
 
 				class Api {
+
+					static unsigned char ref_counter;
 					  
 					static std::unordered_map<std::string, HMODULE> libs;
 					static std::unordered_map<std::string, FARPROC> procs;
+
+					Api(Api&&) = delete;
+					Api(const Api&) = delete;
+					Api& operator=(const Api&) = delete;
+					Api& operator=(Api&&) = delete;
 
 					/// <summary>
 					/// Helpers.
@@ -204,11 +211,21 @@ namespace Juche {
 					static HMODULE in_libs(const std::string& lib) noexcept;
 					static FARPROC in_procs(const std::string& proc) noexcept;
 
+					static void add_ref() noexcept {
+						++Api::ref_counter;
+					}
+
 				public:
 
+					Api() {
+						Api::add_ref();
+					}
+
 					static void free() noexcept {
-						Api::release_libs();
-						Api::procs.erase(Api::procs.begin(), Api::procs.end());
+						if (Api::ref_counter == 1) {
+							Api::release_libs();
+							Api::procs.erase(Api::procs.begin(), Api::procs.end());
+						}
 					}
 
 					/// <summary>
@@ -226,6 +243,7 @@ namespace Juche {
 
 				};
 
+				unsigned char Api::ref_counter = 0;
 				std::unordered_map<std::string, HMODULE> Api::libs = {};
 				std::unordered_map<std::string, FARPROC> Api::procs = {};
 
