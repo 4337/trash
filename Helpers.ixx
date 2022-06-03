@@ -215,6 +215,10 @@ namespace Juche {
 						++Api::ref_counter;
 					}
 
+					static void del_ref() noexcept {
+						--Api::ref_counter;
+					}
+
 				public:
 
 					Api() {
@@ -238,6 +242,7 @@ namespace Juche {
 					static FARPROC function(const std::string& lib, const std::string& proc) noexcept;
 
 					~Api() {
+						Api::del_ref();
 						Api::free();
 					}
 
