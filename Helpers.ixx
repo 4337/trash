@@ -208,6 +208,7 @@ namespace Juche {
 					/// </summary>
 					
 					static void release_libs() noexcept;
+
 					static HMODULE in_libs(const std::string& lib) noexcept;
 					static FARPROC in_procs(const std::string& proc) noexcept;
 
