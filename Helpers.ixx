@@ -187,6 +187,13 @@ namespace Juche {
 				using NtCompareTokens = NTSTATUS(NTAPI*)(HANDLE, HANDLE, PBOOLEAN);
 
 				/// <summary>
+				/// DWORD = initial CRC
+				/// const BYTE* = wkaünik do danych
+				/// DWORD = rozmiar danych
+				/// </summary>
+				using RtlComputeCrc32 = DWORD(NTAPI*)(DWORD, const BYTE*, DWORD);
+
+				/// <summary>
 				/// Inicjalizacja wskaünika do funckji.
 				/// </summary>
 				/// <param name="lib">Nazwa lub úcieøka biblioteki dll lub pliku exe</param>
