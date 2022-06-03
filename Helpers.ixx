@@ -212,18 +212,18 @@ namespace Juche {
 					static HMODULE in_libs(const std::string& lib) noexcept;
 					static FARPROC in_procs(const std::string& proc) noexcept;
 
-					static void add_ref() noexcept {
+					static void inc_ref() noexcept {
 						++Api::ref_counter;
 					}
 
-					static void del_ref() noexcept {
+					static void dec_ref() noexcept {
 						--Api::ref_counter;
 					}
 
 				public:
 
 					Api() {
-						Api::add_ref();
+						Api::inc_ref();
 					}
 
 					static void free() noexcept {
@@ -243,7 +243,7 @@ namespace Juche {
 					static FARPROC function(const std::string& lib, const std::string& proc) noexcept;
 
 					~Api() {
-						Api::del_ref();
+						Api::dec_ref();
 						Api::free();
 					}
 
