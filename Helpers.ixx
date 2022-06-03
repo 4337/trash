@@ -245,8 +245,8 @@ namespace Juche {
 					static FARPROC function(const std::string& lib, const std::string& proc) noexcept;
 
 					~Api() {
-						Api::dec_ref();
 						Api::free();
+						Api::dec_ref();
 					}
 
 				};
