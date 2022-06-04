@@ -78,8 +78,8 @@ namespace Juche {
 			/// true = wartoœæ znajduje siê w kolekcji.
 			/// false = wartoœæ nie znajduje siê w kolekcji.
 			/// </returns>
-			template<typename TK, typename TV> 
-			bool in_collection(const std::unordered_map<TK, TV>& collection, TK key) noexcept {
+			template< template<typename, typename> class ASSOC_ARRAY, typename TK, typename TV >
+			bool in_collection(const ASSOC_ARRAY<TK, TV>& collection, TK key) noexcept {
 				 
 				for (const auto& item : collection) {
 					if (item.first == key) {
