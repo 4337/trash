@@ -57,7 +57,7 @@ namespace Juche {
 			/// </returns>
 			template<typename T, typename V>
 			requires valid_range<T>
-			bool in_collection(const T& collection, V val) {  //TODO: tests !!!!
+			bool in_collection(const T& collection, V val) {  
 
 				for (const auto& item : collection) {
 					if (item == val) {
@@ -65,6 +65,7 @@ namespace Juche {
 					}
 				 }
 				return false;
+
 			}
 
 			/// <summary>
