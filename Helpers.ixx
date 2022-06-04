@@ -68,7 +68,7 @@ namespace Juche {
 			}
   
 			/// <summary>
-			/// Specjalizacja dla tablic asocjacyjnych.
+			/// Wersja dla tablic asocjacyjnych.
 			/// </summary>
 			/// <typeparam name="TK">Typ klucza tablicy.</typeparam>
 			/// <typeparam name="TV">Typ wartoœci powi¹zanej z kluczem.</typeparam>
