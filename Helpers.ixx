@@ -69,6 +69,19 @@ namespace Juche {
   
 			/// <summary>
 			/// Wersja dla tablic asocjacyjnych.
+			/// (W trakcie konkretyzacji liczba parametrów mo¿e siê niez gadzaæ eg:
+			/// -------
+			/// std::map ma 4 parametry (2 domyœlne)
+			/// template<class Key,class T,
+		    /// class Compare = std::less<Key>,
+		    /// class Allocator = std::allocator<std::pair<const Key, T> >
+            /// > class ma
+			/// -------
+			/// Wy zy wi¹zku z czym mo¿e zaitnieæ potrzeba definiowania aliasów eg:
+			/// template<typename key, typename value> using mymap = map<key, value>;
+			/// ...
+			/// if(in_collection<mymap,string, HANDLE>(libs, "stefan.dll"))
+			/// ...
 			/// </summary>
 			/// <typeparam name="TK">Typ klucza tablicy.</typeparam>
 			/// <typeparam name="TV">Typ wartoœci powi¹zanej z kluczem.</typeparam>
