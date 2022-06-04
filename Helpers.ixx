@@ -260,7 +260,7 @@ namespace Juche {
 				/// Wywo³uje destruktor podczas koñczenia programu.
 				/// Dziêki temu nie musimy jawnie wywo³ywaæ metody zwalniaj¹cej zasoby ("free()").
 				/// </summary>
-				Api api_object;
+				Api API_OBJECT_CLEANING;
 
 			}
 
