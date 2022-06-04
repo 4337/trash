@@ -82,6 +82,7 @@ namespace Juche {
 			/// ...
 			/// if(in_collection<mymap,string, HANDLE>(libs, "stefan.dll"))
 			/// ...
+			/// lub uskuteczniania jakieœ innej gimnastyki.
 			/// </summary>
 			/// <typeparam name="TK">Typ klucza tablicy.</typeparam>
 			/// <typeparam name="TV">Typ wartoœci powi¹zanej z kluczem.</typeparam>
