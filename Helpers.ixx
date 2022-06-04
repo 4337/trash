@@ -33,17 +33,6 @@ namespace Juche {
 		export {
 
 			/// <summary>
-			/// Koncepcja.
-			/// (1>The contents of <ranges> are available only in c++latest mode with concepts support;
-			///  1 > see https ://github.com/microsoft/STL/issues/1814 for details.)
-			/// </summary>
-			template<typename T>
-			concept valid_range = requires(T& t) {
-				std::ranges::begin(t); 
-				std::ranges::end(t);
-			};
-
-			/// <summary>
 			/// Sprawdza czy wartoœæ typu V 
 			/// znajduje siê w kolekcji  typu T.
 			/// </summary>
@@ -55,9 +44,10 @@ namespace Juche {
 			/// true = wartoœæ znajduje siê w kolekcji.
 			/// false = wartoœæ nie znajduje siê w kolekcji.
 			/// </returns>
-			template<typename T, typename V>
-			requires valid_range<T>
-			bool in_collection(const T& collection, V val) {  
+			template
+			<typename T, typename V>
+			requires std::range<T>
+			bool in_collection(const T& collection, V val) noexcept {  
 
 				for (const auto& item : collection) {
 					if (item == val) {
@@ -80,7 +70,7 @@ namespace Juche {
 			/// false = wartoœæ nie znajduje siê w kolekcji.
 			/// </returns>
 			template<typename TK, typename TV> 
-			bool in_collection(const std::unordered_map<TK, TV>& collection, TK key) {
+			bool in_collection(const std::unordered_map<TK, TV>& collection, TK key) noexcept {
 				 
 				for (const auto& item : collection) {
 					if (item.first == key) {
