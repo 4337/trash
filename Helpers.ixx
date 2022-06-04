@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////
-///03/06/2022 14:02
+///04/06/2022 10:13
 ///Modu³ pomocniczy.
 ///Udostêpnia funkcje konwersji, konsole debugowania,
 ///procedure obs³ugi wyj¹tków, wskaŸniki do funckji oraz 
@@ -191,11 +191,11 @@ namespace Juche {
 				/// //////////
 				/// 
 
-				class Api {
+				class Api { 
 
 					static unsigned char ref_counter;
 					  
-					static std::unordered_map<std::string, HMODULE> libs;
+					static std::unordered_map<string_t, HMODULE> libs;
 					static std::unordered_map<std::string, FARPROC> procs;
 
 					Api(Api&&) = delete;
@@ -209,7 +209,7 @@ namespace Juche {
 					
 					static void release_libs() noexcept;
 
-					static HMODULE in_libs(const std::string& lib) noexcept;
+					static HMODULE in_libs(const string_t& lib) noexcept;
 					static FARPROC in_procs(const std::string& proc) noexcept;
 
 					static inline 
