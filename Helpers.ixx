@@ -10,6 +10,7 @@ module;
 
 #include <Windows.h>
 #include <mutex>
+#include <ranges>
 #include <concepts>
 #include <unordered_map>
 
@@ -30,6 +31,40 @@ namespace Juche {
 	namespace Helpers {
 
 		export {
+
+			/// <summary>
+			/// Koncepcja.
+			/// (1>The contents of <ranges> are available only in c++latest mode with concepts support;
+			///  1 > see https ://github.com/microsoft/STL/issues/1814 for details.)
+			/// </summary>
+			template<typename T>
+			concept valid_range = requires(T& t) {
+				std::ranges::begin(t); 
+				std::ranges::end(t);
+			};
+
+			/// <summary>
+			/// Sprawdza czy wartoœæ typu V 
+			/// znajduje siê w kolekcji  typu T.
+			/// </summary>
+			/// <typeparam name="T">Typ kolekcji/kontenera.</typeparam>
+			/// <typeparam name="V">Typ wartoœci.</typeparam>
+			/// <param name="collection">Referencja do przeszukiwanego kontenera.</param>
+			/// <param name="val">Szukana wartoœæ.</param>
+			/// <returns>
+			/// true = wartoœæ znajduje siê w kolekcji.
+			/// false = wartoœæ nie znajduje siê w kolekcji.
+			/// </returns>
+			template<typename T, typename V>
+			requires valid_range<T>
+			bool in_collection(const T& collection, V val) {
+				for (const auto& item : collection) {
+					if (item == val) {
+						return true;
+					}
+				 }
+				return false;
+			}
 
 			/// <summary>
 			/// Konwersja ASCII -> UNICODE
