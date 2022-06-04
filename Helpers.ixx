@@ -67,6 +67,29 @@ namespace Juche {
 				return false;
 
 			}
+  
+			/// <summary>
+			/// Specjalizacja dla tablic asocjacyjnych.
+			/// </summary>
+			/// <typeparam name="TK">Typ klucza tablicy.</typeparam>
+			/// <typeparam name="TV">Typ wartoœci powi¹zanej z kluczem.</typeparam>
+			/// <param name="collection">Tablica asocjacyjna któr¹ przesukujemy.</param>
+			/// <param name="key">Klucz którego szukamy w tablicy.</param>
+			/// <returns>
+			/// true = wartoœæ znajduje siê w kolekcji.
+			/// false = wartoœæ nie znajduje siê w kolekcji.
+			/// </returns>
+			template<typename TK, typename TV> 
+			bool in_collection(const std::unordered_map<TK, TV>& collection, TK key) {
+				 
+				for (const auto& item : collection) {
+					if (item.first == key) {
+						return true;
+					}
+				}
+				return false;
+
+			}
 
 			/// <summary>
 			/// Konwersja ASCII -> UNICODE
