@@ -78,7 +78,13 @@ namespace Juche {
 			/// true = wartoœæ znajduje siê w kolekcji.
 			/// false = wartoœæ nie znajduje siê w kolekcji.
 			/// </returns>
-			template< template<typename, typename> class ASSOC_ARRAY, typename TK, typename TV >
+			template
+			< 
+			 template<typename, typename> class ASSOC_ARRAY, 
+			 typename TK, 
+			 typename TV 
+			>
+			requires valid_range<ASSOC_ARRAY>
 			bool in_collection(const ASSOC_ARRAY<TK, TV>& collection, TK key) noexcept {
 				 
 				for (const auto& item : collection) {
