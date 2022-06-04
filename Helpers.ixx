@@ -10,7 +10,6 @@ module;
 
 #include <Windows.h>
 #include <mutex>
-#include <ranges>
 #include <concepts>
 #include <unordered_map>
 
@@ -33,6 +32,16 @@ namespace Juche {
 		export {
 
 			/// <summary>
+			/// Koncpecja szablonu.
+			/// (trzeba poprawiæ, ale mi siê nie chce).
+			/// </summary>
+			template< class T >
+			concept valid_range = requires(T & t) {
+				t.begin(); 
+				t.end();
+			};
+
+			/// <summary>
 			/// Sprawdza czy wartoœæ typu V 
 			/// znajduje siê w kolekcji  typu T.
 			/// </summary>
@@ -46,7 +55,7 @@ namespace Juche {
 			/// </returns>
 			template
 			<typename T, typename V>
-			requires std::range<T>
+			requires valid_range<T>
 			bool in_collection(const T& collection, V val) noexcept {  
 
 				for (const auto& item : collection) {
