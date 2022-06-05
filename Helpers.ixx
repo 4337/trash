@@ -12,6 +12,7 @@ module;
 #include <mutex>
 #include <concepts>
 #include <unordered_map>
+#include <iterator>
 
 #include "Environment.h"
 
@@ -36,10 +37,13 @@ namespace Juche {
 			/// (trzeba poprawiæ, ale mi siê nie chce).
 			/// </summary>
 			template<typename T>
-			concept valid_range = requires(T& t) {
-				t.begin(); 
+			concept valid_range_type = requires(T& t) {
+				t.begin();
 				t.end();
 			};
+
+			template<typename TV>
+			using vector_t = std::vector<TV>;
 
 			/// <summary>
 			/// Sprawdza czy wartoœæ typu TV 
@@ -59,7 +63,7 @@ namespace Juche {
 			 template<typename> class CONTAINER,
 			 typename TV
 			>
-			requires valid_range<CONTAINER>
+			requires valid_range_type<CONTAINER>
 			bool in_collection(const CONTAINER<TV>& collection, TV val) noexcept {
 
 				for (const auto& item : collection) {
@@ -102,7 +106,7 @@ namespace Juche {
 			 typename TK, 
 			 typename TV 
 			>
-			requires valid_range<ASSOC_ARRAY>
+			requires valid_range_type<ASSOC_ARRAY>
 			bool in_collection(const ASSOC_ARRAY<TK, TV>& collection, TK key) noexcept {
 				 
 				for (const auto& item : collection) {
@@ -198,7 +202,7 @@ namespace Juche {
 			/// która mo¿e byæ rzutowana na const char*.
 			/// </summary>
 			template<typename T>
-			concept valid_exception_type = requires (T t) {
+			concept valid_exception_type = requires (T& t) {
 				{t.what()} -> std::convertible_to<const char*>;
 			};
 
