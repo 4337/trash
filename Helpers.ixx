@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////
-///05/06/2022 09:09
+///05/06/2022 16:34
 ///Modu³ pomocniczy.
 ///Udostêpnia funkcje konwersji, konsole debugowania,
 ///procedure obs³ugi wyj¹tków, wskaŸniki do funckji oraz 
@@ -12,7 +12,7 @@ module;
 #include <mutex>
 #include <concepts>
 #include <unordered_map>
-#include <iterator>
+#include <ranges>
 
 #include "Environment.h"
 
@@ -33,16 +33,6 @@ namespace Juche {
 		export {
 
 			/// <summary>
-			/// Koncpecja szablonu.
-			/// (trzeba poprawiæ, ale mi siê nie chce).
-			/// </summary>
-			template<typename T>
-			concept valid_range_type = requires(T& t) {
-				t.begin();
-				t.end();
-			};
-
-			/// <summary>
 			/// Sprawdza czy wartoœæ typu TV 
 			/// znajduje siê w kolekcji  typu constainer<TV>.
 			/// (Mo¿e wymagaæ definicji aliasu).
@@ -60,7 +50,7 @@ namespace Juche {
 			 template<typename> class CONTAINER,
 			 typename TV
 			>
-			//requires valid_range_type<CONTAINER>
+			requires std::ranges::range<CONTAINER<TV>>
 			bool in_collection(const CONTAINER<TV>& collection, TV val) noexcept {
 
 				for (const auto& item : collection) {
@@ -71,6 +61,16 @@ namespace Juche {
 				return false;
 
 			}
+
+			/// <summary>
+		    /// Koncpecja szablonu.
+		    /// (trzeba poprawiæ, ale mi siê nie chce).
+		    /// </summary>
+			template<typename T, typename TK>
+			concept valid_associative_type = requires(T& t) {
+				std::ranges::range<T>;
+				{ t.first } -> std::same_as<TK>;
+			};
   
 			/// <summary>
 			/// Wersja dla tablic asocjacyjnych.
@@ -103,7 +103,7 @@ namespace Juche {
 			 typename TK, 
 			 typename TV 
 			>
-			//requires valid_range_type<ASSOC_ARRAY>
+			requires valid_associative_type<ASSOC_ARRAY<TK,TV>,TK>
 			bool in_collection(const ASSOC_ARRAY<TK, TV>& collection, TK key) noexcept {
 				 
 				for (const auto& item : collection) {
