@@ -42,9 +42,6 @@ namespace Juche {
 				t.end();
 			};
 
-			template<typename TV>
-			using vector_t = std::vector<TV>;
-
 			/// <summary>
 			/// Sprawdza czy wartoœæ typu TV 
 			/// znajduje siê w kolekcji  typu constainer<TV>.
