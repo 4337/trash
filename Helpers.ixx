@@ -60,7 +60,7 @@ namespace Juche {
 			 template<typename> class CONTAINER,
 			 typename TV
 			>
-			requires valid_range_type<CONTAINER>
+			//requires valid_range_type<CONTAINER>
 			bool in_collection(const CONTAINER<TV>& collection, TV val) noexcept {
 
 				for (const auto& item : collection) {
@@ -103,7 +103,7 @@ namespace Juche {
 			 typename TK, 
 			 typename TV 
 			>
-			requires valid_range_type<ASSOC_ARRAY>
+			//requires valid_range_type<ASSOC_ARRAY>
 			bool in_collection(const ASSOC_ARRAY<TK, TV>& collection, TK key) noexcept {
 				 
 				for (const auto& item : collection) {
@@ -326,7 +326,7 @@ namespace Juche {
 					/// <param name="lib">Nazwa biblioteki.</param>
 					/// <param name="proc">Nazwa procedury/funkcji.</param>
 					/// <returns>Adres procedury/funkcji lub nullptr.</returns>
-					static FARPROC function(const std::string& lib, const std::string& proc) noexcept;
+					static FARPROC function(const string_t& lib, const std::string& proc) noexcept;
 
 					~Api() {
 						Api::free();
@@ -336,7 +336,7 @@ namespace Juche {
 				};
 
 				unsigned char Api::ref_counter = 0;
-				std::unordered_map<std::string, HMODULE> Api::libs = {};
+				std::unordered_map<string_t, HMODULE> Api::libs = {};
 				std::unordered_map<std::string, FARPROC> Api::procs = {};
 
 				/// <summary>
