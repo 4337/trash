@@ -144,13 +144,13 @@ namespace Juche {
 
                 /// <summary>
                 /// DWORD = Suma CRC32 nazwy wykluczonego procesu.
-				/// ASCII:
-				/// 0xb4e35f10 = firefox.exe 
-				/// 0x9c1d0d0e = chrome.exe
-				/// 0x79a3aebf = msedge.exe
-				/// UNICODE:
-				/// 0xXXXXXXXX = msedge.exe
-				/// 0xYYYYYYYY = firefox.exe
+		    /// ASCII:
+		    /// 0xb4e35f10 = firefox.exe 
+		    /// 0x9c1d0d0e = chrome.exe
+		    /// 0x79a3aebf = msedge.exe
+		    /// UNICODE:
+		    /// 0xXXXXXXXX = msedge.exe
+		    /// 0xYYYYYYYY = firefox.exe
                 /// </summary>
                 std::vector<DWORD> excluded_;  
 
