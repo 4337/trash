@@ -172,7 +172,14 @@ namespace Juche {
 
 				int snapshoot(ProcessType proc_type = ProcessType::ANY, bool ignore_cig = false) noexcept(false); 
 
-				const Process& operator[](size_t index) noexcept;
+				/// <summary>
+				/// Operator indeksowania bez weryfikacji granic.
+				/// </summary>
+				/// <param name="index">indeks.</param>
+				/// <returns>Process</returns>
+				inline Process& operator[](size_t index) noexcept {
+					return list_[index];
+				}
 
 				~ProcessList();
 
