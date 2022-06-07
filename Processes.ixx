@@ -144,18 +144,23 @@ namespace Juche {
 
                 /// <summary>
                 /// DWORD = Suma CRC32 nazwy wykluczonego procesu.
-		    /// ASCII:
-		    /// 0xb4e35f10 = firefox.exe 
-		    /// 0x9c1d0d0e = chrome.exe
-		    /// 0x79a3aebf = msedge.exe
-		    /// UNICODE:
-		    /// 0xXXXXXXXX = msedge.exe
-		    /// 0xYYYYYYYY = firefox.exe
+				/// ASCII:
+				/// 0xb4e35f10 = firefox.exe 
+				/// 0x9c1d0d0e = chrome.exe
+				/// 0x79a3aebf = msedge.exe
+				/// UNICODE:
+				/// 0xXXXXXXXX = msedge.exe
+				/// 0xYYYYYYYY = firefox.exe
                 /// </summary>
                 std::vector<DWORD> excluded_;  
 
 				template<typename T>
 				using exclusion_vector = std::vector<T>;
+
+
+				/// <summary>
+				/// Helpers.
+				/// </summary>
 
 				int enum_pids(Pids& info) noexcept(false);
 				  
@@ -165,7 +170,7 @@ namespace Juche {
 
 				explicit ProcessList(std::initializer_list<DWORD> ex = {}) noexcept(false);
 
-				int snapshoot(ProcessType proc_type = ProcessType::ANY, bool ignore_cig = false) noexcept(false);  
+				int snapshoot(ProcessType proc_type = ProcessType::ANY, bool ignore_cig = false) noexcept(false); 
 
 				const Process& operator[](size_t index) noexcept;
 
