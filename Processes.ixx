@@ -165,7 +165,7 @@ namespace Juche {
 
 				explicit ProcessList(std::initializer_list<DWORD> ex = {}) noexcept(false);
 
-				int snapshoot(ProcessType proc_type = ProcessType::ANY, bool ignore_cig = false) noexcept(false);  //trzeba dodaæ parametry: has_privileges[], user, session = 0
+				int snapshoot(ProcessType proc_type = ProcessType::ANY, bool ignore_cig = false) noexcept(false);  
 
 				const Process& operator[](size_t index) noexcept;
 
