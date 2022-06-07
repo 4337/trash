@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////
 ///07/06/2022 10:56
 ///Modu³ tworzy listê procesów które sep³niaj¹ okreœlone 
-///warunki wstêpne i udostêpnia interfesj do pobierania 
+///warunki wstêpne i udostêpnia interfejs do pobierania 
 ///informacji o poszczególnych procesach.
 ////////////////////////////////////////////////////////
 module;
