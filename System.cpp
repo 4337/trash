@@ -266,7 +266,7 @@ Juche::System::Account::set_sid() noexcept {
     sid_.init = false;
     sid_.sid = new SID[sid_size];
     if (sid_.sid == nullptr) {
-        return -1;
+        ret = -1;
     } else if (LookupAccountName(0, user_name_.c_str(), sid_.sid, &sid_size,
                                  domain, &ad_size, &sid_use) == 0) {
             ret = 0;
