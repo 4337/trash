@@ -1,5 +1,5 @@
 //////////////////////////////////////////////////////////////
-///28/05/2022 20:00
+///08/06/2022 13:00
 ///Modu³ udostepnia informacje o systemie operacyjnym,
 ///aktualnie wykorzystywanym koncie u¿ytkownika oraz 
 ///udostêpnia interfejs do manipulowania podstawowym tokenem 
@@ -239,10 +239,11 @@ Juche::System::Account::is_admin() noexcept {
 /// (u¿ytkownik który jest w³aœcielem tego procesu).
 /// </summary>
 /// <returns>
-/// true = sukces
-/// false = error
+/// 1 = sukces
+/// 0 = error
+/// -1 = bardzo error
 /// </returns>
-bool 
+int
 Juche::System::Account::set_sid() noexcept {
 
     SID_NAME_USE sid_use;
@@ -251,31 +252,30 @@ Juche::System::Account::set_sid() noexcept {
     if (LookupAccountName(nullptr, user_name_.c_str(), nullptr, &sid_size, 0, 
                           &ad_size, &sid_use) == 0) {
         if (GetLastError() != ERROR_INSUFFICIENT_BUFFER) {
-            return false;
+            return 0;
         }
     }
 
-    std::unique_ptr<TCHAR[]> domain(new TCHAR[ad_size]);
-
-    if (!domain) {
-        return false;
+    int ret = 1;
+    TCHAR* domain = new TCHAR[ad_size];
+    if (domain == nullptr) {
+        return -1;
     }
 
     sid_.sid = new SID[sid_size];
     if (sid_.sid == nullptr) {
-        return false;
+        ret = -1;
+    } else if (LookupAccountName(0, user_name_.c_str(), sid_.sid, &sid_size,
+                                 domain, &ad_size, &sid_use) == 0) {
+            ret = 0;
+    } else {
+        sid_.init = true;
+        sid_.sid_size = sid_size;
     }
 
-    if (LookupAccountName(0, user_name_.c_str(), sid_.sid, &sid_size,
-                          domain.get(), 
-                          &ad_size, &sid_use) == 0) {   
-        return false;
-    }
+    delete[] domain;
 
-    sid_.init = true;
-    sid_.sid_size = sid_size;
-
-    return true;
+    return ret;
 
 }
 

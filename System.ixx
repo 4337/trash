@@ -1,5 +1,5 @@
 //////////////////////////////////////////////////////////////
-///02/06/2022 11:51
+///08/06/2022 13:00
 ///Modu³ udostepnia informacje o systemie operacyjnym,
 ///aktualnie wykorzystywanym koncie u¿ytkownika oraz 
 ///udostêpnia interfejs do manipulowania podstawowym tokenem 
@@ -110,7 +110,7 @@ namespace Juche {
 
 				int set_token() noexcept;
 
-				bool set_sid() noexcept;
+				int set_sid() noexcept;
 
 			public:
 
