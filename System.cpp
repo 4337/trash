@@ -262,6 +262,7 @@ Juche::System::Account::set_sid() noexcept {
     } 
 
     int ret = 1;
+
     sid_.sid = new SID[sid_size];
     if (sid_.sid == nullptr) {
         ret = -1;
