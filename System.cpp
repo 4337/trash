@@ -193,12 +193,7 @@ Juche::System::Account::set_token() noexcept {
         return -1;
     }
 
-    int ret = luid_2_privs();
-    if (ret != 1) {
-        return ret;
-    }
-
-    return 1;
+    return luid_2_privs();
 
 }
 
