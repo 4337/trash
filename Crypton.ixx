@@ -181,7 +181,7 @@ namespace Juche {
 
                   inline binary_string decode(const std::string& encoded_key) const noexcept(false);
 
-                  int import_3rd_public_key(const BYTE* key_blob, DWORD blob_size) const noexcept;
+                  int import_3rd_public_key(const BYTE* key_blob, DWORD blob_size) noexcept;
 
                   /// <summary>
                   /// Ustawia tryb szyfrowania.
