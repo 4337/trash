@@ -167,6 +167,8 @@ namespace Juche {
                       return CryptGenKey(provider_, CALG_DH_EPHEM, (1024 << 16) | CRYPT_CREATE_SALT | CRYPT_EXPORTABLE, &priv_key_);
                   }
 
+                  inline bool algorithm(SymmetricAlgorithm algo) noexcept;
+
             public:
                   
                   explicit Cipher(SymmetricAlgorithm enc_algo) noexcept;
@@ -190,8 +192,6 @@ namespace Juche {
                   /// CRYPT_MODE_CTS
                   /// </summary>
                   inline bool encryption_mode(DWORD mode) noexcept;
-
-                  inline bool algorithm(SymmetricAlgorithm algo) noexcept;
 
                   std::vector<unsigned char> encrypt(const BYTE* data, DWORD data_len) const noexcept(false);
 
