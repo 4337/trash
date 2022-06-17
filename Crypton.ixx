@@ -138,7 +138,7 @@ namespace Juche {
             
             /// <summary>
             /// Ubogi Defi Helmans - Umo¿liwia "bezpieczn¹" wymianê klucza i 
-            /// szyfrowanie symetryczne przy pomocy kilku algorytmów.
+            /// szyfrowanie symetryczne przy pomocy jednego z kilku algorytmów.
             /// Klasa nie zapewnia mo¿lioœci eksportu/importu klucza prywatnego
             /// wiêc generowana para kluczy pub/priv oraz klucz sesyjny jest w³aœciwie efemeryczna.
             /// Klasa nie umoŸliwia równie¿ generowania kluczy z predefiniowanymi wartoœciami G i P.
