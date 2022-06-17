@@ -163,10 +163,6 @@ namespace Juche {
                   /// Helpers.
                   /// </summary>
                   
-                  inline bool init() const noexcept {
-                      return (priv_key_ != 0) ? true : false;
-                  }
-
                   inline bool private_key() noexcept {
                       return CryptGenKey(provider_, CALG_DH_EPHEM, (1024 << 16) | CRYPT_CREATE_SALT | CRYPT_EXPORTABLE, &priv_key_);
                   }
@@ -200,6 +196,10 @@ namespace Juche {
                   std::vector<unsigned char> encrypt(const BYTE* data, DWORD data_len) const noexcept(false);
 
                   std::vector<unsigned char> decrypt(const BYTE* enc_data, DWORD enc_data_len) const noexcept(false);
+
+                  inline bool init() const noexcept {
+                      return (priv_key_ != 0) ? true : false;
+                  }
 
                   ~Cipher();
 
