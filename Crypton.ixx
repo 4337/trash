@@ -164,7 +164,7 @@ namespace Juche {
                   /// </summary>
                   
                   inline bool private_key() noexcept {
-                      return CryptGenKey(provider_, CALG_DH_EPHEM, (1024 << 16) | CRYPT_CREATE_SALT | CRYPT_EXPORTABLE, &priv_key_);
+                      return CryptGenKey(provider_, CALG_DH_EPHEM, (1024 << 16) | CRYPT_CREATE_SALT, &priv_key_);
                   }
 
                   inline bool algorithm(SymmetricAlgorithm algo) noexcept; 
