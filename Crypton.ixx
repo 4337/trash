@@ -150,7 +150,7 @@ namespace Juche {
                   HCRYPTPROV provider_;
                   
                   /// <summary>
-                  /// Nasz klucze prywatny i publiczny.
+                  /// Nasze klucze prywatny i publiczny.
                   /// </summary>
                   HCRYPTKEY priv_key_;
                  
@@ -205,7 +205,7 @@ namespace Juche {
 
             };
 
-		};
+		}
 
     }
 
