@@ -145,7 +145,7 @@ namespace Juche {
             /// </summary>
             class Cipher {
 
-                  ALG_ID enc_algo_;
+                  SymmetricAlgorithm enc_algo_;
                   
                   HCRYPTPROV provider_;
                   
