@@ -168,7 +168,7 @@ namespace Juche {
                   /// </summary>
                   /// <param name="key">Klucz (sessji).</param>
                   /// <returns>Rozmiar bloku lub 1</returns>
-                  DWORD block_size(HCRYPTKEY key) noexcept;
+                  DWORD block_size(HCRYPTKEY key) const noexcept;
 
                   inline bool private_key() noexcept {
                       return CryptGenKey(provider_, CALG_DH_EPHEM, (1024 << 16) | CRYPT_CREATE_SALT, &priv_key_);
