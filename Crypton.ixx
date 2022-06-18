@@ -194,8 +194,8 @@ namespace Juche {
                   /// <returns>Rozmiar bloku lub 1</returns>
                   DWORD block_size(HCRYPTKEY key) const noexcept;
 
-                  inline bool private_key() noexcept {
-                      return CryptGenKey(provider_, CALG_DH_EPHEM, (1024 << 16), &priv_key_);
+                  inline bool private_key(DWORD flag) noexcept {
+                      return CryptGenKey(provider_, CALG_DH_EPHEM, flag, &priv_key_);
                   }
 
                   inline bool algorithm(SymmetricAlgorithm algo) noexcept {
@@ -204,7 +204,7 @@ namespace Juche {
 
             public:
                   
-                  explicit Cipher(SymmetricAlgorithm enc_algo) noexcept;
+                  explicit Cipher(SymmetricAlgorithm enc_algo, DWORD flag = 1024 << 16) noexcept;
 
                   exported_key key_blob(KeyType key_type = KeyType::PUBLIC, HCRYPTKEY key_encryption_key = 0) const noexcept(false);
 
