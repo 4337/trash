@@ -117,6 +117,11 @@ namespace Juche {
             /// //////////
             /// 
             
+            void free_blob(void* blob, DWORD size) noexcept {
+                ZeroMemory(blob, size);
+                delete[] blob;
+            }
+            
             /// <summary>
             /// blob jest alokowany przy pomocy operatora new[]
             /// i powinien/musiæ byæ zwolniony za pomoc¹ delete[].
