@@ -161,6 +161,15 @@ namespace Juche {
                   /// Helpers.
                   /// </summary>
                   
+                  /// <summary>
+                  /// Zwraca rozmiar bloku, dla szyfrów blokowych.
+                  /// Dla szyfrów strumieniowych zwraca 1
+                  /// (w orginale zwraca 0, ale mno¿yæ przez 0 to doœæ g³upie).
+                  /// </summary>
+                  /// <param name="key">Klucz (sessji).</param>
+                  /// <returns>Rozmiar bloku lub 1</returns>
+                  DWORD block_size(HCRYPTKEY key) noexcept;
+
                   inline bool private_key() noexcept {
                       return CryptGenKey(provider_, CALG_DH_EPHEM, (1024 << 16) | CRYPT_CREATE_SALT, &priv_key_);
                   }
