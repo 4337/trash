@@ -117,11 +117,6 @@ namespace Juche {
             /// //////////
             /// 
             
-            void free_blob(void* blob, DWORD size) noexcept {
-                ZeroMemory(blob, size);
-                delete[] blob;
-            }
-            
             /// <summary>
             /// blob jest alokowany przy pomocy operatora new[]
             /// i powinien/musiæ byæ zwolniony za pomoc¹ delete[].
@@ -132,6 +127,11 @@ namespace Juche {
                 DWORD size;
                 BYTE* blob;
             };
+
+            void release_exported_key(const exported_key& key) noexcept {
+                ZeroMemory(key.blob, key.size);
+                delete[] key.blob;
+            }
 
             /// <summary>
             /// Typy kluczy jakie nas interesuj¹.
