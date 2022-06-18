@@ -37,7 +37,7 @@ namespace Juche {
 
             /// /////////
 
-            std::string base64_encode(const BYTE * data, DWORD data_size) noexcept(false);
+            std::string base64_encode(const BYTE* data, DWORD data_size) noexcept(false);
 
             std::vector<unsigned char> base64_decode(const std::string& enc_data) noexcept(false);
 
@@ -173,9 +173,11 @@ namespace Juche {
 
                   exported_key key_blob(KeyType key_type = KeyType::PUBLIC, HCRYPTKEY key_encryption_key = 0) const noexcept(false);
 
-                  inline std::string encode(const exported_key& key) const noexcept(false);
+                  inline std::string encode(const exported_key& key) const noexcept(false) {
+                      return Juche::Crypto::base64_encode(key.blob, key.size);
+                  }
 
-                  inline binary_string decode(const std::string& encoded_key) const noexcept(false);
+                  binary_string decode(const std::string& encoded_key) const noexcept(false);
 
                   int import_3rd_public_key(const BYTE* key_blob, DWORD blob_size) noexcept;
 
@@ -189,7 +191,7 @@ namespace Juche {
                   /// CRYPT_MODE_OFB
                   /// CRYPT_MODE_CTS
                   /// </summary>
-                  inline bool encryption_mode(DWORD mode) noexcept;
+                  bool encryption_mode(DWORD mode) noexcept;
 
                   std::vector<unsigned char> encrypt(const BYTE* data, DWORD data_len) const noexcept(false);
 
