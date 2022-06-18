@@ -162,7 +162,7 @@ namespace Juche {
                   /// </summary>
                   
                   /// <summary>
-                  /// Zwraca rozmiar bloku, dla szyfrów blokowych.
+                  /// Zwraca rozmiar bloku dla szyfrów blokowych.
                   /// Dla szyfrów strumieniowych zwraca 1
                   /// (w orginale zwraca 0, ale mno¿yæ przez 0 to doœæ g³upie).
                   /// </summary>
