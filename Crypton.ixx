@@ -1,5 +1,5 @@
 ///////////////////////////////////////
-/// 16/06/2022 10:49
+/// 18/06/2022 12:00
 /// Modu³ udostêpnia klasê która umo¿liwia symetryczne 
 /// szyfrowanie i deszyfrowanie danych z bezpieczn¹ wymian¹ klucza
 /// bazuj¹c¹ na protokole Diffiego-Hellmana.
@@ -13,6 +13,25 @@
 /// Klasa nie pozwala na generowanie i u¿ywanie kluczy z predefiniowanymi wartoœciami G i P.
 /// Modu³ zawiera równie¿ funkcje CRC32 oraz base64.
 ////////////////////////////////////////
+///  Juche::Crypto::Cipher a(Juche::Crypto::SymmetricAlgorithm::ALG_3DES_112);
+///  Juche::Crypto::exported_key pubkey_a = a.key_blob();
+///  std::string pubkey_a_b64 = a.encode(pubkey_a);
+///  
+///  Juche::Crypto::Cipher b(Juche::Crypto::SymmetricAlgorithm::ALG_3DES_112);
+///  binary_string pubkey_a_b64dec = b.decode(pubkey_a_b64);
+/// 
+///  if (b.import_3rd_public_key(pubkey_a_b64dec.c_str(), static_cast<DWORD>(pubkey_a_b64dec.length())) == 1) {
+/// 
+///      Juche::Crypto::exported_key pubkey_b = b.key_blob();
+///      std::string pubkey_b_b64 = b.encode(pubkey_b);
+///      binary_string pubkey_b_b64dec = a.decode(pubkey_b_b64);
+/// 
+///      if (a.import_3rd_public_key(pubkey_b_b64dec.c_str(), (DWORD)pubkey_b_b64dec.length()) == 1) {
+///          char data[] = "Tajne przez poufne (^^)";
+///          std::vector<unsigned char> data_enc = a.encrypt(reinterpret_cast<unsigned char*>(data), static_cast<DWORD>(sizeof(data)));
+///          binary_string data_enc_bin(data_enc.begin(), data_enc.end());
+///          std::vector<unsigned char> data_dec = b.decrypt(data_enc_bin.c_str(), static_cast<DWORD>(data_enc_bin.length()));
+//////////////////////////////////////////
 
 module;
 
