@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////
-///05/06/2022 16:34
+///18/06/2022 08:05
 ///Modu³ pomocniczy.
 ///Udostêpnia funkcje konwersji, konsole debugowania,
 ///procedure obs³ugi wyj¹tków, wskaŸniki do funckji oraz 
@@ -331,6 +331,14 @@ namespace Juche {
 					~Api() {
 						Api::free();
 						Api::dec_ref();
+					}
+
+					static bool free_library(const string_t& lib) noexcept {
+						if (FreeLibrary(Api::libs[lib])) {
+							Api::libs.erase(lib);
+							return true;
+						}
+						return false;
 					}
 
 				};
