@@ -1,5 +1,5 @@
 ///////////////////////////////////////
-/// 18/06/2022 12:00
+/// 18/06/2022 18:57
 /// Modu³ udostêpnia klasê która umo¿liwia symetryczne 
 /// szyfrowanie i deszyfrowanie danych z bezpieczn¹ wymian¹ klucza
 /// bazuj¹c¹ na protokole Diffiego-Hellmana.
@@ -195,7 +195,7 @@ namespace Juche {
                   DWORD block_size(HCRYPTKEY key) const noexcept;
 
                   inline bool private_key() noexcept {
-                      return CryptGenKey(provider_, CALG_DH_EPHEM, (1024 << 16) | CRYPT_CREATE_SALT, &priv_key_);
+                      return CryptGenKey(provider_, CALG_DH_EPHEM, (1024 << 16), &priv_key_);
                   }
 
                   inline bool algorithm(SymmetricAlgorithm algo) noexcept {
