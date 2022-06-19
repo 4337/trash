@@ -134,10 +134,6 @@ namespace Juche {
                    0x6f, 0xfd, 0x85, 0xac, 0x9f, 0x99, 0x2d, 0xea, 0x42
             };
 
-            ///
-            /// /////////
-            /// 
-            
             /// <summary>
             /// blob jest alokowany przy pomocy operatora new[]
             /// i powinien/musiæ byæ zwolniony za pomoc¹ delete[].
