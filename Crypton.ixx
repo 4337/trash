@@ -184,6 +184,8 @@ namespace Juche {
             /// szyfrowanie symetryczne przy pomocy jednego z kilku algorytmów.
             /// Klasa nie zapewnia mo¿lioœci eksportu/importu klucza prywatnego
             /// wiêc generowana para kluczy pub/priv oraz klucz sesyjny jest w³aœciwie efemeryczna.
+            /// Oczywiœcie nic nie stoi na przeszkodzie aby zaszyfrowaæ nimi inny klucz symetryczny (has³o)
+            /// i siê nim wymieniæ z drug¹ stron¹.
             /// </summary>
             class Cipher {
 
