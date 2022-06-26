@@ -1,5 +1,5 @@
 ///////////////////////////////////////
-/// 19/06/2022 13:44
+/// 26/06/2022 21:55
 /// Modu³ udostêpnia klasê która umo¿liwia symetryczne 
 /// szyfrowanie i deszyfrowanie danych z bezpieczn¹ wymian¹ klucza
 /// bazuj¹c¹ na protokole Diffiego-Hellmana.
@@ -10,27 +10,10 @@
 /// umo¿liwia równie¿ zmianê trybu szyfrowania.
 /// Aby zaszyfrowaæ dane, poza wymian¹ klucza publicznego, trzeba oczywiœcie 
 /// przekazaæ informacje o tym jakim algorytmem zosta³y zaszyforwane.
+/// Klasa umo¿liwia równie¿ szyfrowanie i deszyfrowanie wybranym algorytmem z kluczem 
+/// tajnym, który mo¿e byæ sta³y, lub mieæ d³u¿szy czas ¿ycia ni¿ klucze DH.
 /// Modu³ zawiera równie¿ funkcje CRC32 oraz base64.
 ////////////////////////////////////////
-///  Juche::Crypto::Cipher a(Juche::Crypto::SymmetricAlgorithm::ALG_3DES_112);
-///  Juche::Crypto::exported_key pubkey_a = a.key_blob();
-///  std::string pubkey_a_b64 = a.encode(pubkey_a);
-///  
-///  Juche::Crypto::Cipher b(Juche::Crypto::SymmetricAlgorithm::ALG_3DES_112);
-///  binary_string pubkey_a_b64dec = b.decode(pubkey_a_b64);
-/// 
-///  if (b.import_3rd_public_key(pubkey_a_b64dec.c_str(), static_cast<DWORD>(pubkey_a_b64dec.length())) == 1) {
-/// 
-///      Juche::Crypto::exported_key pubkey_b = b.key_blob();
-///      std::string pubkey_b_b64 = b.encode(pubkey_b);
-///      binary_string pubkey_b_b64dec = a.decode(pubkey_b_b64);
-/// 
-///      if (a.import_3rd_public_key(pubkey_b_b64dec.c_str(), (DWORD)pubkey_b_b64dec.length()) == 1) {
-///          char data[] = "Tajne przez poufne (^^)";
-///          std::vector<unsigned char> data_enc = a.encrypt(reinterpret_cast<unsigned char*>(data), static_cast<DWORD>(sizeof(data)));
-///          binary_string data_enc_bin(data_enc.begin(), data_enc.end());
-///          std::vector<unsigned char> data_dec = b.decrypt(data_enc_bin.c_str(), static_cast<DWORD>(data_enc_bin.length()));
-//////////////////////////////////////////
 
 module;
 
@@ -186,6 +169,8 @@ namespace Juche {
             /// wiêc generowana para kluczy pub/priv oraz klucz sesyjny jest w³aœciwie efemeryczna.
             /// Oczywiœcie nic nie stoi na przeszkodzie aby zaszyfrowaæ nimi inny klucz symetryczny (has³o)
             /// i siê nim wymieniæ z drug¹ stron¹.
+            /// Klasa zapewnia dwie przeci¹¿one metody encrypt i decrypt, które umo¿liwiaj¹ 
+            /// szyfrowanie tajnym kluczem, który mo¿e byæ sta³y.
             /// </summary>
             class Cipher {
 
@@ -250,9 +235,45 @@ namespace Juche {
                   /// </summary>
                   bool encryption_mode(DWORD mode) noexcept;
 
+                  /// <summary>
+                  /// Szyfrowanie kluczem efemerycznym.
+                  /// </summary>
                   std::vector<unsigned char> encrypt(const BYTE* data, DWORD data_len) const noexcept(false);
 
+                  /// <summary>
+                  /// Szyfruje dane wskazanym algorytmem z u¿yciem 
+                  /// klucza przekazanego w argumencie.
+                  /// </summary>
+                  /// <param name="enc_algo">Algorytm szyfrowania.</param>
+                  /// <param name="key">Klucz szyfrowania.</param>
+                  /// <param name="data">Dane do zaszyfrowania</param>
+                  /// <param name="data_len">Rozmiar danych do zaszyfrowania.</param>
+                  /// <returns>
+                  /// Vector binarnych znaków szyfrogramu.
+                  /// Jeœli rozmiar vector == 0 to znaczy, ¿e coœ posz³o Ÿle,
+                  /// wiêcej informacji zwróci GetLastError().
+                  /// </returns>
+                  std::vector<unsigned char> encrypt(SymmetricAlgorithm enc_algo, const std::string& key, const BYTE* data, DWORD data_len) const noexcept(false);
+
+                  /// <summary>
+                  /// Deszyfrowanie kluczem efemerycznym.
+                  /// </summary>
                   std::vector<unsigned char> decrypt(const BYTE* enc_data, DWORD enc_data_len) const noexcept(false);
+
+                  /// <summary>
+                  /// Deszyfruje dane wskazanym algorytmem z u¿yciem 
+                  /// klucza przekazanego w argumencie.
+                  /// </summary>
+                  /// <param name="enc_algo">Algorytm szyfrowania.</param>
+                  /// <param name="key">Klucz szyfrowania.</param>
+                  /// <param name="enc_data">Zaszyfrowane dane.</param>
+                  /// <param name="enc_data_len">Rozmiar zaszyfrowanych danyc.</param>
+                  /// <returns>
+                  /// Vector binarnych znaków oszyfrowanej wiadomoœci.
+                  /// Jeœli rozmiar vector == 0 to znaczy, ¿e coœ posz³o Ÿle,
+                  /// wiêcej informacji zwróci GetLastError().
+                  /// </returns>
+                  std::vector<unsigned char> decrypt(SymmetricAlgorithm enc_algo, const std::string& key, const BYTE* enc_data, DWORD enc_data_len) const noexcept(false);
 
                   inline bool init() const noexcept {
                       return init_;
