@@ -1,5 +1,5 @@
 ///////////////////////////////////////
-/// 26/06/2022 21:55
+/// 26/06/2022 21:57
 /// Modu³ udostêpnia klasê która umo¿liwia symetryczne 
 /// szyfrowanie i deszyfrowanie danych z bezpieczn¹ wymian¹ klucza
 /// bazuj¹c¹ na protokole Diffiego-Hellmana.
