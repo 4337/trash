@@ -169,7 +169,7 @@ namespace Juche {
             /// wiêc generowana para kluczy pub/priv oraz klucz sesyjny jest w³aœciwie efemeryczna.
             /// Oczywiœcie nic nie stoi na przeszkodzie aby zaszyfrowaæ nimi inny klucz symetryczny (has³o)
             /// i siê nim wymieniæ z drug¹ stron¹.
-            /// Klasa zapewnia dwie przeci¹¿one metody encrypt i decrypt, które umo¿liwiaj¹ 
+            /// Klasa posiada dwie przeci¹¿one metody encrypt i decrypt, które umo¿liwiaj¹ 
             /// szyfrowanie tajnym kluczem, który mo¿e byæ sta³y.
             /// </summary>
             class Cipher {
@@ -269,7 +269,7 @@ namespace Juche {
                   /// <param name="enc_data">Zaszyfrowane dane.</param>
                   /// <param name="enc_data_len">Rozmiar zaszyfrowanych danyc.</param>
                   /// <returns>
-                  /// Vector binarnych znaków oszyfrowanej wiadomoœci.
+                  /// Vector binarnych znaków odszyfrowanej wiadomoœci.
                   /// Jeœli rozmiar vector == 0 to znaczy, ¿e coœ posz³o Ÿle,
                   /// wiêcej informacji zwróci GetLastError().
                   /// </returns>
