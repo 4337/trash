@@ -46,7 +46,7 @@ namespace Juche {
 				}
 
 				int operator()(int min, int max) {
-					std::uniform_int_distribution<> dist(min, max);
+					std::uniform_int_distribution<int> dist(min, max);
 					return dist(generator);
 				}
 
