@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////
-///18/06/2022 08:05
+///28/06/2022 06:08
 ///Modu³ pomocniczy.
 ///Udostêpnia funkcje konwersji, konsole debugowania,
 ///procedure obs³ugi wyj¹tków, wskaŸniki do funckji oraz 
@@ -13,6 +13,7 @@ module;
 #include <concepts>
 #include <unordered_map>
 #include <ranges>
+#include <random>
 
 #include "Environment.h"
 
@@ -31,6 +32,32 @@ namespace Juche {
 	namespace Helpers {
 
 		export {
+
+			///
+			/// //////////
+			///
+		
+			class Random {
+				std::mt19937 generator;
+			public:
+				Random() : generator() {
+					std::random_device _seed_;
+					generator.seed(_seed_());
+				}
+
+				int operator()(int min, int max) {
+					std::uniform_int_distribution<> dist(min, max);
+					return dist(generator);
+				}
+
+				~Random() {
+				}
+
+			};
+
+			///
+			/// /////////
+			/// 
 
 			/// <summary>
 			/// Sprawdza czy wartoœæ typu TV 
