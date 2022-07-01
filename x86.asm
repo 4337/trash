@@ -2,8 +2,6 @@
 .model flat,stdcall
 option casemap:none
 
-option prologue: none                        
-option epilogue: none
 
 
 ldr_load_lib proto stdcall 
@@ -14,6 +12,9 @@ MAGIC_ADDR dd 031333370h
 MAGIC_PATH_SIZE dd (0100h * 02h / 04h) - 08h
 
 .code
+
+option prologue: none                        
+option epilogue: none
 
 ldr_load_lib proc stdcall public
   
@@ -52,11 +53,12 @@ ldr_load_lib proc stdcall public
 
 ldr_load_lib endp 
 
+option prologue:PrologueDef
+option epilogue:EpilogueDef
+
 start:
      call ldr_load_lib
 end start
 
-option prologue:PrologueDef
-option epilogue:EpilogueDef
 
 
