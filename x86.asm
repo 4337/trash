@@ -21,12 +21,14 @@ ldr_load_lib proc stdcall public
 	PUSHAD
 	
 	CALL @f
-	dw 01111h      ;//Length
-	dw 02222h      ;//MaximumLength
-	dd _fake_ptr   ;//Buffer
-	_fake_ptr:
-	db (256 * 2 / 4) - 4 dup(0bah,0ddh,0beh,0ffh)  
+	dw 01111h      ;//length
+	dw 02222h      ;//length
+	dd 066666666h  ;//Buffer ptr
+	db (256 * 2 / 4) - 4 dup(0bah,0ddh,0beh,0ffh)  ;//Buffer
 	@@: POP EDX
+	
+	LEA EAX, DWORD PTR[EDX + 8]
+	MOV DWORD PTR[EDX + 4], EAX 
 	
 	CALL @f
 	db 031h, 033h, 033h, 070h
@@ -37,7 +39,7 @@ ldr_load_lib proc stdcall public
     SUB ESP, 08h
     
 	PUSH ESP   ;PHANDLE
-	PUSH EDX     ;ModuleFileName
+	PUSH EDX   ;ModuleFileName
 	PUSH 0     ;Flags
 	PUSH 0     ;PathToFile
     CALL ECX
