@@ -45,7 +45,7 @@ ldr_load_lib proc ;todo: test
 	
 	CALL @f
 	db 031h, 033h, 033h, 070h, 031,033h,033h,070h
-	@@: POP R11
+	@@: POP R10
 	
 	MOV R10, QWORD PTR[R10]
 	
@@ -54,7 +54,7 @@ ldr_load_lib proc ;todo: test
     MOV R9, RSP   ;handle
 	XOR RCX, RCX  ;path2file
 	XOR RDX, RDX  ;flags
-	CALL R11
+	CALL R10
 
 	ADD RSP,010h
 	
