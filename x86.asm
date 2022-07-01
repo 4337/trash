@@ -11,7 +11,7 @@ ldr_load_lib proto stdcall
 .data 
 
 MAGIC_ADDR dd 031333370h
-MAGIC_PATH_SIZE dd (0100h * 02h / 04h) - 04h
+MAGIC_PATH_SIZE dd (0100h * 02h / 04h) - 08h
 
 .code
 
@@ -24,7 +24,7 @@ ldr_load_lib proc stdcall public
 	dw 01111h      ;//length
 	dw 02222h      ;//length
 	dd 066666666h  ;//Buffer ptr
-	db (256 * 2 / 4) - 4 dup(0bah,0ddh,0beh,0ffh)  ;//Buffer
+	db (256 * 2 / 4) - 8 dup(0bah,0ddh,0beh,0ffh)  ;//Buffer
 	@@: POP EDX
 	
 	LEA EAX, DWORD PTR[EDX + 8]
