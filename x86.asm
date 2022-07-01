@@ -21,8 +21,8 @@ ldr_load_lib proc stdcall public
 	PUSHAD
 	
 	CALL @f
-	dw 01111h      ;//length
-	dw 02222h      ;//length
+	dw 01111h      ;//Length
+	dw 02222h      ;//MaximumLength
 	dd 066666666h  ;//Buffer ptr
 	db (256 * 2 / 4) - 8 dup(0bah,0ddh,0beh,0ffh)  ;//Buffer
 	@@: POP EDX
