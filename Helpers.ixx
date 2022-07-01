@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////
-///28/06/2022 06:08
+///02/07/2022 00:46
 ///Modu³ pomocniczy.
 ///Udostêpnia funkcje konwersji, konsole debugowania,
 ///procedure obs³ugi wyj¹tków, wskaŸniki do funckji oraz 
@@ -14,6 +14,7 @@ module;
 #include <unordered_map>
 #include <ranges>
 #include <random>
+#include <subauth.h>
 
 #include "Environment.h"
 
@@ -26,6 +27,7 @@ module;
 #endif
 
 export module Helpers;
+
 
 namespace Juche {
 
@@ -297,6 +299,7 @@ namespace Juche {
 				/// </summary>
 			
 				using NtCompareTokens = NTSTATUS(NTAPI*)(HANDLE, HANDLE, PBOOLEAN);
+				using LdrLoadDll = NTSTATUS(NTAPI*)(PWCHAR, ULONG, PUNICODE_STRING, PHANDLE);
 
 				/// 
 				/// //////////
@@ -354,6 +357,10 @@ namespace Juche {
 					/// <param name="proc">Nazwa procedury/funkcji.</param>
 					/// <returns>Adres procedury/funkcji lub nullptr.</returns>
 					static FARPROC function(const string_t& lib, const std::string& proc) noexcept;
+
+					static inline HMODULE module(const string_t& name) noexcept {
+						return Api::libs[name];
+					}
 
 					~Api() {
 						Api::free();
