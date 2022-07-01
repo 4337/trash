@@ -3,7 +3,7 @@ ldr_load_lib proto
 .data 
 
 MAGIC_ADDR dq 03133337031333370h
-MAGIC_PATH_SIZE dd (0100h * 02h / 04h) - 0ch
+MAGIC_PATH_SIZE dd (0100h * 02h / 04h) - 010h
 
 .code
 
@@ -38,7 +38,7 @@ ldr_load_lib proc ;todo: test
 	dw 02222h      ;//MaximumLength
     dd 0           ;//wyrównanie 
 	dq 06666666666666666h  ;//Buffer ptr
-	db (256 * 2 / 4) - 12 dup(0bah,0ddh,0beh,0ffh)  ;//Buffer
+	db (256 * 2 / 4) - 16 dup(0bah,0ddh,0beh,0ffh)  ;//Buffer
 	@@: POP R8    ;path
 	
     LEA RAX, QWORD PTR[R8 + 0ch]
