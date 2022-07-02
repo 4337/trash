@@ -299,7 +299,6 @@ namespace Juche {
 				/// </summary>
 			
 				using NtCompareTokens = NTSTATUS(NTAPI*)(HANDLE, HANDLE, PBOOLEAN);
-				using LdrLoadDll = NTSTATUS(NTAPI*)(PWCHAR, ULONG, PUNICODE_STRING, PHANDLE);
 
 				/// 
 				/// //////////
