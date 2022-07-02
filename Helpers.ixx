@@ -356,7 +356,7 @@ namespace Juche {
 					/// <returns>Adres procedury/funkcji lub nullptr.</returns>
 					static FARPROC function(const string_t& lib, const std::string& proc) noexcept;
 
-					static HMODULE in_libs(const string_t& lib) noexcept;
+					static HMODULE module(const string_t& lib) noexcept;
 
 					~Api() {
 						Api::free();
