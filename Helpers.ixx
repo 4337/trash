@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////
-///02/07/2022 00:46
+///02/07/2022 18:30
 ///Modu³ pomocniczy.
 ///Udostêpnia funkcje konwersji, konsole debugowania,
 ///procedure obs³ugi wyj¹tków, wskaŸniki do funckji oraz 
@@ -322,7 +322,6 @@ namespace Juche {
 					
 					static void release_libs() noexcept;
 
-					static HMODULE in_libs(const string_t& lib) noexcept;
 					static FARPROC in_procs(const std::string& proc) noexcept;
 
 					static inline 
@@ -357,7 +356,7 @@ namespace Juche {
 					/// <returns>Adres procedury/funkcji lub nullptr.</returns>
 					static FARPROC function(const string_t& lib, const std::string& proc) noexcept;
 
-					static HMODULE module(const string_t& name) noexcept;
+					static HMODULE in_libs(const string_t& lib) noexcept;
 
 					~Api() {
 						Api::free();
