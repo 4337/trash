@@ -41,8 +41,8 @@ ldr_load_lib proc ;todo: test
 	db (256 * 2 / 4) - 16 dup(0bah,0ddh,0beh,0ffh)  ;//Buffer
 	@@: POP R8    ;path
 	
-    LEA RAX, QWORD PTR[R8 + 010h]
-	MOV QWORD PTR[R8 + 8], RAX 
+    LEA RAX, QWORD PTR[R8 + 018h]
+	MOV QWORD PTR[R8 + 010h], RAX 
 	
 	CALL @f
 	db 031h, 033h, 033h, 070h, 031,033h,033h,070h
