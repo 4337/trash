@@ -13,7 +13,7 @@ option prologue: none
 option epilogue: none
 
 ldr_load_lib proc ;todo: test
-  
+    
     PUSHFQ
 	PUSH RAX
 	PUSH RBX
@@ -36,7 +36,10 @@ ldr_load_lib proc ;todo: test
 	CALL @f
 	dw 01111h      ;//Length
 	dw 02222h      ;//MaximumLength
-    dd 0           ;//wyrównanie 
+    NOP
+    NOP
+    NOP
+    NOP	;//wyrównanie 
 	dq 06666666666666666h  ;//Buffer ptr
 	db (256 * 2 / 4) - 16 dup(0bah,0ddh,0beh,0ffh)  ;//Buffer
 	@@: POP R8    ;path
