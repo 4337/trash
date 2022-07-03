@@ -294,12 +294,6 @@ namespace Juche {
 
 			export {
 
-				/// <summary>
-				/// Wkaüniki do funkcji.
-				/// </summary>
-			
-				using NtCompareTokens = NTSTATUS(NTAPI*)(HANDLE, HANDLE, PBOOLEAN);
-
 				/// 
 				/// //////////
 				/// 
