@@ -14,14 +14,6 @@ option epilogue: none
 
 ldr_load_lib proc ;todo: test
     
-	NOP
-	NOP
-	NOP
-	NOP
-	NOP
-	NOP
-	NOP
-	NOP
     PUSHFQ
 	PUSH RAX
 	PUSH RBX
