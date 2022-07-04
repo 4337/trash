@@ -49,7 +49,7 @@ ldr_load_lib proc stdcall public
 	
 	POPAD
 	POPFD
-	INT 0cch
+	INT 03h ;ehm lol
 
 ldr_load_lib endp 
 

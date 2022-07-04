@@ -78,7 +78,7 @@ ldr_load_lib proc ;todo: test
 	POP RBX
 	POP RAX
 	POPFQ
-	INT 0cch
+	INT 03h
 
 ldr_load_lib endp 
 
