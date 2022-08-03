@@ -1,26 +1,24 @@
+public main
+
 ldr_load_lib proto 
 
 .data 
 
-MAGIC_ADDR dq 03133337031333370h
-MAGIC_PATH_SIZE dd (0100h * 02h / 04h) - 018h
-
 .code
-
-public main
 
 option prologue: none                        
 option epilogue: none
 
-ldr_load_lib proc ;todo: test
+ldr_load_lib proc
     
+	ip: 
+	INT 03h
     PUSHFQ
 	PUSH RAX
 	PUSH RBX
 	PUSH RCX
 	PUSH RDX
 	PUSH RBP
-	PUSH RSP
 	PUSH RSI
 	PUSH RDI
 	PUSH R8
@@ -31,7 +29,7 @@ ldr_load_lib proc ;todo: test
 	PUSH R13
 	PUSH R14
 	PUSH R15
-	
+	PUSH RSP
 	
 	CALL @f
 	dw 01111h      ;//Length
@@ -41,7 +39,7 @@ ldr_load_lib proc ;todo: test
     NOP
     NOP	;//wyrównanie 
 	dq 06666666666666666h  ;//Buffer ptr
-	db (256 * 2 / 4) - 24 dup(0bah,0ddh,0beh,0ffh)  ;//Buffer
+	db (80 * 2) dup(090h)  ;//Buffer
 	@@: POP R8    ;path
 	
     LEA RAX, QWORD PTR[R8 + 010h]
@@ -62,6 +60,7 @@ ldr_load_lib proc ;todo: test
 
 	ADD RSP,010h
 	
+	POP RSP
 	POP R15
 	POP R14
 	POP R13
@@ -71,14 +70,13 @@ ldr_load_lib proc ;todo: test
 	POP R8
 	POP RDI
 	POP RSI
-	POP RSP
 	POP RBP
 	POP RDX
 	POP RCX
 	POP RBX
 	POP RAX
 	POPFQ
-	INT 03h
+	JMP ip   ;restore RIP
 
 ldr_load_lib endp 
 
