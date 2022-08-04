@@ -29,7 +29,7 @@ ldr_load_lib proc
 	PUSH R13
 	PUSH R14
 	PUSH R15
-	PUSH RSP
+	;PUSH RSP
 	
 	CALL @f
 	dw 01111h      ;//Length
@@ -60,7 +60,7 @@ ldr_load_lib proc
 
 	ADD RSP,010h
 	
-	POP RSP
+	;POP RSP
 	POP R15
 	POP R14
 	POP R13
