@@ -1,0 +1,42 @@
+#include <iostream>
+#include <vector>
+#include <deque>
+
+using namespace std;
+
+class A {
+   
+   public:
+   A() {
+       
+   }
+   
+   A(const A& copy) {
+       cout<<"A::copy_constructor"<<endl;
+   }
+    
+};
+
+// Vector (continous memory (array)) vs deque (double linked list)
+// deque dont need relocation when we adds a new element at the end of container
+// Vector needed because is a dynamically allocated array, so choose life ;P
+
+int main()
+{
+    A a;
+    A b;
+    A c; 
+    vector<A> vec_a;
+    vec_a.push_back(a); //A::copy_constructor  <- first element
+    vec_a.push_back(b); //A::copy_constructor  <- delete, reloaction, copy constructor of first element
+                        //A::copy_constructor  <- second element copy constructor
+    vec_a.push_back(c); //A::copy_constructor  <- delete reloacation, copy constructor of first element
+                        //A::copy_constructor  <- second element copy constructor
+                        //A::copy_constructor  <- thrid element copy constructor
+    deque<A> deque_a; 
+    deque_a.push_back(a); //A::copy_constructor
+    deque_a.push_back(b); //A::copy_constructor
+    deque_a.push_back(c); //A::copy_constructor
+    
+    return 0;
+}
