@@ -10,6 +10,7 @@ static echo_clean( flag ) {
 		  DelStruc( GetStrucIdByName("ECHO_IMAGE_NT_HEADERS"));
 		  DelStruc( GetStrucIdByName("ECHO_SYSTEM_MODULE_ENTRY"));
 		  DelStruc( GetStrucIdByName("ECHO_SYSTEM_MODULE_INFORMATION"));
+                  DelStruc( GetStrucIdByName("ECHO_DRIVER_ENTRY_x64")); 
 	   }
 }
 
@@ -115,8 +116,28 @@ static echo_add_structures( ) {
 	   
 	   AddStrucMember(p_struct, "Count", 0, FF_BYTE, -1, 4);
 	   AddStrucMember(p_struct, "Module", 4, FF_BYTE, -1, GetStrucSize(GetStrucIdByName("ECHO_SYSTEM_MODULE_ENTRY")) * 2);
-	   
-	  
+       
+       //nowe
+       p_struct = AddStrucEx(-1,"ECHO_DRIVER_ENTRY_x64",0);  //_DRIVER_ENTRY (x64)
+       if(p_struct == -1) {
+	      return echo_error(-1,"AddStrucEx(-1,ECHO_DRIVER_ENTRY_x64,0) FAIL !"); 
+       }
+
+       AddStrucMember(p_struct, "Type", 0, FF_BYTE, -1, 4);
+       AddStrucMember(p_struct, "Size", 4, FF_BYTE, -1, 4);
+       AddStrucMember(p_struct, "DeviceObject", 8, FF_BYTE, -1, 8);
+       AddStrucMember(p_struct, "Flags", 16, FF_BYTE, -1, 8);
+       AddStrucMember(p_struct, "DriverStart", 24, FF_BYTE, -1, 8);
+       AddStrucMember(p_struct, "DriverSize", 32, FF_BYTE, -1, 8);
+       AddStrucMember(p_struct, "DeviceSection", 40, FF_BYTE, -1, 8);
+       AddStrucMember(p_struct, "DeviceExtension", 48, FF_BYTE, -1, 8);
+       AddStrucMember(p_struct, "DriverName", 56, FF_BYTE, -1, 16);
+       AddStrucMember(p_struct, "HardwareDatabase", 72, FF_BYTE, -1, 8);
+       AddStrucMember(p_struct, "FastIoDispatch", 80, FF_BYTE, -1, 8);
+       AddStrucMember(p_struct, "DriverInit", 88, FF_BYTE, -1, 8);
+       AddStrucMember(p_struct, "DriverStartIo", 96, FF_BYTE, -1, 8);
+       AddStrucMember(p_struct, "DriverUnload", 104, FF_BYTE, -1, 8);
+       AddStrucMember(p_struct, "MajorFunction", 112, FF_BYTE, -1, 224);	  
        return 1;
 }
 
