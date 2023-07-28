@@ -11,6 +11,7 @@ static echo_clean( flag ) {
 		  DelStruc( GetStrucIdByName("ECHO_SYSTEM_MODULE_ENTRY"));
 		  DelStruc( GetStrucIdByName("ECHO_SYSTEM_MODULE_INFORMATION"));
                   DelStruc( GetStrucIdByName("ECHO_DRIVER_ENTRY_x64")); 
+                  DelStruc( GetStrucIdByName("ECHO_MDL_x64"));           
 	   }
 }
 
@@ -138,8 +139,25 @@ static echo_add_structures( ) {
        AddStrucMember(p_struct, "DriverStartIo", 96, FF_BYTE, -1, 8);
        AddStrucMember(p_struct, "DriverUnload", 104, FF_BYTE, -1, 8);
        AddStrucMember(p_struct, "MajorFunction", 112, FF_BYTE, -1, 224);	  
+
+       p_struct = AddStrucEx(-1,"ECHO_MDL_x64",0);  //_MDL (x64)
+       if(p_struct == -1) {
+	      return echo_error(-1,"AddStrucEx(-1,ECHO_MDL_x64,0) FAIL !"); 
+       }
+
+       AddStrucMember(p_struct, "Next", 0, FF_BYTE, -1, 8);
+       AddStrucMember(p_struct, "Size", 8, FF_BYTE, -1, 2);             //spakowane w 8 bajtow
+       AddStrucMember(p_struct, "MdlFlags", 10, FF_BYTE, -1, 6);
+       AddStrucMember(p_struct, "Process", 16, FF_BYTE, -1, 8);
+       AddStrucMember(p_struct, "MappedSystemVa", 24, FF_BYTE, -1, 8);
+       AddStrucMember(p_struct, "StartVa", 32, FF_BYTE, -1, 8);
+       AddStrucMember(p_struct, "ByteCount", 40, FF_BYTE, -1, 8); 
+       AddStrucMember(p_struct, "ByteOffset", 44, FF_BYTE, -1, 8); 
+
        return 1;
+
 }
+
 
 static main() {
        auto ret;
