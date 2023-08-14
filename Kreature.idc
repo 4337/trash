@@ -10,7 +10,7 @@ static echo_clean( flag ) {
 		  DelStruc( GetStrucIdByName("ECHO_IMAGE_NT_HEADERS"));
 		  DelStruc( GetStrucIdByName("ECHO_SYSTEM_MODULE_ENTRY"));
 		  DelStruc( GetStrucIdByName("ECHO_SYSTEM_MODULE_INFORMATION"));
-                  DelStruc( GetStrucIdByName("ECHO_DRIVER_ENTRY_x64")); 
+                  DelStruc( GetStrucIdByName("ECHO_DRIVER_OBJECT_x64")); 
                   DelStruc( GetStrucIdByName("ECHO_MDL_x64"));           
 	   }
 }
@@ -119,9 +119,9 @@ static echo_add_structures( ) {
 	   AddStrucMember(p_struct, "Module", 4, FF_BYTE, -1, GetStrucSize(GetStrucIdByName("ECHO_SYSTEM_MODULE_ENTRY")) * 2);
        
        //nowe
-       p_struct = AddStrucEx(-1,"ECHO_DRIVER_ENTRY_x64",0);  //_DRIVER_ENTRY (x64)
+       p_struct = AddStrucEx(-1,"ECHO_DRIVER_OBJECT_x64",0);  //_DRIVER_OBJECT (x64)
        if(p_struct == -1) {
-	      return echo_error(-1,"AddStrucEx(-1,ECHO_DRIVER_ENTRY_x64,0) FAIL !"); 
+	      return echo_error(-1,"AddStrucEx(-1,ECHO_DRIVER_OBJECT_x64,0) FAIL !"); 
        }
 
        AddStrucMember(p_struct, "Type", 0, FF_BYTE, -1, 4);
