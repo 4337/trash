@@ -93,7 +93,7 @@ class Musk {
            }
            
            whole[strlen(whole) - 1] = "";
-           msg(whole);
+           msg(whole+"\r\n");
     }
 
       ~Musk() {
