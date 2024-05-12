@@ -11,7 +11,8 @@ static echo_clean( flag ) {
 		  DelStruc( GetStrucIdByName("ECHO_SYSTEM_MODULE_ENTRY"));
 		  DelStruc( GetStrucIdByName("ECHO_SYSTEM_MODULE_INFORMATION"));
                   DelStruc( GetStrucIdByName("ECHO_DRIVER_OBJECT_x64")); 
-                  DelStruc( GetStrucIdByName("ECHO_MDL_x64"));           
+                  DelStruc( GetStrucIdByName("ECHO_MDL_x64"));      
+          DelStruc( GetStrucIdByName("ECHO_WSPPROC_TABLE_x64") );				  
 	   }
 }
 
@@ -153,7 +154,45 @@ static echo_add_structures( ) {
        AddStrucMember(p_struct, "StartVa", 32, FF_BYTE, -1, 8);
        AddStrucMember(p_struct, "ByteCount", 40, FF_BYTE, -1, 8); 
        AddStrucMember(p_struct, "ByteOffset", 44, FF_BYTE, -1, 8); 
-
+	   
+	   //USER_LAND
+	   
+	   p_struct = AddStrucEx(-1,"ECHO_WSPPROC_TABLE_x64",0);  //_MDL (x64)
+       if(p_struct == -1) {
+	      return echo_error(-1,"AddStrucEx(-1,ECHO_WSPPROC_TABLE_x64,0) FAIL !"); 
+       }
+	   
+	   AddStrucMember(p_struct, "lpWSPAccept", 0, FF_BYTE, -1, 8);
+	   AddStrucMember(p_struct, "lpWSPAddressToString", 8, FF_BYTE, -1, 8);
+	   AddStrucMember(p_struct, "lpWSPAsyncSelect", 16, FF_BYTE, -1, 8);
+	   AddStrucMember(p_struct, "lpWSPBind", 24, FF_BYTE, -1, 8);
+	   AddStrucMember(p_struct, "lpWSPCancelBlockingCall", 32, FF_BYTE, -1, 8);
+	   AddStrucMember(p_struct, "lpWSPCleanup", 40, FF_BYTE, -1, 8);
+	   AddStrucMember(p_struct, "lpWSPCloseSocket", 48, FF_BYTE, -1, 8);
+	   AddStrucMember(p_struct, "lpWSPConnect", 56, FF_BYTE, -1, 8);
+	   AddStrucMember(p_struct, "lpWSPDuplicateSocket", 64, FF_BYTE, -1, 8);
+	   AddStrucMember(p_struct, "lpWSPEnumNetworkEvents", 72, FF_BYTE, -1, 8);
+	   AddStrucMember(p_struct, "lpWSPEventSelect", 80, FF_BYTE, -1, 8);
+       AddStrucMember(p_struct, "lpWSPGetOverlappedResult", 88, FF_BYTE, -1, 8);
+	   AddStrucMember(p_struct, "lpWSPGetPeerName", 96, FF_BYTE, -1, 8);
+	   AddStrucMember(p_struct, "lpWSPGetSockName", 104, FF_BYTE, -1, 8);
+	   AddStrucMember(p_struct, "lpWSPGetSockOpt", 112, FF_BYTE, -1, 8);
+	   AddStrucMember(p_struct, "lpWSPGetQOSByName", 120, FF_BYTE, -1, 8);
+	   AddStrucMember(p_struct, "lpWSPIoctl", 128, FF_BYTE, -1, 8);
+	   AddStrucMember(p_struct, "lpWSPJoinLeaf", 136, FF_BYTE, -1, 8);
+	   AddStrucMember(p_struct, "lpWSPListen", 144, FF_BYTE, -1, 8);
+	   AddStrucMember(p_struct, "lpWSPRecv", 152, FF_BYTE, -1, 8);
+	   AddStrucMember(p_struct, "lpWSPRecvDisconnect", 160, FF_BYTE, -1, 8);
+	   AddStrucMember(p_struct, "lpWSPRecvFrom", 168, FF_BYTE, -1, 8);
+	   AddStrucMember(p_struct, "lpWSPSelect", 176, FF_BYTE, -1, 8);
+	   AddStrucMember(p_struct, "lpWSPSend", 184, FF_BYTE, -1, 8);
+	   AddStrucMember(p_struct, "lpWSPSendDisconnect", 192, FF_BYTE, -1, 8);
+	   AddStrucMember(p_struct, "lpWSPSendTo", 200, FF_BYTE, -1, 8);
+	   AddStrucMember(p_struct, "lpWSPSetSockOpt", 208, FF_BYTE, -1, 8);
+       AddStrucMember(p_struct, "lpWSPShutdown", 216, FF_BYTE, -1, 8);
+	   AddStrucMember(p_struct, "lpWSPSocket", 224, FF_BYTE, -1, 8);
+	   AddStrucMember(p_struct, "lpWSPStringToAddress", 232, FF_BYTE, -1, 8);
+	   
        return 1;
 
 }
