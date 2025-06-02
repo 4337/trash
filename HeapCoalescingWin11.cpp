@@ -7,7 +7,7 @@
 int main()
 {
 
-    const int ch_size = 0x110;//0x100 - smallest one, relatively stable;// 0x90 - that's we need;
+    const int ch_size = 0x110;//0x100 - smallest one, relatively stable;// 0x90 - that's what we need;
 
     void* be_heaps[11] = { 0 };
 
