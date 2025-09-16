@@ -27,7 +27,7 @@ given any insertion point then
         report issue and continue:
             severity: medium
             confidence: firm
-            detail: `Payloads {arrax1} and {arrax2} generate different response codes. This could indicate an SQL injection issue.`
+            detail: `Payloads {arrax1} and {arrax2} returned different response codes. This could indicate an SQL injection issue.`
             remediation: `{recommendation}`
     end if
 
