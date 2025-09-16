@@ -41,7 +41,7 @@ given any insertion point then
        report issue and continue:
             severity: medium
             confidence: firm
-            detail: `Payload {arrax1} generate exception. This could indicate an SQL injection issue.`
+            detail: `Payload {arrax1} generate an exception. This could indicate an SQL injection issue.`
             remediation: `{recommendation}`
     end if
 
