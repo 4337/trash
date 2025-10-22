@@ -1,0 +1,58 @@
+metadata:
+    language: v2-beta
+    name: "SCooEl v1.1"
+    description: "Simple Error based and Blind SQL Injection checker"
+    author: "echovsky 22/10/2025"
+    tags: "active", "injection", "sql"
+
+define:
+    recommendation="The most effective way to prevent SQL injection attacks is to use parameterized queries (also known as prepared statements) for all database access."
+
+run for each:
+    arrax1="＇",
+           "%ef%bc%87", 
+           "%e2%80%98",
+           "'",
+           "%27",
+           "%2527", 
+           "&#65287",
+           "&#xFF07",
+           "0x27",
+           "%%27",
+           "\"",
+           "%22",
+           "\`" 
+
+
+given any insertion point then
+    ###########################
+    #Blind 
+    ###########################
+    send payload called blind_a:
+        appending: {arrax1}      
+
+    send payload called blind_b:    
+        appending: `{arrax1}{arrax1}`  
+
+    if not ({blind_a.response.status_code} is {blind_b.response.status_code}) then 
+        report issue and continue:
+            severity: medium
+            confidence: firm
+            detail: `Payloads {arrax1} and {arrax1}{arrax1} returned different response codes. This could indicate an SQL injection issue.`
+            remediation: `{recommendation}`
+    end if
+
+    ###########################
+    #Error based
+    ###########################
+    send payload called error_a:
+         replacing: {arrax1}
+
+    if {error_a.response.body} matches "(java\.[\w]+\.[\w]+)|(\w+Exception:\s['\"\w\d\s]+)|(at\stryModuleLoad\s)|(\.php\son\sline\s\d+)|(\.rb:\d+:in)|Exception in|ORA-" or {error_a.response.status_code} is "500" then 
+       report issue and continue:
+            severity: medium
+            confidence: firm
+            detail: `Payload {arrax1} generate an exception. This could indicate an SQL injection issue.`
+            remediation: `{recommendation}`
+    end if
+
