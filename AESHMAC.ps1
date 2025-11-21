@@ -35,6 +35,7 @@ enum _HmacType {
 
 
 function _Get-Aes-Params-From-Cryptogram {
+	      [CmdletBinding()]
 	      param ( 
 		         [string]$enc_msg,
 				 [_HmacType] $hmac_type = [_HmacType]::SHA256
@@ -90,8 +91,7 @@ function Convert-ByteArrayToHex {
 }
 
 Function Convert-HexToByte {
- [CmdletBinding()]
-    [OutputType([byte[]])]
+    [CmdletBinding()]
     param(
         [String]$Value
     )
