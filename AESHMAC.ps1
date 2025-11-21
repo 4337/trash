@@ -93,7 +93,7 @@ Function Convert-HexToByte {
  [CmdletBinding()]
     [OutputType([byte[]])]
     param(
-        [Parameter(Mandatory=$true)] [String]$Value
+        [String]$Value
     )
     $bytes = New-Object -TypeName byte[] -ArgumentList ($Value.Length / 2)
     for ($i = 0; $i -lt $Value.Length; $i += 2) {
