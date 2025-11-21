@@ -54,24 +54,10 @@ function _Get-Aes-Params-From-Cryptogram {
 		  $ret.ALL = [byte[]]::new($bytes.length);
 		  [byte[]]::Copy($bytes,0,$ret.ALL,0, $bytes.length);	
 		  
-          switch($hmac_type) {   #chck! length
-                 SHA1 {
-					   $ret.HMAC = [byte[]]::new(20);
-					   [byte[]]::Copy($bytes,$bytes.length - 20,$ret.HMAC,0, 20);
-				 }
-				 SHA256{
-					   $ret.HMAC = [byte[]]::new(32);
-					   [byte[]]::Copy($bytes,$bytes.length - 32,$ret.HMAC,0, 32);
-				 }
-				 SHA384 {
-					   $ret.HMAC = [byte[]]::new(48);
-					   [byte[]]::Copy($bytes,$bytes.length - 48,$ret.HMAC,0, 48);
-				 }
-		         SHA512{
-					   $ret.HMAC = [byte[]]::new(64);
-					   [byte[]]::Copy($bytes,$bytes.length - 64,$ret.HMAC,0, 64);
-		         }
-          }			  
+		  $hmac_size = _Get-HmacSize $hmac_type
+ 
+		  $ret.HMAC = [byte[]]::new($hmac_size);
+		  [byte[]]::Copy($bytes,$bytes.length - $hmac_size,$ret.HMAC,0, $hmac_size);		  
 				 
 		  return $ret;		 
 }
@@ -103,6 +89,26 @@ Function Convert-HexToByte {
     return [byte[]]$bytes
 }
 
+function _Get-HmacSize {
+	  [CmdletBinding()] 
+	  param(
+	       [_HmacType] $hmac_type = [_HmacType]::SHA256
+	  )
+	  switch($hmac_type) {
+			 SHA1 {
+			      return 20;
+			 }
+	         SHA384 {
+			      return 48;
+		     }
+		     SHA512 {
+			       return 64;
+		     }
+      }
+      return 32;	  
+}
+
+
 function _Hmac-Compute {
 	      [CmdletBinding()] 
 	      param ( 
@@ -110,18 +116,7 @@ function _Hmac-Compute {
 				 [byte[]]$key,
 				 [_HmacType] $hmac_type = [_HmacType]::SHA256
 		  )
-		  $hmac_size = 32;
-		  switch($hmac_type) {
-			 SHA1 {
-			      $hmac_size = 20;
-			 }
-	         SHA384 {
-			      $hmac_size = 48;
-		     }
-		     SHA512 {
-			       $hmac_size = 64;
-		     }
-		  }
+		  $hmac_size = _Get-HmacSize $hmac_type;
 		  $enc = [byte[]]::new($enc_msg.length - $hmac_size);
 		  [byte[]]::Copy($enc_msg,0,$enc,0, $enc_msg.length - $hmac_size);	
 		  $hmc = [System.Security.Cryptography.HMACSHA256]::new($key);
