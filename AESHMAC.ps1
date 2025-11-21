@@ -103,7 +103,7 @@ Function Convert-HexToByte {
     return [byte[]]$bytes
 }
 
-function _HmacCompute {
+function _Hmac-Compute {
 	      [CmdletBinding()] 
 	      param ( 
 		         [byte[]]$enc_msg,
@@ -140,7 +140,7 @@ $aes_params.ALL.length;
 $aes_params.HMAC.GetType();
 $aes_params.HMAC.length;
 $valid = Convert-HexToByte("EBF9076B4E3026BE6E3AD58FB72FF9FAD5F7134B42AC73822C5F3EE159F20214B73A80016F9DDB56BD194C268870845F7A60B39DEF96B553A022F1BA56A18B80");
-$hmac_code = _HmacCompute $aes_params.ALL $valid;
+$hmac_code = _Hmac-Compute $aes_params.ALL $valid;
 write-output "HmacSha256 : $hmac_code";
 if($cryptogram.Contains($hmac_code)) {
    Write-output "HmacSha256 is correct !";
