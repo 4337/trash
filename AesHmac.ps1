@@ -201,13 +201,21 @@ class _Aes {
 				return $ret;
 	   }
 	   
-	   [string] Decrypt( [string]$msg ) {  #$msg = hex string
-		   		$decryptor = $this.csp.CreateDecryptor(); 
-                $msg_arr = Convert-HexStrToByteArray $msg;	
-                $dec_msg = $decryptor.TransformFinalBlock($msg_arr, 0, $msg_arr.length);
-                $ret = [system.Text.Encoding]::UTF8.GetString($dec_msg);
-                return $ret; 				
+	   [string] Encrypt( [byte[]]$msg ) {
+		        $encryptor = $this.csp.CreateEncryptor();  
+				$enc_msg = $encryptor.TransformFinalBlock($msg, 0, $msg.length);
+			    [byte[]] $ivenc = $this.csp.IV + $enc_msg;
+			    $ret = (Convert-ByteArrayToHexStr $ivenc).ToUpper();
+				return $ret;
 	   }
+	   
+	   [byte[]] Decrypt( [string]$msg ) {
+		   $decryptor = $this.csp.CreateDecryptor(); 
+           $msg_arr = Convert-HexStrToByteArray $msg;	
+           $ret = $decryptor.TransformFinalBlock($msg_arr, 0, $msg_arr.length);
+           return $ret; 	
+	   }
+	   
 	   
 }
 
@@ -236,20 +244,27 @@ function _Copmpute-Hmac {
   TESST
 #>
 
-#$params = _Aes-Params-Cookie "48F59EE979C4CB7F9BBC90C15D9D3024EA4A2D974B2E484D166A88DCF98C0A737F448093ECCA6B7393F6992639C576CFF6FE8426A41493DA0292F4DFCE5C7D1B860610E4961059A207D0195153297C4DAD83197C455AF79355F258F410CBAB45966F577FAA4E955817F0E12F1575838CE2270F115C1E178C569AC7EA8E0D9651C91F7877AC719C0055B1B3B526CE7A7CBBCFF04328F1F37C70ACAD7AC4C42640" SHA256;
-
+$params1 = _Aes-Params-Cookie "3E5D27FCB245A9EA280A67CAFF5D274E4F09797D26B238746ED249206597F8EFA54C03FE1068BD0471658D13B303F7E02196A1C8D3129382F711B5C3BB126F0A78D5D559B50AF0C2B82DE5D82D8D683C8C57CECD89FE190CCBB3A58A9EA8851BDA2B336C3499FA0614EB7ED793FBEDF8FE41D48BBB271E92DDDB80B5325D3017ACD5173FF326F75DF691B736170A756A7F1D91B56B9ED8AE7FDD633A2A95BFC0" SHA256
 $aes = [_Aes]::new()
-$iv = $aes.SetIV("0123456789123456");
+#$iv = $aes.SetIV("0123456789123456");
 $key = $aes.SetKey("B26C371EA0A71FA5C3C9AB53A343E9B962CD947CD3EB5861EDAE4CCC6B019581");
-$key_size = $aes.SetKeySize(256);
 $block_size = $aes.SetBlockSize(128);
 $padding = $aes.SetPadding([System.Security.Cryptography.PaddingMode]::PKCS7);
 
-$encmsg = $aes.Encrypt("ALA MA KOTA");
-$encmsghmac = _Copmpute-Hmac $encmsg "EBF9076B4E3026BE6E3AD58FB72FF9FAD5F7134B42AC73822C5F3EE159F20214B73A80016F9DDB56BD194C268870845F7A60B39DEF96B553A022F1BA56A18B80"  SHA256
-write-output "Encrypted text           : $encmsg"
-write-output "Encrypted text with hmac : $encmsghmac"
-$params = _Aes-Params-Cookie $encmsghmac SHA256
-$iv = $aes.SetIV($params.IV);
-$decrypted = $aes.Decrypt($encmsg);
-write-output "Decrypted text (first bytes are IV vector) : $decrypted" 
+#$encmsg = $aes.Encrypt("ALA MA KOTA");
+#$encmsghmac = _Copmpute-Hmac $encmsg "EBF9076B4E3026BE6E3AD58FB72FF9FAD5F7134B42AC73822C5F3EE159F20214B73A80016F9DDB56BD194C268870845F7A60B39DEF96B553A022F1BA56A18B80"  SHA256
+#write-output "Encrypted text           : $encmsg"
+#write-output "Encrypted text with hmac : $encmsghmac"
+#$params = _Aes-Params-Cookie $encmsghmac SHA256
+$iv = $aes.SetIV($params1.IV);
+$decrypted = $aes.Decrypt($params1.MSG_STR);
+$dec_str = [system.Text.Encoding]::UTF8.GetString($decrypted)
+write-output "Decrypted text (first bytes are IV vector) : $dec_str"
+#zapisz do pliku
+#wedytuj
+#odczytaj i zaszyfruj
+$enced = $aes.Encrypt($decrypted);
+#$enced = $aes.Encrypt($decrypted);
+$encedhmac = _Copmpute-Hmac $enced "EBF9076B4E3026BE6E3AD58FB72FF9FAD5F7134B42AC73822C5F3EE159F20214B73A80016F9DDB56BD194C268870845F7A60B39DEF96B553A022F1BA56A18B80"  SHA256
+#$decbytes = Convert-ByteArrayToHexStr $decrypted;
+write-output $encedhmac;
