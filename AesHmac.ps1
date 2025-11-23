@@ -1,17 +1,5 @@
 <#
- Ponieważ kryptografia .NET jest głupia :)
- Jak być może wiecie domyślne ustawienia crypto różnią się z wersji do wesrji
- Na przykład .NET 4.8 może wykorzystywać domyślnie rozmiar blokó 128 bitów, rozmiar klucza 256
- a nowe .NET jeszcze zupełnie innych ustawień.
- Sytuacja komplikuje sie kiedy chcecie wykorzystać gotową biblioteke i okazuje się że 
- ona z jakiś powodów korzysta z domyślnych ustawień i nie pozwala tego zmienić.
- Jest milion możliwośći! 
- Możecie na przykład naiwnie poświecać czas na szukanie sposóbu na zmianę ustawień domyślnych na poziomie aplikacji 
- (tak app.config to jest myśl) lub próbować zmienić nieco biblioteke którą chcecie wykorzystać lub 
- w ogóle zmienić ustawienia OS-a - pewenie troche rzeczy się zepsuje, ale w końcu chcemy użyć AES 128 CBC czy inne ECB prawda ?
- Wydawać by się mogło że przecież musi istenieć taka klasa która umożliwia powiedzenie aplikacji 
- "hej jeśli używasz gdzieś AES-a to tu są parametry bo ja tak chcę", to było by logiczne i przydatne.
- Niestety nie ma takiej klasy, nawet sztuczna inteligencja mówi "dej se spokój".
+ Bo kryptografia .NET jest głupia ;]
 #>
 
 Add-Type -Assembly System
