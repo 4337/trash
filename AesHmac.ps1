@@ -8,11 +8,10 @@
  Jest milion możliwośći! 
  Możecie na przykład naiwnie poświecać czas na szukanie sposóbu na zmianę ustawień domyślnych na poziomie aplikacji 
  (tak app.config to jest myśl) lub próbować zmienić nieco biblioteke którą chcecie wykorzystać lub 
- w ogóle zmienić ustawienia OS-a - pewenie troche rzeczy się zepsuje, ale w końcu chcemy użyć AES 128 CBC prawda ?
+ w ogóle zmienić ustawienia OS-a - pewenie troche rzeczy się zepsuje, ale w końcu chcemy użyć AES 128 CBC czy inne ECB prawda ?
  Wydawać by się mogło że przecież musi istenieć taka klasa która umożliwia powiedzenie aplikacji 
  "hej jeśli używasz gdzieś AES-a to tu są parametry bo ja tak chcę", to było by logiczne i przydatne.
- Niestety nie ma takiej klasy.
- Nawet sztuczna inteligencja mówi "dej se spokój".
+ Niestety nie ma takiej klasy, nawet sztuczna inteligencja mówi "dej se spokój".
 #>
 
 Add-Type -Assembly System
@@ -192,6 +191,12 @@ class _Aes {
 		   return $this.csp.padding;
 	   }
 	   
+	   <# set mode #>
+	   [System.Security.Cryptography.CipherMode] SetMode(   [System.Security.Cryptography.CipherMode]$mode ) {
+		   $this.csp.mode = $mode;
+		   return  $this.csp.mode;
+	   }
+	   
 	   [string] Encrypt( [string]$msg ) {
 		        $encryptor = $this.csp.CreateEncryptor();  
 				$msg_arr = [system.Text.Encoding]::UTF8.GetBytes($msg);
@@ -248,6 +253,7 @@ $cookie = "3E5D27FCB245A9EA280A67CAFF5D274E4F09797D26B238746ED249206597F8EFA54C0
 $params1 = _Aes-Params-Cookie $cookie SHA256
 $aes = [_Aes]::new()
 #$iv = $aes.SetIV("0123456789123456");
+$mode = $aes.SetMode( [System.Security.Cryptography.CipherMode]::CBC );
 $key = $aes.SetKey("B26C371EA0A71FA5C3C9AB53A343E9B962CD947CD3EB5861EDAE4CCC6B019581");
 $block_size = $aes.SetBlockSize(128);
 $padding = $aes.SetPadding([System.Security.Cryptography.PaddingMode]::PKCS7);
@@ -259,9 +265,12 @@ $padding = $aes.SetPadding([System.Security.Cryptography.PaddingMode]::PKCS7);
 #$params = _Aes-Params-Cookie $encmsghmac SHA256
 $iv = $aes.SetIV($params1.IV);
 $decrypted = $aes.Decrypt($params1.MSG_STR);
+#$decrypted.findAll(
 $dec_str = [system.Text.Encoding]::UTF8.GetString($decrypted)
-write-output "Decrypted text (first bytes are IV vector) : $dec_str"
+write-output "Decrypted text : $dec_str"
 Set-Content cookie.bin -Value $decrypted -Encoding Byte
+
+#$decrypted =  [System.IO.File]::ReadAllBytes("fixedcookie.bin")# 
 $enced = $aes.Encrypt($decrypted);
 $encedhmac = _Copmpute-Hmac $enced "EBF9076B4E3026BE6E3AD58FB72FF9FAD5F7134B42AC73822C5F3EE159F20214B73A80016F9DDB56BD194C268870845F7A60B39DEF96B553A022F1BA56A18B80"  SHA256
 #$decbytes = Convert-ByteArrayToHexStr $decrypted;
