@@ -245,18 +245,45 @@ class _LegacyCookieHelper {
 	  [byte[]]$IV = [byte[]]::new(16) #IV
 	  [byte]$formatVersion;
 	  [byte]$ticketVersion;
-	  [DateTime]$ticketIssueDate;
+	  [DateTime]$ticketIssueDate;     #1
 	  [byte]$spacer;
-	  [DateTime]$ticketExpirationDate;
+	  [DateTime]$ticketExpirationDate; #2
 	  [bool]$ticketPersistenceFieldValue;
-	  [string]$ticketName;
-	  [string]$ticketData;
+	  [string]$ticketName; #3 
+	  [string]$ticketData; #4 
 	  [string]$ticketPath;
 	  [byte]$footer;
-	  [byte[]]$hmac = [byte[]]::new(32);   #SHA256 in our case HMAC(hex_cookie without IV)
+	  [byte[]]$hmac;   #SHA256 in our case HMAC(hex_cookie without IV)
 	
-	  _LegacyCookieHelper([byte[]]$cookie) {
+	  [int]$hmac_size;
+	  
+	  [string] SetTicketName( [string]$name ){
+		     $this.ticketName = $name;
+			 return $this.ticketName;
+	  }
+	  
+	  [string] SetTicketData( [string]$data ){
+		     $this.ticketData = $data;
+			 return $this.ticketData;
+	  }
+	
+	  [DateTime] SetExpirationDate( [DateTime]$date ) {
+		  
+		  $this.ticketExpirationDate = $date;
+		  return $this.ticketExpirationDate;
+	  }
+	
+	  [DateTime] SetIssueDate( [DateTime]$date ) {
+		  
+		  $this.ticketIssueDate = $date;
+		  return $this.ticketIssueDate;
+	  }
+	
+	  _LegacyCookieHelper([byte[]]$cookie , [_HmacType]$HmacType) {
 		            
+					
+					$this.hmac_size = _Get-HmacSize $HmacType;
+					$this.hmac = [byte[]]::new( $this.hmac_size );
 					
 					$reader = [System.IO.BinaryReader]::new([System.Io.MemoryStream]::new($cookie));		  
 					$this.IV = $reader.ReadBytes(16);
@@ -275,10 +302,14 @@ class _LegacyCookieHelper {
 					$str_len = $reader.ReadByte();
 					$this.ticketPath = [System.Text.Encoding]::Unicode.GetString($reader.ReadBytes($str_len * 2));
 					$this.footer = $reader.ReadByte();
-					$this.hmac = $reader.ReadBytes(32);
+					$this.hmac = $reader.ReadBytes($this.hmac_size);
+					
 	  }
 	  
 	  #dokończyć
+	  [Object] Write() {
+		  return {};
+	  }
 	
 }
 
@@ -312,7 +343,7 @@ write-output "DEC HMAC : $dec_hmac";
 write-output "HMAC FROM DEC : "$params2.HMAC_STR;
 #>
 
-[_LegacyCookieHelper]::new($decrypted);
+[_LegacyCookieHelper]::new($decrypted, [_HmacType]::SHA256 );
 
 
 $dec_str = [system.Text.Encoding]::UTF8.GetString($decrypted)
