@@ -253,15 +253,10 @@ $padding = $aes.SetPadding([System.Security.Cryptography.PaddingMode]::PKCS7);
 #$params = _Aes-Params-Cookie $encmsghmac SHA256
 $iv = $aes.SetIV($params1.IV);
 $decrypted = $aes.Decrypt($params1.MSG_STR);
-#$decrypted.findAll(
 $dec_str = [system.Text.Encoding]::UTF8.GetString($decrypted)
 write-output "Decrypted text : $dec_str"
-Set-Content cookie.bin -Value $decrypted -Encoding Byte
-
-#$decrypted =  [System.IO.File]::ReadAllBytes("fixedcookie.bin")# 
 $enced = $aes.Encrypt($decrypted);
 $encedhmac = _Copmpute-Hmac $enced "EBF9076B4E3026BE6E3AD58FB72FF9FAD5F7134B42AC73822C5F3EE159F20214B73A80016F9DDB56BD194C268870845F7A60B39DEF96B553A022F1BA56A18B80"  SHA256
-#$decbytes = Convert-ByteArrayToHexStr $decrypted;
 write-output "Encrypted text and hmac : $encedhmac";
 if($cookie.Contains($encedhmac)) {
 	write-output "Cryptomsg are the same !";
