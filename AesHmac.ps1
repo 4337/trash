@@ -304,7 +304,7 @@ $iv = $aes.SetIV($params1.IV);
 $decrypted = $aes.Decrypt($params1.MSG_STR);
 
 <#
-#Trzeba oblicz hmac również dla decrypted
+#Trzeba obliczyć hmac również dla decrypted (samo cookie bez IV)
 $dec_hex = Convert-ByteArrayToHexStr $decrypted;
 $params2 = _Aes-Params-Cookie $dec_hex SHA256
 $dec_hmac = _Copmpute-Hmac $params2.MSG_STR "EBF9076B4E3026BE6E3AD58FB72FF9FAD5F7134B42AC73822C5F3EE159F20214B73A80016F9DDB56BD194C268870845F7A60B39DEF96B553A022F1BA56A18B80"  SHA256
