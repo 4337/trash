@@ -59,6 +59,7 @@ function _Get-HmacSize {
 		     SHA512 { return 64; }
       }
       return 0;	  
+	  
 }
 
 function _Aes-Params-Cookie {
@@ -85,8 +86,8 @@ function _Aes-Params-Cookie {
 		   [byte[]]::Copy($array, $array.length - $hmac_size, $params.HMAC, 0, $hmac_size);
 		   $params.HMAC_STR = (Convert-ByteArrayToHexStr $params.HMAC).ToUpper();
 		} else {
-		  $params.HMAC = $null;
-          $params.HMAC_STR = $null;		  
+		  $params.HMAC = null;
+          $params.HMAC_STR = null;		  
 		}
 		
 		return $params;
@@ -234,10 +235,58 @@ function _Copmpute-Hmac {
 }
 
 <#
+
+  legacy cookie deserializer / serializer
+
+#>
+
+class _LegacyCookieHelper { 
+	
+	  [byte[]]$legacy = [byte[]]::new(16)
+	  [byte]$formatVersion;
+	  [byte]$ticketVersion;
+	  [DateTime]$ticketIssueDate;
+	  [byte]$spacer;
+	  [DateTime]$ticketExpirationDate;
+	  [bool]$ticketPersistenceFieldValue;
+	  [string]$ticketName;
+	  [string]$ticketData;
+	  [string]$ticketPath;
+	  [byte]$footer;
+	  [byte[]]$legacy2 = [byte[]]::new(32);
+	
+	  _LegacyCookieHelper([byte[]]$cookie) {
+		            
+					
+					$reader = [System.IO.BinaryReader]::new([System.Io.MemoryStream]::new($cookie));		  
+					$this.legacy = $reader.ReadBytes(16);
+					$this.formatVersion = $reader.ReadByte();#$cookie[17];                 #1 byte
+					$this.ticketVersion = $reader.ReadByte();#$cookie[18];                 #1 byte
+					$ticketIssueDateUtcTicks = $reader.ReadInt64(); #[BitConverter]::ToUInt64($cookie,19); #8 byte
+					$this.ticketIssueDate = ([DateTime]::new($ticketIssueDateUtcTicks)).ToLocalTime();
+					$this.spacer = $reader.ReadByte();
+					$ticketExpirationDateTicks =  $reader.ReadInt64();
+					$this.ticketExpirationDate = ([DateTime]::new($ticketExpirationDateTicks)).ToLocalTime();
+					$this.ticketPersistenceFieldValue = $reader.ReadByte();
+					$str_len = $reader.ReadByte();
+					$this.ticketName = [System.Text.Encoding]::Unicode.GetString($reader.ReadBytes($str_len * 2));
+					$str_len = $reader.ReadByte();
+					$this.ticketData = [System.Text.Encoding]::Unicode.GetString($reader.ReadBytes($str_len * 2));
+					$str_len = $reader.ReadByte();
+					$this.ticketPath = [System.Text.Encoding]::Unicode.GetString($reader.ReadBytes($str_len * 2));
+					$this.footer = $reader.ReadByte();
+					$this.legacy2 = $reader.ReadBytes(32);
+	  }
+	  
+	  #dokończyć
+	
+}
+
+<#
   TESST
 #>
 
-$cookie = "3E5D27FCB245A9EA280A67CAFF5D274E4F09797D26B238746ED249206597F8EFA54C03FE1068BD0471658D13B303F7E02196A1C8D3129382F711B5C3BB126F0A78D5D559B50AF0C2B82DE5D82D8D683C8C57CECD89FE190CCBB3A58A9EA8851BDA2B336C3499FA0614EB7ED793FBEDF8FE41D48BBB271E92DDDB80B5325D3017ACD5173FF326F75DF691B736170A756A7F1D91B56B9ED8AE7FDD633A2A95BFC0";
+$cookie = "5F14B65BDA96CD642DECDC1D7DAC707C1AAE6111CF3B5D5C5F077420B33C5CFCAD8503EAC571966B9500AAEF1FC5FF751BEA6C8827E9E5E26489E2C170B40124DFC2FC0FA3BA3FA1EE47007091875F76E7C12D9304AB939BD2EC6813817BF103BD8BD041D64058769CAAF936853463425BE801BD690E6EEDA76818E1BBC2867A48C3472174E4389BBAE2645CDFFE22621DC9DB67E5815FB8BCF7587A2BCE62F3"
 $params1 = _Aes-Params-Cookie $cookie SHA256
 $aes = [_Aes]::new()
 #$iv = $aes.SetIV("0123456789123456");
@@ -253,11 +302,18 @@ $padding = $aes.SetPadding([System.Security.Cryptography.PaddingMode]::PKCS7);
 #$params = _Aes-Params-Cookie $encmsghmac SHA256
 $iv = $aes.SetIV($params1.IV);
 $decrypted = $aes.Decrypt($params1.MSG_STR);
+
+[_LegacyCookieHelper]::new($decrypted);
+
+
 $dec_str = [system.Text.Encoding]::UTF8.GetString($decrypted)
 write-output "Decrypted text : $dec_str"
+
 $enced = $aes.Encrypt($decrypted);
+#$enced = $aes.Encrypt($decrypted);
 $encedhmac = _Copmpute-Hmac $enced "EBF9076B4E3026BE6E3AD58FB72FF9FAD5F7134B42AC73822C5F3EE159F20214B73A80016F9DDB56BD194C268870845F7A60B39DEF96B553A022F1BA56A18B80"  SHA256
-write-output "Encrypted text and hmac : $encedhmac";
+#$decbytes = Convert-ByteArrayToHexStr $decrypted;
+write-output "Encrypted text and hmac (edited) : $encedhmac";
 if($cookie.Contains($encedhmac)) {
 	write-output "Cryptomsg are the same !";
 }
