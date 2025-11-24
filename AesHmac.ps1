@@ -255,6 +255,7 @@ class _LegacyCookieHelper {
 	  [byte]$footer;
 	  [byte[]]$hmac;   #SHA256 in our case HMAC(hex_cookie without IV)
 	
+	  [_HmacType]$hmac_type;
 	  [int]$hmac_size;
 	  
 	  [string] SetTicketName( [string]$name ){
@@ -281,7 +282,7 @@ class _LegacyCookieHelper {
 	
 	  _LegacyCookieHelper([byte[]]$cookie , [_HmacType]$HmacType) {
 		            
-					
+					$this.hmac_type = $HmacType;
 					$this.hmac_size = _Get-HmacSize $HmacType;
 					$this.hmac = [byte[]]::new( $this.hmac_size );
 					
