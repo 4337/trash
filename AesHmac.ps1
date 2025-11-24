@@ -242,7 +242,7 @@ function _Copmpute-Hmac {
 
 class _LegacyCookieHelper { 
 	
-	  [byte[]]$legacy = [byte[]]::new(16)
+	  [byte[]]$IV = [byte[]]::new(16) #IV
 	  [byte]$formatVersion;
 	  [byte]$ticketVersion;
 	  [DateTime]$ticketIssueDate;
@@ -253,13 +253,13 @@ class _LegacyCookieHelper {
 	  [string]$ticketData;
 	  [string]$ticketPath;
 	  [byte]$footer;
-	  [byte[]]$legacy2 = [byte[]]::new(32);
+	  [byte[]]$hmac = [byte[]]::new(32);   #SHA256 in our case HMAC(hex_cookie without IV)
 	
 	  _LegacyCookieHelper([byte[]]$cookie) {
 		            
 					
 					$reader = [System.IO.BinaryReader]::new([System.Io.MemoryStream]::new($cookie));		  
-					$this.legacy = $reader.ReadBytes(16);
+					$this.IV = $reader.ReadBytes(16);
 					$this.formatVersion = $reader.ReadByte();#$cookie[17];                 #1 byte
 					$this.ticketVersion = $reader.ReadByte();#$cookie[18];                 #1 byte
 					$ticketIssueDateUtcTicks = $reader.ReadInt64(); #[BitConverter]::ToUInt64($cookie,19); #8 byte
@@ -275,7 +275,7 @@ class _LegacyCookieHelper {
 					$str_len = $reader.ReadByte();
 					$this.ticketPath = [System.Text.Encoding]::Unicode.GetString($reader.ReadBytes($str_len * 2));
 					$this.footer = $reader.ReadByte();
-					$this.legacy2 = $reader.ReadBytes(32);
+					$this.hmac = $reader.ReadBytes(32);
 	  }
 	  
 	  #dokończyć
@@ -302,6 +302,15 @@ $padding = $aes.SetPadding([System.Security.Cryptography.PaddingMode]::PKCS7);
 #$params = _Aes-Params-Cookie $encmsghmac SHA256
 $iv = $aes.SetIV($params1.IV);
 $decrypted = $aes.Decrypt($params1.MSG_STR);
+
+<#
+#Trzeba oblicz hmac również dla decrypted
+$dec_hex = Convert-ByteArrayToHexStr $decrypted;
+$params2 = _Aes-Params-Cookie $dec_hex SHA256
+$dec_hmac = _Copmpute-Hmac $params2.MSG_STR "EBF9076B4E3026BE6E3AD58FB72FF9FAD5F7134B42AC73822C5F3EE159F20214B73A80016F9DDB56BD194C268870845F7A60B39DEF96B553A022F1BA56A18B80"  SHA256
+write-output "DEC HMAC : $dec_hmac";
+write-output "HMAC FROM DEC : "$params2.HMAC_STR;
+#>
 
 [_LegacyCookieHelper]::new($decrypted);
 
