@@ -313,7 +313,7 @@ $enced = $aes.Encrypt($decrypted);
 #$enced = $aes.Encrypt($decrypted);
 $encedhmac = _Copmpute-Hmac $enced "EBF9076B4E3026BE6E3AD58FB72FF9FAD5F7134B42AC73822C5F3EE159F20214B73A80016F9DDB56BD194C268870845F7A60B39DEF96B553A022F1BA56A18B80"  SHA256
 #$decbytes = Convert-ByteArrayToHexStr $decrypted;
-write-output "Encrypted text and hmac (edited) : $encedhmac";
+write-output "Encrypted text and hmac : $encedhmac";
 if($cookie.Contains($encedhmac)) {
 	write-output "Cryptomsg are the same !";
 }
