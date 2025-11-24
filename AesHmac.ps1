@@ -86,8 +86,8 @@ function _Aes-Params-Cookie {
 		   [byte[]]::Copy($array, $array.length - $hmac_size, $params.HMAC, 0, $hmac_size);
 		   $params.HMAC_STR = (Convert-ByteArrayToHexStr $params.HMAC).ToUpper();
 		} else {
-		  $params.HMAC = null;
-          $params.HMAC_STR = null;		  
+		  $params.HMAC = $null;
+          $params.HMAC_STR = $null;		  
 		}
 		
 		return $params;
