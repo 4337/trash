@@ -391,8 +391,9 @@ $cookie_array = Convert-HexStrToByteArray $new_cookie;
 #$encrypted = $aes.Encrypt($decrypted)                  #<- dobrze, tylko że $decrypted i $cookie_array są z pozoru przynajmniej identyczne
 $encrypted = $aes.Encrypt($cookie_array);              #<- źle, eh źle przeciązyłem metodę 
 
-<# dziala
-$test = $aes.Encrypt("DUPA JASIA");
+
+<# też działa
+$test = $aes.EncryptString("DUPA JASIA");
 write-output $test;
 $lol = $aes.Decrypt($test);
 $x = [system.Text.Encoding]::UTF8.GetString($lol);
