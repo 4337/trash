@@ -190,14 +190,15 @@ class _Aes {
 		   return  $this.csp.mode;
 	   }
 	   
-	   <# 
-	   [byte[]] Encrypt( [string]$msg ) {
+	   
+	   [string] EncryptString( [string]$msg ) {
 		        $encryptor = $this.csp.CreateEncryptor();  
 				$msg_arr = [system.Text.Encoding]::UTF8.GetBytes($msg);
 				$enc_msg = $encryptor.TransformFinalBlock($msg_arr, 0, $msg_arr.length);
 			    [byte[]] $ivenc = $this.csp.IV + $enc_msg;
-			    return $ivenc;
-	   }#>
+				$ret = (Convert-ByteArrayToHexStr $ivenc).ToUpper();
+			    return $ret;
+	   }
 	   
 	   [string] Encrypt( [byte[]]$msg ) {
 		        $encryptor = $this.csp.CreateEncryptor();  
