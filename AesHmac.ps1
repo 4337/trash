@@ -385,7 +385,7 @@ $cookie_helper = [_LegacyCookieHelper]::new($decrypted, [_HmacType]::SHA256 );
 #$expiration_date = $cookie_helper.SetExpirationDate([DateTime]::Parse("23.11.2026 19:14:03"));   #change ExpirationDate
 #write-output "New expiration date: $expiration_date";
 $new_cookie = $cookie_helper.SignAndSave("EBF9076B4E3026BE6E3AD58FB72FF9FAD5F7134B42AC73822C5F3EE159F20214B73A80016F9DDB56BD194C268870845F7A60B39DEF96B553A022F1BA56A18B80"); #Hmac and Save
-write-output "New cookie: $new_cookie";                
+write-output "New decrypted cookie: $new_cookie";                
 
 $cookie_array = Convert-HexStrToByteArray $new_cookie;
 #$encrypted = $aes.Encrypt($decrypted)                  #<- dobrze, tylko że $decrypted i $cookie_array są z pozoru przynajmniej identyczne
@@ -401,7 +401,7 @@ write-output "LOL: $x";
 #>
 
 $encrypted_hmac = _Copmpute-Hmac $encrypted "EBF9076B4E3026BE6E3AD58FB72FF9FAD5F7134B42AC73822C5F3EE159F20214B73A80016F9DDB56BD194C268870845F7A60B39DEF96B553A022F1BA56A18B80"  SHA256
-write-output "Encrypted cookie: $encrypted_hmac";
+write-output "[IV][encrypted cookie][HMAC]: $encrypted_hmac";
 
 if($cookie.Contains($encrypted_hmac)) {
 	write-output "Cryptomsg are the same !";
