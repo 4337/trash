@@ -145,7 +145,7 @@ class _Aes {
 	   <# -- methods -- #>
 	   
 	   <# set vector IV #>
-	   [byte[]] SetIV( [string]$IV ) {
+	   [byte[]] SetIVFromHexStr( [string]$IV ) {
 			  $this.csp.IV = [system.Text.Encoding]::ASCII.GetBytes($IV);
 	 		  return $this.csp.IV;
 	   }
@@ -161,7 +161,7 @@ class _Aes {
 		   return $this.csp.key;
 	   }
 	   
-	   [byte[]] SetKey( [string]$key ) { 
+	   [byte[]] SetKeyFromHexStr( [string]$key ) { 
 		   $this.csp.key =  Convert-HexStrToByteArray $key;
 		   return $this.csp.key;
 	   }
@@ -369,7 +369,7 @@ $aes_params = _Aes-Params-Cookie $cookie SHA256
 $aes = [_Aes]::new()
 
 $aes_mode = $aes.SetMode( [System.Security.Cryptography.CipherMode]::CBC );
-$aes_key = $aes.SetKey("B26C371EA0A71FA5C3C9AB53A343E9B962CD947CD3EB5861EDAE4CCC6B019581");
+$aes_key = $aes.SetKeyFromHexStr("B26C371EA0A71FA5C3C9AB53A343E9B962CD947CD3EB5861EDAE4CCC6B019581");
 $aes_block_size = $aes.SetBlockSize(128);
 $aes_padding = $aes.SetPadding([System.Security.Cryptography.PaddingMode]::PKCS7);
 $aes_iv = $aes.SetIV($aes_params.IV);
