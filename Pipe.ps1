@@ -81,7 +81,6 @@ function New-PSNamedPipeClient {
 		   Write-Host '[X]. Read inSize: ['$pipeClient.InBufferSize'] '$rLen' bytes'
 	    }
 		if($pipeClient.CanWrite) {
-		   #$pipeClient.Write($iData, 0, $iData.Length);   #trza skonwertowac do byte[]
 		   $iBytes = [System.Text.Encoding]::UTF8.GetBytes($iData);
 		   try {
 		   $pipeClient.Write($iBytes, 0, $iData.Length);
