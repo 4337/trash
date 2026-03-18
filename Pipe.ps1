@@ -4,7 +4,7 @@
 
   Based on: https://www.powershellgallery.com/packages/PSNamedPipe/1.0.0.19/Content/Public%5CNew-PSNamedPipeClient.ps1
 
-  Version: 1.1 17/03/2026
+  Version: 1.2 18/03/2026
 
 #>
 
@@ -108,9 +108,7 @@ $iPath = $ipcDataFile
 
  
 
-try { $iData = Get-Content $iPath -Raw -ErrorAction Stop -Encoding UTF8 } #Unknown, String, Unicode, Byte, BigEndianUnicode, UTF8, UTF7, UTF32, Ascii, Default, Oem, BigEndianUTF32
-
-catch {
+try { $iData = Get-Content $iPath -ErrorAction Stop -Encoding Unicode } catch {
 
 Write-Host '[!].'$error[0] 
 
@@ -174,11 +172,11 @@ return
 
 if($pipeClient.CanWrite) {
 
-   $iBytes = [System.Text.Encoding]::UTF8.GetBytes($iData);
+   $iBytes = [System.Text.Encoding]::Unicode.GetBytes($iData); 
 
    try {
 
-   $pipeClient.Write($iBytes, 0, $iData.Length);
+   $pipeClient.Write($iBytes, 0, $iBytes.Length);
 
    $pipeClient.WaitForPipeDrain()
 
@@ -188,7 +186,7 @@ if($pipeClient.CanWrite) {
 
    }
 
-   Write-Host '[X]. Write inSize: '$iData.Length' bytes';
+   Write-Host '[X]. Write inSize: '$iBytes.Length' bytes';
 
   
 
@@ -214,4 +212,4 @@ return;
 
  
 
-New-PSNamedPipeClient "Pipe1337" "." "Out" "" $true
+New-PSNamedPipeClient "Pipe1337" "." "Out"
