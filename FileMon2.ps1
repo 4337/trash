@@ -118,7 +118,7 @@ finally
 {
   # release the watcher and free its memory:
   $watcher.Dispose()
-  Write-Warning 'FileSystemWatcher removed.'
+  Write-Warning '[*]. FileSystemWatcher removed.'
   
 }
 
