@@ -67,11 +67,11 @@ function Invoke-SomeAction{
                $ChangeInformation
          )
 	     
-		 write-host -ForegroundColor DarkYellow "[*]. $($ChangeInformation.Name) [$($ChangeInformation.ChangeType)]" 
+		 write-host -ForegroundColor DarkYellow "[*]. $dir$($ChangeInformation.Name) [$($ChangeInformation.ChangeType)]" 
 		  
 	     if($script:PSBoundParameters.ContainsKey('copy')) {
 				 $name = Split-Path -Path $ChangeInformation.Name -Leaf;
-			     $src = $ChangeInformation.Name;
+			     $src = $dir+$ChangeInformation.Name;
                  $dst = $copy + "\" + $name;
 				 try {
 			          Copy-Item -Path $src -Destination $dst -ErrorAction Stop
