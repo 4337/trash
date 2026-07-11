@@ -41,8 +41,7 @@ DWORD Nipc::Ipc::impersonation() {
 
     char username[512 + 1] = { 0 };
     DWORD username_len = sizeof(username);
-    if (GetUserName(username, &username_len)) {
-        printf("[!!!]. Impersonation succeeded. Current thread user:: %s\n", username);
+    if (GetUserNameA(username, &username_len)) {
     }
 
     return ERROR_SUCCESS; 
@@ -105,6 +104,10 @@ bool Nipc::Ipc::server(const std::string& pipe_name, DWORD max_instances) {
 
 DWORD Nipc::Ipc::client(const std::string& pipe_name, DWORD access_mode, const DWORD timeout) {
 
+    if (handler != INVALID_HANDLE_VALUE) {
+        return ERROR_INVALID_HANDLE;
+    }
+
     while (true) {
 
         handler = CreateFile(pipe_name.c_str(), 
@@ -161,6 +164,7 @@ template <typename T>
 size_t Nipc::Ipc::write(const T& data) {
        
     DWORD writed_bytes = 0;
+    printf("DATA size write %d\r\n", data.size());
     WriteFile(handler, data.data(), static_cast<DWORD>(data.size()), &writed_bytes, nullptr);
     return static_cast<size_t>(writed_bytes);
 }
