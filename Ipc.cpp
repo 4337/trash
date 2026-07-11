@@ -5,22 +5,22 @@ module;
 #include <userenv.h>
 
 /*
- * Moja wielka pora¿ka – nie uda³o mi siê obczaiæ protoko³u komunikacji
- * za poœrednictwem potoków nazwanych w NordVPN.
+ * Moja wielka poraÅ¼ka â€“ nie udaÅ‚o mi siÄ™ obczaiÄ‡ protokoÅ‚u komunikacji
+ * za poÅ›rednictwem potokÃ³w nazwanych w NordVPN.
  *
- * Us³uga wysy³a nazwê potoku, ale niezale¿nie od tego, w jaki sposób próbowa³em
- * siê z ni¹ po³¹czyæ – jako u¿ytkownik, administrator, SYSTEM, us³uga,
- * podpisana aplikacja czy aplikacja, która odbiera wszystkim poza sob¹
- * mo¿liwoœæ dostêpu do procesu – próba po³¹czenia zawsze zwraca³a
+ * UsÅ‚uga wysyÅ‚a nazwÄ™ potoku, ale niezaleÅ¼nie od tego, w jaki sposÃ³b prÃ³bowaÅ‚em
+ * siÄ™ z niÄ… poÅ‚Ä…czyÄ‡ â€“ jako uÅ¼ytkownik, administrator, SYSTEM, usÅ‚uga,
+ * podpisana aplikacja czy aplikacja, ktÃ³ra odbiera wszystkim poza sobÄ…
+ * moÅ¼liwoÅ›Ä‡ dostÄ™pu do procesu â€“ prÃ³ba poÅ‚Ä…czenia zawsze zwracaÅ‚a
  * kod 0x02 (Path Not Found).
  *
- * Oczywiœcie du¿¹ czêœæ tych us³ug mo¿na zdekompilowaæ, poniewa¿ s¹ napisane
- * w .NET, i w³aœnie dlatego to wielka pora¿ka.
+ * OczywiÅ›cie duÅ¼Ä… czÄ™Å›Ä‡ tych usÅ‚ug moÅ¼na zdekompilowaÄ‡, poniewaÅ¼ sÄ… napisane
+ * w .NET, i wÅ‚aÅ›nie dlatego to wielka poraÅ¼ka.
  *
- * Mo¿e kiedyœ Nord mi powie, ¿ebym nie by³ smutny.
+ * MoÅ¼e kiedyÅ› Nord mi powie, Å¼ebym nie byÅ‚ smutny.
  *
  * *****************
- * Synchroniczny klient-serwer, którego potrzebowa³em
+ * Synchroniczny klient-serwer, ktÃ³rego potrzebowaÅ‚em
  * *****************
  */
 
