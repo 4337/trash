@@ -77,8 +77,8 @@ DWORD Nipc::Ipc::server(const std::string& pipe_name, DWORD max_instances) {
         PIPE_ACCESS_DUPLEX,                   
         PIPE_TYPE_BYTE | PIPE_READMODE_BYTE | PIPE_WAIT, 
         max_instances,                   
-        1024 * 4,                             
-        1024 * 4,                               
+        1024 << 2,                             
+        1024 << 2,                               
         0,                                      
         &sa                                     
     );
