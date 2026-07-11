@@ -42,7 +42,7 @@ DWORD Nipc::Ipc::impersonation() {
     DWORD username_len = 512;
     char user_name[512 + 1] = { 0 };
     if (GetUserNameA(user_name, &username_len)) {
-        printf("[!!!]. mpersonation succeeded. Current thread user: %s\r\n", user_name);
+        printf("[!!!]. Impersonation succeeded. Current thread user: %s\r\n", user_name);
     }
 
     return ERROR_SUCCESS; 
