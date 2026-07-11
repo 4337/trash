@@ -4,7 +4,7 @@ module;
 #include <regex>
 
 /*
- * Moja wielka pora¿ka – nie uda³o mi siê rozgryŸæ protoko³u komunikacji
+ * Moja wielka pora¿ka – nie uda³o mi siê obczaiæ protoko³u komunikacji
  * za poœrednictwem potoków nazwanych w NordVPN.
  *
  * Us³uga wysy³a nazwê potoku, ale niezale¿nie od tego, w jaki sposób próbowa³em
