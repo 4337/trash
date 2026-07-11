@@ -2,6 +2,7 @@ module;
 #include <windows.h>
 #include <string>
 #include <regex>
+#include <userenv.h>
 
 /*
  * Moja wielka pora¿ka – nie uda³o mi siê obczaiæ protoko³u komunikacji
@@ -39,8 +40,8 @@ DWORD Nipc::Ipc::impersonation() {
         return GetLastError();
     }
 
+    DWORD username_len = 512;
     char user_name[512 + 1] = { 0 };
-    DWORD username_len = sizeof(user_name);
     if (GetUserNameA(user_name, &username_len)) {
         printf("[!!!]. mpersonation succeeded. Current thread user: %s\r\n", user_name);
     }
@@ -48,23 +49,23 @@ DWORD Nipc::Ipc::impersonation() {
     return ERROR_SUCCESS; 
 }
 
-bool Nipc::Ipc::server(const std::string& pipe_name, DWORD max_instances) {
+DWORD Nipc::Ipc::server(const std::string& pipe_name, DWORD max_instances) {
 
     if (handler != INVALID_HANDLE_VALUE) {
-        return false;
+        return ERROR_INVALID_HANDLE;
     }
 
     if (pipe_name.empty()) {
-        return false;
+        return 0x43374337;
     }
 
     SECURITY_DESCRIPTOR sd;
     if (!InitializeSecurityDescriptor(&sd, SECURITY_DESCRIPTOR_REVISION)) {
-        return false;
+        return GetLastError();
     }
 
     if (!SetSecurityDescriptorDacl(&sd, TRUE, nullptr, FALSE)) {
-        return false;
+        return GetLastError();
     }
 
     SECURITY_ATTRIBUTES sa;
@@ -84,7 +85,7 @@ bool Nipc::Ipc::server(const std::string& pipe_name, DWORD max_instances) {
     );
 
     if (handler == INVALID_HANDLE_VALUE) {
-        return false;
+        return GetLastError();
     }
 
     BOOL connected = ConnectNamedPipe(handler, nullptr);
@@ -92,18 +93,22 @@ bool Nipc::Ipc::server(const std::string& pipe_name, DWORD max_instances) {
     if (!connected) {
         DWORD last_error = GetLastError();
         if (last_error == ERROR_PIPE_CONNECTED) {
-            return true;
+            return NO_ERROR;
         }
 
         CloseHandle(handler);
         handler = INVALID_HANDLE_VALUE;
-        return false;
+        return last_error;
     }
 
-    return true;
+    return NO_ERROR;
 }
 
 DWORD Nipc::Ipc::client(const std::string& pipe_name, DWORD access_mode, const DWORD timeout) {
+
+    if (pipe_name.empty()) {
+        return 0x43374337;
+    }
 
     if (handler != INVALID_HANDLE_VALUE) {
         return ERROR_INVALID_HANDLE;

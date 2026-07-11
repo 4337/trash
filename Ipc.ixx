@@ -32,7 +32,7 @@ namespace Nipc {
 		* pipe_name
 		* access_mode
 		*/
-		bool server(const std::string&, DWORD max_instances = PIPE_UNLIMITED_INSTANCES);
+		DWORD server(const std::string&, DWORD max_instances = PIPE_UNLIMITED_INSTANCES);
 
 		/*
 		* evil things
