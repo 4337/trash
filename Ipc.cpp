@@ -17,7 +17,7 @@ module;
  * Oczywiœcie du¿¹ czêœæ tych us³ug mo¿na zdekompilowaæ, poniewa¿ s¹ napisane
  * w .NET, i w³aœnie dlatego to wielka pora¿ka.
  *
- * Mo¿e kiedyœ Nord mi kiedyœ powie, ¿ebym nie by³ smutny.
+ * Mo¿e kiedyœ Nord mi powie, ¿ebym nie by³ smutny.
  *
  * *****************
  * Synchroniczny klient-serwer, którego potrzebowa³em
