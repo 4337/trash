@@ -13,7 +13,7 @@ module;
  * się z nią połączyć – jako użytkownik, administrator, SYSTEM, usługa,
  * podpisana aplikacja czy aplikacja, która odbiera wszystkim poza sobą
  * możliwość dostępu do procesu – próba połączenia zawsze zwracała
- * kod 0x02 (Path Not Found).
+ * kod 0x02 (Path Not Found) ;].
  *
  * Oczywiście dużą część tych usług można zdekompilować, ponieważ są napisane
  * w .NET, i właśnie dlatego to wielka porażka.
