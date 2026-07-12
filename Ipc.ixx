@@ -16,8 +16,8 @@ namespace Nipc {
 		const size_t HEADER_SIZE = 4;
 
 		/*
-		 * Nie udzielamy dostêpu do handler nikomu poza funkcj¹ process::execve_as_client
-		 * które potrzebuje go w trybie odczytu aby uruchomiæ process z tokenem klienta.
+		 * Nie udzielamy dostÄ™pu do handler nikomu poza funkcjÄ… process::execve_as_client
+		 * ktÃ³ra potrzebuje go w trybie odczytu aby uruchomiÄ‡ process z tokenem klienta.
 		 */
 		friend DWORD execve_as_client(const Ipc& ipc_obj);
 
