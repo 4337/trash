@@ -1,57 +1,69 @@
 module;
 
-#include <Windows.h>
-#include <aclapi.h>
-#include <sddl.h>
+#include <string>
+#include <windows.h>
 
-module Process;
-import Ipc; // Importujemy pełny moduł Ipc, aby widzieć definicję klasy i pole 'handler'
+export module Ipc;
 
-// Dodano brakujący modyfikator 'const' w sygnaturze
-DWORD Nipc::execve_as_client(const Nipc::Ipc& ipc_obj) {
-    // Przykład dostępu do prywatnego pola dzięki zaprzyjaźnieniu:
-    HANDLE h = ipc_obj.handler;
+import Helpers;
 
-    return -1;
-}
+namespace Nipc {
 
-bool Nipc::LockProcess() {
-    HANDLE Process = GetCurrentProcess();
+	export
+		class Ipc {
 
-    /*
-     DENY Admin
-     DENY System
-     ALLOW Owner
-    */
-    PCSTR Sddl = "D:(D;OICI;GA;;;BA)(D;OICI;GA;;;SY)(A;OICI;GA;;;OW)";
+		HANDLE handler;
+		const size_t HEADER_SIZE = 4;
 
-    PSECURITY_DESCRIPTOR PSD = NULL;
+		/*
+		 * Nie udzielamy dostępu do handler nikomu poza funkcją process::execve_as_client
+		 * która potrzebuje go w trybie odczytu aby uruchomić process z tokenem klienta.
+		 */
+		friend DWORD execve_as_client(const Ipc& ipc_obj);
 
-    if (!ConvertStringSecurityDescriptorToSecurityDescriptor(
-        Sddl, SDDL_REVISION_1, &PSD, NULL)) {
-        return FALSE;
-    }
+		public:
 
-    BOOL DaclPresent = FALSE;
-    BOOL DaclDefaulted = FALSE;
-    PACL DDacl = NULL;
+			Ipc() : handler(INVALID_HANDLE_VALUE) {
+			}
 
-    if (!GetSecurityDescriptorDacl(PSD, &DaclPresent, &DDacl, &DaclDefaulted)) {
-        LocalFree(PSD);
-        return FALSE;
-    }
+			DWORD client(const std::string&, DWORD, DWORD timeout = 20000);
+			DWORD server(const std::string&, DWORD max_instances = PIPE_UNLIMITED_INSTANCES);
+			DWORD impersonation();
 
-    DWORD result = SetSecurityInfo(
-        Process,
-        SE_KERNEL_OBJECT,
-        DACL_SECURITY_INFORMATION,
-        NULL,
-        NULL,
-        DDacl,
-        NULL
-    );
+			bool is_alive() {
+				DWORD PipeState = 0;
+				return GetNamedPipeHandleState(handler, &PipeState, nullptr, nullptr, nullptr, nullptr, 0) != FALSE;
+			}
 
-    LocalFree(PSD);
+			void close() {
+				if (handler != nullptr && handler != INVALID_HANDLE_VALUE) {
+					CloseHandle(handler);
+					handler = INVALID_HANDLE_VALUE;
+				}
+			}
 
-    return (result == ERROR_SUCCESS);
+			size_t bytes_to_read() {
+				DWORD to_read = 0;
+				PeekNamedPipe(handler, nullptr, 0, nullptr, &to_read, nullptr);
+				return static_cast<size_t>(to_read);
+			}
+
+			template<typename T>
+			binary_string create_public_msg(const T&);
+
+			template <typename T>
+			std::string create_pipename(const T&);
+
+			template <typename T>
+			T read(size_t);
+
+			template <typename T>
+			size_t write(const T&);
+
+			~Ipc() {
+				close();
+			}
+
+	};
+
 }
