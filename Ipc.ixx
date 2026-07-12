@@ -27,7 +27,7 @@ namespace Nipc {
 			}
 
 			DWORD client(const std::string&, DWORD, DWORD timeout = 20000);
-			DWORD server(const std::string&, DWORD max_instances = PIPE_UNLIMITED_INSTANCES);
+			DWORD server(const std::string&, DWORD , DWORD pipe_mode = PIPE_TYPE_BYTE | PIPE_READMODE_BYTE | PIPE_WAIT,DWORD max_instances = PIPE_UNLIMITED_INSTANCES);
 			DWORD impersonation();
 
 			bool is_alive() {

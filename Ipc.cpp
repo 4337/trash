@@ -50,7 +50,7 @@ DWORD Nipc::Ipc::impersonation() {
     return ERROR_SUCCESS; 
 }
 
-DWORD Nipc::Ipc::server(const std::string& pipe_name, DWORD max_instances) {
+DWORD Nipc::Ipc::server(const std::string& pipe_name,DWORD open_mode, DWORD pipe_mode, DWORD max_instances) {
 
     if (handler != INVALID_HANDLE_VALUE) {
         return ERROR_INVALID_HANDLE;
@@ -75,9 +75,9 @@ DWORD Nipc::Ipc::server(const std::string& pipe_name, DWORD max_instances) {
     sa.bInheritHandle = FALSE;
 
     handler = CreateNamedPipe(
-        pipe_name.c_str(),                      
-        PIPE_ACCESS_DUPLEX,                   
-        PIPE_TYPE_BYTE | PIPE_READMODE_BYTE | PIPE_WAIT, 
+        pipe_name.c_str(),
+        open_mode,
+        pipe_mode, 
         max_instances,                   
         1024 << 2,                             
         1024 << 2,                               
