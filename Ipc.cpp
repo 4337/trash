@@ -189,6 +189,11 @@ template<typename T>
 binary_string Nipc::Ipc::create_public_msg(const T& msg) {
 
     size_t msg_len = msg.size();
+
+    if (msg_len <= 4) {
+        return binary_string({ 0 });
+    }
+
     binary_string message(msg_len + HEADER_SIZE, 0);
 
     message[0] = static_cast<unsigned char>((msg_len >> 24) & 0xFF);
@@ -196,9 +201,7 @@ binary_string Nipc::Ipc::create_public_msg(const T& msg) {
     message[2] = static_cast<unsigned char>((msg_len >> 8) & 0xFF);
     message[3] = static_cast<unsigned char>(msg_len & 0xFF);
 
-    if (msg_len > 0) {
-        std::memcpy(message.data() + HEADER_SIZE, msg.data(), msg_len);
-    }
+    std::memcpy(message.data() + HEADER_SIZE, msg.data(), msg_len);
 
     //yyyy eee a ?
     printf("HALABANCHA %zu %s\r\n", msg_len, reinterpret_cast<const char*>(message.data() + HEADER_SIZE));
@@ -259,4 +262,3 @@ template std::string Nipc::Ipc::create_pipename<binary_string>(const binary_stri
 
 template std::string Nipc::Ipc::read(size_t);
 template binary_string Nipc::Ipc::read(size_t);
-
