@@ -190,7 +190,7 @@ binary_string Nipc::Ipc::create_public_msg(const T& msg) {
 
     size_t msg_len = msg.size();
 
-    if (msg_len <= 4) {
+    if (msg_len <= HEADER_SIZE) {
         return binary_string({ 0 });
     }
 
