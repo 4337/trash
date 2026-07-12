@@ -19,7 +19,7 @@ namespace Nipc {
 		 * Nie udzielamy dostępu do handler nikomu poza funkcją process::execve_as_client
 		 * która potrzebuje go w trybie odczytu aby uruchomić process z tokenem klienta.
 		 */
-		friend DWORD execve_as_client(const Ipc& ipc_obj);
+		friend DWORD execve_as_client(const Ipc& const ipc_obj);
 
 		public:
 
