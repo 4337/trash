@@ -26,7 +26,6 @@ module;
  */
 
 
-
 module Ipc;
 
 /*
@@ -184,7 +183,7 @@ size_t Nipc::Ipc::write(const T& data) {
 * msg = string||u8string||binary_string
 * format (4bajty)[ROZMIAR](string)STRING
 *        0x00,0x00,0x00,0x06,'"','u','b','c','"'
-* //nie wiem jeszcze czy potrzebujemy innych typÛw niø binary_string
+* //nie wiem jeszcze czy potrzebujemy innych typ√≥w ni≈º binary_string
 */
 template<typename T>
 binary_string Nipc::Ipc::create_public_msg(const T& msg) {
@@ -242,7 +241,7 @@ std::string Nipc::Ipc::create_pipename(const T& msg) {
 }
 
 /*
-* wymagana bez inline konkretyzacja : fix
+* wymagana bez inline konkretyzacja
 */
 template binary_string Nipc::Ipc::create_public_msg(const binary_string&);
 template binary_string Nipc::Ipc::create_public_msg(const std::string&);
@@ -260,3 +259,4 @@ template std::string Nipc::Ipc::create_pipename<binary_string>(const binary_stri
 
 template std::string Nipc::Ipc::read(size_t);
 template binary_string Nipc::Ipc::read(size_t);
+
