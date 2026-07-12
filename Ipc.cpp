@@ -105,7 +105,7 @@ DWORD Nipc::Ipc::server(const std::string& pipe_name, DWORD max_instances) {
     return NO_ERROR;
 }
 
-DWORD Nipc::Ipc::client(const std::string& pipe_name, DWORD access_mode, const DWORD timeout) {
+DWORD Nipc::Ipc::client(const std::string& pipe_name, DWORD access_mode,  DWORD timeout) {
 
     if (pipe_name.empty()) {
         return 0x43374337;

@@ -26,7 +26,7 @@ namespace Nipc {
 			Ipc() : handler(INVALID_HANDLE_VALUE) {
 			}
 
-			DWORD client(const std::string&, DWORD, const DWORD timeout = 20000);
+			DWORD client(const std::string&, DWORD, DWORD timeout = 20000);
 			DWORD server(const std::string&, DWORD max_instances = PIPE_UNLIMITED_INSTANCES);
 			DWORD impersonation();
 
